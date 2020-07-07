@@ -1,25 +1,38 @@
-// http://patreon.com/codingtrain
-
-// VARIABLE FOR THE DATABASE
 var database;
-
-// DRAWING (ARRAY OF POINTS)
 var drawing = [];
+var hardtileId = 1;
+var currentTile = hardtileId;
+var tiles = {
+  1: {
+    'writing': 'writing',
+    'drawing': drawing,
+    'tile': 1,
+    'firebaseKey' : null,
+    'width': 70,
+    'height': 40,
+    'position': {
+      'x': 10,
+      'y': 10
+    }
+  },
+  2: {
+    'writing': 'writing',
+    'drawing': drawing,
+    'tile': 2,
+    'firebaseKey' : null,
+    'width': 70,
+    'height': 40,
+    'position': {
+      'x': 10,
+      'y': 50
+    }
+  }
+};
 var writing;
-
-// CURRENT PATH  (ARRAY WHERE THE CURRENT DRAWING IS BEING STORED)
-var currentPath = [];
-
-// !ISDRAWING BY DEFAULT
+var currentPath = []; // (ARRAY WHERE THE CURRENT DRAWING IS BEING STORED)
 var isDrawing = false;
-var inDrawCanvas;
 var drawCanvasToggle = false;
-
-var tileId = 1;
-
-// empty javascript object / map
-var tileFirebaseMap = {};
-
+// var tileFirebaseMap = {}; // empty javascript object / map
 var bg;
 
 //SETUP
@@ -28,39 +41,22 @@ function setup() {
   bg = loadImage('img/toilet2.png');
   canvas = createCanvas(800, 517);
   // canvas = createCanvas(windowWidth, windowHeight);
-
-  // WHEN THE MOUSE IS PRESSED, START COLLECTING X AND Y POINTS
-  canvas.mousePressed(startPath);
-
-  //SET THE PARENT OF THE CANVAS TO THE CANVAS CONTAINER...WHY?
-  canvas.parent('canvascontainer');
-
-  // WHEN THE MOUSE IS RELEASED, START COLLECTING X AND Y POINTS
-  canvas.mouseReleased(endPath);
-
-  // SET A "SAVEBUTTON" VAR TO THE THING THAT HAS THE ID OF SAVEBUTTON
-  // var saveButton = select('#saveButton');
-  //WHEN THE MOUSE PRESSES ON THE SAVEBUTTON RUN THE SAVE DRAWING FUNCTION
-  // saveButton.mousePressed(saveDrawing);
-
-  // var clearButton = select('#clearButton');
-  // clearButton.mousePressed(clearDrawing);
-
-  // saveButton = createButton('save');
-  // saveButton.position(205, 205);
-  // saveButton.size(60, 40);
-  // saveButton.mousePressed(saveDrawing);
+  canvas.mousePressed(startPath); // when mouse is PRESSED, START COLLECTING X AND Y POINTS
+  canvas.parent('canvascontainer'); //SET THE PARENT OF THE CANVAS TO THE CANVAS CONTAINER?
+  canvas.mouseReleased(endPath); // WHEN THE MOUSE IS RELEASED, stop COLLECTING X AND Y POINTS
 
   // clearButton = createButton('clear');
   // clearButton.position(135, 205);
   // clearButton.size(60, 40);
   // clearButton.mousePressed(clearDrawing);
 
-
-  toggleDrawCanvasButton = createButton('');
-  toggleDrawCanvasButton.position(65, 250);
-  toggleDrawCanvasButton.size(60, 40);
-  toggleDrawCanvasButton.mousePressed(toggleDrawCanvas);
+// for each tile
+  for (const tileId in tiles) {
+    tile = createButton(''); // make a button
+    tile.position(tiles[tileId]['position']['x'], tiles[tileId]['position']['y']);
+    tile.size(tiles[tileId]['width'], tiles[tileId]['height']);
+    tile.mousePressed(toggleDrawCanvas); // when mouse is pressed on tile togl draw canvas
+  }
 
   // FIREBASE AUTH STUFF
   var config = {
@@ -73,247 +69,164 @@ function setup() {
   firebase.initializeApp(config);
   database = firebase.database();
 
-  // get URL params for permalink
-  var params = getURLParams();
-  // console.log(params);
+  var params = getURLParams();  // get URL params for permalink
   if (params.id) {
     showDrawing(params.id);
   }
 
-  // GRAB THE DRAWINGS
+  // get THE DRAWINGS
   var ref = database.ref('drawings');
-  //EVENT THAT WILL BE TRIGGERED ANYTIME ANYTHING IS CHANGED IN THE DATABASE
-  // ERR DATA IN CASE THERE IS AN ERROR
-  ref.on('value', gotData, errData);
+  ref.on('value', gotData, errData); //trigger this anytime anything is changed in the database (err is in case of error)
+  ref.once('value', buildMap, errData);  // buildMap at start
 
-  // tileFirebaseMap
-  ref.once('value', buildMap, errData);
 }
 
 function startPath() {
-  // SET ISDRAWING TO TRUE
-  isDrawing = true;
-  // RESET CURRENT PATH TO AN EMPTY OBJECT
-  currentPath = [];
-  // PUSH THE CURRENT PATH TO THE DRAWING OBJECT
-  drawing.push(currentPath);
+  isDrawing = true; //set isdrawing to true
+  currentPath = []; // reset current path to an empty object
+  tiles["1"]["drawing"].push(currentPath); // push the current path to the drawing object
 }
 
 function endPath() {
-  // SET ISDRAWING TO FALSE
-  isDrawing = false;
+  isDrawing = false; // set isdrawing to false
 }
 
-function displayArt(){
-  if(!drawCanvasToggle) {
+function displayDrawing() {
+  if (!drawCanvasToggle) {
     scale(0.2, 0.2);
   }
-  // FOR EACH IN THE DRAWING OBJECT
-  for (var i = 0; i < drawing.length; i++) {
-    // GRAB THE NEXT LIST [{X:90,Y:80},{X:4,Y:5}] & SET IT TO "PATH"
-    var path = drawing[i];
-    // BEGIN DRAWING
+  for (var i = 0; i < tiles['1']['drawing'].length; i++) { // foreach path in the drawing
+    var path = tiles["1"]["drawing"][i]; // grab the next path
     beginShape();
-    // THEN FOR EACH in the PATH OBJECT
-    for (var j = 0; j < path.length; j++) {
-      // FOR EVERY SPOT IN THE PATH, CREATE A VERTEX & DRAW A LINE BETWEEN
-      vertex(path[j].x, path[j].y);
+    for (var j = 0; j < path.length; j++) { // for each path
+      vertex(path[j].x, path[j].y); // mark each vertex and draw a line between
     }
-    // STOP DRAWING
     endShape();
   }
 }
-
-function toggleDrawCanvas() {
-  if (drawCanvasToggle) {
-    saveDrawing();
+function detectMouseLocation() {
+  for (const tileId in tiles) { // for each tile, check if mouse is over it
+    if (mouseX > tiles[tileId]['position']['x'] && mouseX < tiles[tileId]['position']['x'] + tiles[tileId]['width'] && mouseY > tiles[tileId]['position']['y'] && mouseY < tiles[tileId]['position']['y'] + tiles[tileId]['height']) {
+      return tiles[tileId];
+    }
   }
-  drawCanvasToggle = !drawCanvasToggle;
+}
+function toggleDrawCanvas() {
+  var tileId = detectMouseLocation(); // grab mouse location (over which tile?)
+  if (drawCanvasToggle) { // if drawcanvas is open
+    saveDrawing(tileId); // save to specific tile
+  } else { // if drawcanvas is closed
+    currentTile = tileId //update currenttile
+  }
+  drawCanvasToggle = !drawCanvasToggle; // toggle canvas
 }
 
-function inDrawCanvasCheck() {
+function inDrawCanvasCheck() { // check if in the drawcanvas
   if (mouseX > 20 && mouseX < 420 && mouseY > 20 && mouseY < 220) {
-    inDrawCanvas = true;
+    return true;
   } else {
-    inDrawCanvas = false;
+    return false;
   }
 }
 
 function draw() {
   background(bg);
 
-  if (drawCanvasToggle) {
+  if (drawCanvasToggle) { // if canvas is open
     fill("white");
     stroke("black");
     strokeWeight(3);
     rect(20, 20, 400, 200);
-  }
-
-
-  if (drawCanvasToggle) {
-    if (isDrawing) {
-      inDrawCanvasCheck();
-      if (inDrawCanvas) {
-        // DRAW EACH POINT OF THE DRAWING
-        var point = {
+    if (isDrawing) {  // if person isdrawing
+      if (inDrawCanvasCheck()) { // and person isdrawing in the canvas
+        var point = { // grab the x and y of each point
           x: mouseX,
           y: mouseY
         };
-        // PUSH THAT POINT (AN X VALUE AND A Y VALUE) INTO THE ARRAY
-        currentPath.push(point);
+        currentPath.push(point); // push that x and y into the currentpath array
       }
     }
-    // LINE STUFF
-    stroke("black");
-    strokeWeight(4);
-    noFill();
-
-    // scale(0.2);
+    noFill(); // don't fill the draw stroke
   }
-  displayArt();
+  displayDrawing(); // show the drawing
 }
 
-// SAVE THE DRAWING
-function saveDrawing() {
-  if (drawing.length > 0) {
-    // MAKE A NEW REFERENCE to the drawings database
-    var ref = database.ref('drawings');
-    // WE CAN ADD OTHER DATA!
-    var data = {
+function saveDrawing(tile) {
+  var id = tile["tile"]; // grab the tile id
+  if (tiles[id]["drawing"].length > 0) { // if the drawing is not nothing
+    var ref = database.ref('drawings'); // make a new reference to the drawings database
+    var data = { // include
       writing: 'writing',
       drawing: drawing,
-      tile: tileId,
+      tile: id,
     };
-    // 1. for the current tile (tileId = 1)
-    //    do we have an firebase ID for it?
-    // 2. if we have a firebase id, then we update
-    // 3. if we do not have a firebase id, then we PUSH
-    //    and update the tile-id-firebase-id map.
-    if (tileId in tileFirebaseMap) {
-      // tileId is in the map
-      var firebaseKey = tileFirebaseMap[tileId];
-      // update instead of push
-    } else {
-      // PUSH THE DATA TO THE REF THAT WE CREATED ABOVE
-      var result = ref.push(data, dataSent);
-      tileFirebaseMap[tileId] = result.key;
-      console.log(result.key);
+
+    if (tiles[id]['firebaseKey'] == null) {
+      var result = ref.push(data, dataSent); // push the data to the ref we created above
+      tiles[id]['firebaseKey'] = result.key;
     }
-    function dataSent(err, status) {
-      console.log(status);
-    }
-    // draw it to the screen
-    drawing = data.drawing;
+    function dataSent(err, status) {}
+    tiles[id]["drawing"] = data.drawing; // draw to the screen
   }
 }
 
+// integrate buildmap into tilemap
 function buildMap(data) {
-  // MAKE A DRAWINGS VAR AND STORE IN IT ALL THE ENTRIES IN THE DATABASE
-  var drawings = data.val();
-  var keys = Object.keys(drawings);
-  for (var i = 0; i < keys.length; i++) {
-    var key = keys[i];
-    var tileId = drawings[key]["tile"];
-    tileFirebaseMap[tileId] = key;
+  var drawings = data.val(); // grab all database entries
+  var keys = drawings ? Object.keys(drawings) : []; // grab keys - if keys isn't empty
+  for (var i = 0; i < keys.length; i++) {  // for each key
+    var key = keys[i]; // grab the key
+    var tileId = drawings[key]["tile"]; // grab the tileID
+    tiles[tileId]["firebaseKey"] = key;
   }
 }
 
 //CALLBACK
 function gotData(data) {
-  // clear the listing
-  // CREATE AN ELEMENTS VAR & SELECT ALL
-  var elts = selectAll('.listing');
-  // GO THROUGH EACH OF THEM
-  for (var i = 0; i < elts.length; i++) {
-    // REMOVE DOM ELEMENTS FROM THE PAGE
-    elts[i].remove();
+  // clear the listing?
+  var elts = selectAll('.listing'); // grab all (all what?)
+  for (var i = 0; i < elts.length; i++) { // foreach
+    elts[i].remove(); // remove dom elements
   }
 
-  // GRAB ALL THE VALS FROM THE DATA(?) OBJECT
-  var drawings = data.val();
-  // GET ALL THE KEYS
-  var keys = Object.keys(drawings);
-  // ITERATE OVER ALL THE KEYS
-  for (var i = 0; i < keys.length; i++) {
-    // GRAB THE KEY
-    var key = keys[i];
-    // CREATE LI ELEMENT
-    var li = createElement('li', '');
-    // GIVE EVERY ONE OF THE ELEMENTS A CLASS OF LISTING
-    li.class('listing');
-    // CREATE A LINK ELEMENT WITH THE KEY IN IT
-    //var ahref = createA('#', key);
-    // CREATE AN EVENT CALLED SHOW DRAWING
-    //ahref.mousePressed(showDrawing);
+  var drawings = data.val(); // grab all drawings from firebase
+  var keys = drawings ? Object.keys(drawings) : []; // if there are keys, grab them all
+  for (var i = 0; i < keys.length; i++) { // foreach
+    var key = keys[i]; // grab the key
+    var li = createElement('li', ''); // create li element
+    li.class('listing'); // give each the "listing" class
+    var ahref = createA('#', key); // make a link element with the key in it
+    // ahref.mousePressed(showDrawing); // CREATE AN EVENT CALLED SHOW DRAWING
     var ahref = document.createElement('a');
     ahref.setAttribute('href', '#');
     ahref.addEventListener('click', showDrawing);
     ahref.innerHTML = key;
-
     ahref = new p5.Element(ahref);
     ahref.parent(li);
-
-    // SET UP PERMALINK
-    var perma = createA('?id=' + key, 'permalink');
-    // PARENT IT TO THE LIST
-    perma.parent(li);
-    // STYLE ON THE PERMA
-    perma.style('padding', '4px');
-    // MAKE ITS PARENT THE DRAWING LIST
-    li.parent('drawinglist');
+    // var perma = createA('?id=' + key, 'permalink'); // set up permalink
+    // perma.parent(li); // parent it to the list
+    // perma.style('padding', '4px'); // style it
+    li.parent('drawinglist'); // parent it to the drawing list
   }
 }
 
-// IF THERE IS AN ERROR, SHOW ME IN THE CONSOLE
-function errData(err) {
+function errData(err) { // show me the errors
   console.log(err);
 }
 
-// function createShowDrawingFunction(key) {
-//   return function() {
-//     var ref = database.ref('drawings/' + key);
-//     // PASS THE VALUE ONCE, ONEDRAWING FUNCT, AND CALLBACK FOR ERROR
-//     ref.once('value', oneDrawing, errData);
-//
-//     // GETS DATA
-//     function oneDrawing(data) {
-//       // grab the current drawing from the database
-//       var dbdrawing = data.val();
-//       // console.log(data.val);
-//       drawing = dbdrawing.drawing;
-//     }
-//   };
-// }
-
-// DISPLAY DRAWING - give it the key
-function showDrawing(key) {
-  console.log('the arguments');
-  console.log(arguments);
-  // REPURPOSING FUNCTION FOR TWO DIFFERENT USES?
-  // if the "key" passed into showdrawing is a mouseevent
-  if (key instanceof MouseEvent) {
-    // set key to this.html?
-    key = key.target.innerHTML;
-    console.log('key html = ' + key);
+function showDrawing(key) { //show drawing
+  if (key instanceof MouseEvent) { // if the key passed into showdrawing is a mouseevent
+    key = key.target.innerHTML; // set key to this.html?
   }
-  // then....
+  var ref = database.ref('drawings/' + key); // grab the drawings and whatever key
+  ref.once('value', oneDrawing, errData); //pass the value once and run oneDrawing
 
-  //  GRAB THE REF AND PASS DRAWINGS PLUS THE PATH AND WHATEVER KEY
-  var ref = database.ref('drawings/' + key);
-  // PASS THE VALUE ONCE, ONEDRAWING FUNCT, AND CALLBACK FOR ERROR
-  ref.once('value', oneDrawing, errData);
-
-
-  // GETS DATA
   function oneDrawing(data) {
-    // grab the current drawing from the database
-    var dbdrawing = data.val();
-    console.log("dbdrawing " + JSON.stringify(dbdrawing));
-    drawing = dbdrawing.drawing;
-    // console.log("value of dbdrawing  " + Object.keys(dbdrawing));
+    var dbdrawing = data.val(); // grab the current drawing from the database
+    tiles["1"]["drawing"] = dbdrawing.drawing;
   }
 }
 
 function clearDrawing() {
-  drawing = [];
+  tiles["1"]["drawing"] = [];
 }
