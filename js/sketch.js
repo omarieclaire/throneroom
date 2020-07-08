@@ -1,7 +1,6 @@
 let database;
 let writing;
 let currentPath = []; // (ARRAY WHERE THE CURRENT DRAWING IS BEING STORED)
-let drawing = [];
 let tileId = 1;
 let clickOnButton = false;
 let isDrawing = false;
@@ -74,10 +73,9 @@ function setup() {
 }
 
 function startPath() {
-  if (drawCanvasToggle) {
+  if (drawCanvasToggle && inDrawCanvasCheck()) {
     isDrawing = true; // set isdrawing to true
     currentPath = []; // reset current path to an empty object
-    // console.log(currentTile);
     currentTile['drawing'].push(currentPath); // push the current path to the drawing object
   }
 }
@@ -137,7 +135,6 @@ function detectMouseLocation() {
     }
   }
   clickOnButton = false;
-  // console.log(`WARNING: returning undefined from detectMouseLocation - mouseX=${mouseX} mouseY=${mouseY}`);
 }
 
 function toggleDrawCanvas() {
