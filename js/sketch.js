@@ -6,8 +6,10 @@ let tileId = 1;
 let clickOnButton = false;
 let isDrawing = false;
 let drawCanvasToggle = false;
-let bg;
-
+let drawCanvasW = 500;
+let drawCanvasH = 300;
+let drawCanvasX = 150;
+let drawCanvasY = 50;
 let tiles = {
   1: {
     'writing': 'writing',
@@ -34,8 +36,9 @@ let tiles = {
     }
   }
 };
-
 let currentTile = tiles[1];
+
+let bg;
 
 function setup() {
   bg = loadImage('img/toilet2.png');
@@ -151,7 +154,7 @@ function toggleDrawCanvas() {
 }
 
 function inDrawCanvasCheck() { // check if in the drawcanvas
-  if (mouseX > 20 && mouseX < 420 && mouseY > 20 && mouseY < 220) {
+  if (mouseX > drawCanvasX && mouseX < drawCanvasX + drawCanvasW && mouseY > drawCanvasY && mouseY < drawCanvasY + drawCanvasH) {
     return true;
   } else {
     return false;
@@ -163,7 +166,7 @@ function drawCanvas(){
   fill('white');
   stroke('black');
   strokeWeight(3);
-  rect(200, 20, 400, 200);
+  rect(drawCanvasX, drawCanvasY, drawCanvasW, drawCanvasH);
   pop();
 }
 
@@ -267,7 +270,6 @@ function showDrawing(key) { //show drawing
   if (key instanceof MouseEvent) { // if the key passed into showdrawing is a mouseevent
     key = key.target.innerHTML; // set key to this.html?
   }
-
   var theTileId;
   for (const tileId in tiles) { // for each tile
     let tile = tiles[tileId]; // grab the id
