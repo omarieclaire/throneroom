@@ -1,7 +1,13 @@
 let database;
+let writing;
+let currentPath = []; // (ARRAY WHERE THE CURRENT DRAWING IS BEING STORED)
 let drawing = [];
 let tileId = 1;
-let currentTile = tileId;
+let clickOnButton = false;
+let isDrawing = false;
+let drawCanvasToggle = false;
+let bg;
+
 let tiles = {
   1: {
     'writing': 'writing',
@@ -28,35 +34,21 @@ let tiles = {
     }
   }
 };
-let writing;
-let currentPath = []; // (ARRAY WHERE THE CURRENT DRAWING IS BEING STORED)
-let isDrawing = false;
-let drawCanvasToggle = false;
-// let tileFirebaseMap = {}; // empty javascript object / map
-let bg;
 
-//SETUP
+let currentTile = tiles[1];
+
 function setup() {
-  // CREATE CANVAS
   bg = loadImage('img/toilet2.png');
   canvas = createCanvas(800, 517);
+  function toggleDrawCanvasAndStartPath() {
+    toggleDrawCanvas();
+    startPath(); // when mouse is PRESSED, START COLLECTING X AND Y POINTS
+  }
+  canvas.mousePressed(toggleDrawCanvasAndStartPath);
   // canvas = createCanvas(windowWidth, windowHeight);
-  canvas.mousePressed(startPath); // when mouse is PRESSED, START COLLECTING X AND Y POINTS
+  //canvas.mousePressed(startPath);
   canvas.parent('canvascontainer'); //SET THE PARENT OF THE CANVAS TO THE CANVAS CONTAINER?
   canvas.mouseReleased(endPath); // WHEN THE MOUSE IS RELEASED, stop COLLECTING X AND Y POINTS
-
-  // clearButton = createButton('clear');
-  // clearButton.position(135, 205);
-  // clearButton.size(60, 40);
-  // clearButton.mousePressed(clearDrawing);
-
-// for each tile
-  for (const tileId in tiles) {
-    tile = createButton(''); // make a button
-    tile.position(tiles[tileId]['position']['x'], tiles[tileId]['position']['y']);
-    tile.size(tiles[tileId]['width'], tiles[tileId]['height']);
-    tile.mousePressed(toggleDrawCanvas); // when mouse is pressed on tile togl draw canvas
-  }
 
   // FIREBASE AUTH STUFF
   var config = {
@@ -68,35 +60,44 @@ function setup() {
   };
   firebase.initializeApp(config);
   database = firebase.database();
-
   var params = getURLParams();  // get URL params for permalink
   if (params.id) {
     showDrawing(params.id);
   }
 
-  // get THE DRAWINGS
-  var ref = database.ref('drawings');
-  ref.on('value', gotData, errData); //trigger this anytime anything is changed in the database (err is in case of error)
-  ref.once('value', buildMap, errData);  // buildMap at start
+  var ref = database.ref('drawings'); // get the drawings
+  ref.on('value', gotData, errData); // trigger this anytime anything is changed in the database (err is in case of error)
+  ref.once('value', buildMap, errData);  // buildMap at the start
 }
 
 function startPath() {
-  isDrawing = true; //set isdrawing to true
-  currentPath = []; // reset current path to an empty object
-  currentTile['drawing'].push(currentPath); // push the current path to the drawing object
+  if (drawCanvasToggle) {
+    isDrawing = true; // set isdrawing to true
+    currentPath = []; // reset current path to an empty object
+    // console.log(currentTile);
+    currentTile['drawing'].push(currentPath); // push the current path to the drawing object
+  }
 }
 
 function endPath() {
   isDrawing = false; // set isdrawing to false
 }
 
-function drawTile(tile, scaleFactor) {
+function drawTile(tile){
+  push();
+  stroke('gray');
+  fill('none');
+  rect(tile.position.x, tile.position.y, tile.width, tile.height);
+  pop();
+}
+
+function drawTileDrawing(tile, scaleFactor) {
   push();
   scale(scaleFactor, scaleFactor);
   let drawing = tile['drawing'];
   for (let i = 0; i < drawing.length; i++) { // foreach path in the drawing
     let path = drawing[i]; // grab the next path
-    beginShape();
+    beginShape(); // draw
     for (let j = 0; j < path.length; j++) { // for each coordinate in the path
       vertex(path[j].x, path[j].y); // mark each vertex and draw a line between
     }
@@ -106,41 +107,47 @@ function drawTile(tile, scaleFactor) {
 }
 
 function displayDrawing() {
-  // no canvas: all are scaled to 0.2
-  // yes canvas: all are scaled to 0.2 except for the current tile, 1
-  if (!drawCanvasToggle) {
+  if (!drawCanvasToggle) { // if the canvas is closed
     for(const tileId in tiles) {
-      drawTile(tiles[tileId], 0.2);
+      drawTile(tiles[tileId]); // draw each tile
+      drawTileDrawing(tiles[tileId], 0.2); // draw each tile drawing scaled down
     }
   } else {
     for (const tileId in tiles) {
-      let tile = tiles[tileId];
-      if (currentTile.tile == tileId) {
-        drawTile(tile, 1.0);
+      let tile = tiles[tileId]; // draw each tile
+      drawTile(tiles[tileId]); // draw each tile
+      if (currentTile.tile == tileId) { // if the current tile is open
+        drawTileDrawing(tile, 1.0);  // draw it BIG
       } else {
-        drawTile(tile, 0.2);
+        drawTileDrawing(tile, 0.2); // draw each other tile drawing scaled down
       }
     }
   }
 }
 
 function detectMouseLocation() {
-  for (const tileId in tiles) { // for each tile, check if mouse is over it
-    let tile = tiles[tileId]
+  for (const tileId in tiles) { // for each tile
+    let tile = tiles[tileId] // grab the ID
     if (mouseX > tile['position']['x'] && mouseX < tile['position']['x'] + tile['width'] && mouseY > tile['position']['y'] && mouseY < tile['position']['y'] + tile['height']) {
-      return tiles[tileId];
+      clickOnButton = true;
+      return tiles[tileId]; // check if mouse is over it -> if yes, return that tile (can i just return tile?)
     }
   }
-  console.log(`WARNING: returning undefined from detectMouseLocation - mouseX=${mouseX} mouseY=${mouseY}`);
+  clickOnButton = false;
+  // console.log(`WARNING: returning undefined from detectMouseLocation - mouseX=${mouseX} mouseY=${mouseY}`);
 }
+
 function toggleDrawCanvas() {
   let tile = detectMouseLocation(); // grab mouse location (over which tile?)
-  if (drawCanvasToggle) { // if drawcanvas is open
-    saveDrawing(tile); // save to specific tile
-  } else { // if drawcanvas is closed
-    currentTile = tile //update currenttile
+  if (clickOnButton) {
+    if (drawCanvasToggle) { // if drawcanvas is open
+      saveDrawing(tile); // save to specific tile
+    } else { // if drawcanvas is closed
+      currentTile = tile //update currenttile
+    }
+    drawCanvasToggle = !drawCanvasToggle; // toggle canvas
   }
-  drawCanvasToggle = !drawCanvasToggle; // toggle canvas
+  clickOnButton = false;
 }
 
 function inDrawCanvasCheck() { // check if in the drawcanvas
@@ -151,14 +158,40 @@ function inDrawCanvasCheck() { // check if in the drawcanvas
   }
 }
 
+function drawCanvas(){
+  push();
+  fill('white');
+  stroke('black');
+  strokeWeight(3);
+  rect(200, 20, 400, 200);
+  pop();
+}
+
+// ahref.addEventListener('click', showDrawing);
+// tile.mousePressed(toggleDrawCanvas); // when mouse is pressed on tile togl draw canvas
+
+
+function highlightActiveTile(){
+  // push();
+  // stroke(40);
+  // stroke('red');
+  // fill('yellow');
+  // rect(currentTile.position.x, currentTile.position.y, currentTile.width, currentTile.height);
+  // pop();
+}
+
 function draw() {
   background(bg);
 
+  // need to know when a click happens
+
+// clickhandler on the canvas
+
+  // if they are, toggleDrawCanvas
+
   if (drawCanvasToggle) { // if canvas is open
-    fill('white');
-    stroke('black');
-    strokeWeight(3);
-    rect(20, 20, 400, 200);
+    highlightActiveTile();
+    drawCanvas();
     if (isDrawing) {  // if person isdrawing
       if (inDrawCanvasCheck()) { // and person isdrawing in the canvas
         let point = { // grab the x and y of each point
@@ -236,8 +269,8 @@ function showDrawing(key) { //show drawing
   }
 
   var theTileId;
-  for (const tileId in tiles) {
-    let tile = tiles[tileId];
+  for (const tileId in tiles) { // for each tile
+    let tile = tiles[tileId]; // grab the id
     if (tile.firebaseKey === key) {
       theTileId = tileId;
     }
