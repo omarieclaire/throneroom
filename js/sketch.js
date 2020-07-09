@@ -92,8 +92,9 @@ function drawTile(tile){
   pop();
 }
 
-function drawTileDrawing(tile, scaleFactor) {
+function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
   push();
+  translate(translateX, translateY);
   scale(scaleFactor, scaleFactor);
   let drawing = tile['drawing'];
   for (let i = 0; i < drawing.length; i++) { // foreach path in the drawing
@@ -108,19 +109,16 @@ function drawTileDrawing(tile, scaleFactor) {
 }
 
 function displayDrawing() {
-  if (!drawCanvasToggle) { // if the canvas is closed
-    for(const tileId in tiles) {
-      drawTile(tiles[tileId]); // draw each tile
-      drawTileDrawing(tiles[tileId], 0.2); // draw each tile drawing scaled down
-    }
-  } else {
-    for (const tileId in tiles) {
-      let tile = tiles[tileId]; // draw each tile
-      drawTile(tiles[tileId]); // draw each tile
-      if (currentTile.tile == tileId) { // if the current tile is open
-        drawTileDrawing(tile, 1.0);  // draw it BIG
+  for(const tileId in tiles) {
+    let tile = tiles[tileId];
+    drawTile(tile);
+    if(!drawCanvasToggle) { // if the canvas is closed
+      drawTileDrawing(tile, 0.2, tile.position.x, tile.position.y);
+    } else {
+      if(currentTile.tile == tileId) { // if the current tile is open
+        drawTileDrawing(tile, 1.0, 0, 0);  // draw it BIG
       } else {
-        drawTileDrawing(tile, 0.2); // draw each other tile drawing scaled down
+        drawTileDrawing(tile, 0.2, tile.position.x, tile.position.y); // draw each other tile drawing scaled down
       }
     }
   }
