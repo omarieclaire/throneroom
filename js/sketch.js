@@ -1,5 +1,6 @@
 let database;
 let writing;
+let input, writeButton, wordBox;
 let currentPath = []; // (ARRAY WHERE THE CURRENT DRAWING IS BEING STORED)
 let tileId = 1;
 let clickOnButton = false;
@@ -9,13 +10,14 @@ let drawCanvasW = 500;
 let drawCanvasH = 300;
 let drawCanvasX = 150;
 let drawCanvasY = 50;
+let canvasToolsVisible = false;
 const SCALEFACTOR = 0.145;
 let tiles = {
   1: {
     'writing': 'writing',
     'drawing': [],
     'tile': 1,
-    'firebaseKey' : null,
+    'firebaseKey': null,
     'width': 70,
     'height': 40,
     'position': {
@@ -27,7 +29,7 @@ let tiles = {
     'writing': 'writing',
     'drawing': [],
     'tile': 2,
-    'firebaseKey' : null,
+    'firebaseKey': null,
     'width': 70,
     'height': 40,
     'position': {
@@ -40,18 +42,33 @@ let currentTile = tiles[1];
 
 let bg;
 
+
+// audio setup
 var myAudio = document.createElement('audio');
 if (myAudio.canPlayType('audio/mpeg')) {
-  myAudio.setAttribute('src','audio/song.mp3');
+  myAudio.setAttribute('src', 'audio/song.mp3');
 }
+
 
 function setup() {
   bg = loadImage('img/toilet2.png');
   canvas = createCanvas(900, 617);
+
+  input = createInput(); // make input for text
+  writeButton = createButton('write!'); // make button for submitting text
+
+
+  writeButton.mousePressed(printText);
+  wordBox = createElement('h2', '');
+
+  textAlign(CENTER);
+  textSize(50);
+
   function toggleDrawCanvasAndStartPath() {
     toggleDrawCanvas();
     startPath(); // when mouse is PRESSED, START COLLECTING X AND Y POINTS
   }
+
   canvas.mousePressed(toggleDrawCanvasAndStartPath);
   // canvas = createCanvas(windowWidth, windowHeight);
   //canvas.mousePressed(startPath);
@@ -68,14 +85,14 @@ function setup() {
   };
   firebase.initializeApp(config);
   database = firebase.database();
-  var params = getURLParams();  // get URL params for permalink
+  var params = getURLParams(); // get URL params for permalink
   if (params.id) {
     showDrawing(params.id);
   }
 
   var ref = database.ref('drawings'); // get the drawings
   ref.on('value', gotData, errData); // trigger this anytime anything is changed in the database (err is in case of error)
-  ref.once('value', buildMap, errData);  // buildMap at the start
+  ref.once('value', buildMap, errData); // buildMap at the start
 }
 
 
@@ -91,7 +108,7 @@ function endPath() {
   isDrawing = false; // set isdrawing to false
 }
 
-function drawTile(tile){
+function drawTile(tile) {
   push();
   // fill();
   strokeWeight(.25);
@@ -100,10 +117,6 @@ function drawTile(tile){
   rect(tile.position.x, tile.position.y, tile.width, tile.height);
   pop();
 }
-
-// top left of my canvas
-// x of canvas minus the x of the tile
-// y of the canvas minus the y of the tile
 
 function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
   push();
@@ -123,22 +136,36 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
 }
 
 function displayDrawing() {
-  for(const tileId in tiles) {
+  for (const tileId in tiles) {
     let tile = tiles[tileId];
     // why does this work??
     let translateX = tile.position.x / SCALEFACTOR - drawCanvasX;
     let translateY = tile.position.y / SCALEFACTOR - drawCanvasY;
     drawTile(tile);
-    if(!drawCanvasToggle) { // if the canvas is closed
+    if (!drawCanvasToggle) { // if the canvas is closed
       drawTileDrawing(tile, SCALEFACTOR, translateX, translateY);
     } else {
-      if(currentTile.tile == tileId) { // if the current tile is open
-        drawTileDrawing(tile, 1.0, 0, 0);  // draw it BIG
+      if (currentTile.tile == tileId) { // if the current tile is open
+        drawTileDrawing(tile, 1.0, 0, 0); // draw it BIG
+        drawTileDrawing(tile, SCALEFACTOR, translateX, translateY); // draw each other tile drawing scaled down
       } else {
         drawTileDrawing(tile, SCALEFACTOR, translateX, translateY); // draw each other tile drawing scaled down
       }
     }
   }
+}
+
+function toggleCanvasToolsVisibility() {
+  if (canvasToolsVisible) {
+    input.hide();
+    writeButton.hide();
+    wordBox.hide();
+  } else {
+    input.show();
+    writeButton.show();
+    wordBox.show();
+  }
+  canvasToolsVisible = !canvasToolsVisible
 }
 
 function detectMouseLocation() {
@@ -156,6 +183,7 @@ function detectMouseLocation() {
 function toggleDrawCanvas() {
   let tile = detectMouseLocation(); // grab mouse location (over which tile?)
   if (clickOnButton) {
+    toggleCanvasToolsVisibility();
     if (drawCanvasToggle) { // if drawcanvas is open
       saveDrawing(tile); // save to specific tile
     } else { // if drawcanvas is closed
@@ -174,20 +202,25 @@ function inDrawCanvasCheck() { // check if in the drawcanvas
   }
 }
 
-function drawCanvas(){
+function displayDrawCanvas() {
   push();
   fill('white');
   stroke('black');
   strokeWeight(3);
   rect(drawCanvasX, drawCanvasY, drawCanvasW, drawCanvasH);
   pop();
+
+  input.position(drawCanvasX, drawCanvasY);
+  writeButton.position(input.x + input.width, drawCanvasY);
+  wordBox.position(drawCanvasX + drawCanvasW / 2, drawCanvasY + drawCanvasY / 2);
+
 }
 
 // ahref.addEventListener('click', showDrawing);
 // tile.mousePressed(toggleDrawCanvas); // when mouse is pressed on tile togl draw canvas
 
 
-function highlightActiveTile(){
+function highlightActiveTile() {
   // push();
   // stroke(40);
   // stroke('red');
@@ -196,19 +229,18 @@ function highlightActiveTile(){
   // pop();
 }
 
+function printText() {
+  const name = input.value();
+  wordBox.html(name);
+  input.value('');
+}
+
 function draw() {
   background(bg);
-
-  // need to know when a click happens
-
-// clickhandler on the canvas
-
-  // if they are, toggleDrawCanvas
-
   if (drawCanvasToggle) { // if canvas is open
     highlightActiveTile();
-    drawCanvas();
-    if (isDrawing) {  // if person isdrawing
+    displayDrawCanvas();
+    if (isDrawing) { // if person isdrawing
       if (inDrawCanvasCheck()) { // and person isdrawing in the canvas
         let point = { // grab the x and y of each point
           x: mouseX,
@@ -219,6 +251,7 @@ function draw() {
     }
     noFill(); // don't fill the draw stroke
   }
+
   displayDrawing(); // show the drawing
 }
 
@@ -238,7 +271,7 @@ function saveDrawing(tile) {
 function buildMap(data) {
   let drawings = data.val(); // grab all database entries
   let keys = drawings ? Object.keys(drawings) : []; // grab keys - if keys isn't empty
-  for (let i = 0; i < keys.length; i++) {  // for each key
+  for (let i = 0; i < keys.length; i++) { // for each key
     let key = keys[i]; // grab the key
     let tileId = drawings[key]['tile']; // grab the tileID
     tiles[tileId]['firebaseKey'] = key;
@@ -257,21 +290,21 @@ function gotData(data) {
   // let drawings = data.val(); // grab all drawings from firebase
   // let keys = drawings ? Object.keys(drawings) : []; // if there are keys, grab them all
   // for (let i = 0; i < keys.length; i++) { // foreach
-    // let key = keys[i]; // grab the key
-    // let li = createElement('li', ''); // create li element
-    // li.class('listing'); // give each the 'listing' class
-    // let ahref = createA('#', key); // make a link element with the key in it
-    // ahref.mousePressed(showDrawing); // CREATE AN EVENT CALLED SHOW DRAWING
-    // var ahref = document.createElement('a');
-    // ahref.setAttribute('href', '#');
-    // ahref.addEventListener('click', showDrawing);
-    // ahref.innerHTML = key;
-    // ahref = new p5.Element(ahref);
-    // ahref.parent(li);
-    // let perma = createA('?id=' + key, 'permalink'); // set up permalink
-    // perma.parent(li); // parent it to the list
-    // perma.style('padding', '4px'); // style it
-    // li.parent('drawinglist'); // parent it to the drawing list
+  // let key = keys[i]; // grab the key
+  // let li = createElement('li', ''); // create li element
+  // li.class('listing'); // give each the 'listing' class
+  // let ahref = createA('#', key); // make a link element with the key in it
+  // ahref.mousePressed(showDrawing); // CREATE AN EVENT CALLED SHOW DRAWING
+  // var ahref = document.createElement('a');
+  // ahref.setAttribute('href', '#');
+  // ahref.addEventListener('click', showDrawing);
+  // ahref.innerHTML = key;
+  // ahref = new p5.Element(ahref);
+  // ahref.parent(li);
+  // let perma = createA('?id=' + key, 'permalink'); // set up permalink
+  // perma.parent(li); // parent it to the list
+  // perma.style('padding', '4px'); // style it
+  // li.parent('drawinglist'); // parent it to the drawing list
   // }
 }
 
