@@ -9,6 +9,7 @@ let drawCanvasW = 500;
 let drawCanvasH = 300;
 let drawCanvasX = 150;
 let drawCanvasY = 50;
+const SCALEFACTOR = 0.145;
 let tiles = {
   1: {
     'writing': 'writing',
@@ -18,7 +19,7 @@ let tiles = {
     'width': 70,
     'height': 40,
     'position': {
-      'x': 10,
+      'x': 55,
       'y': 50
     }
   },
@@ -30,7 +31,7 @@ let tiles = {
     'width': 70,
     'height': 40,
     'position': {
-      'x': 10,
+      'x': 55,
       'y': 100
     }
   }
@@ -92,16 +93,23 @@ function endPath() {
 
 function drawTile(tile){
   push();
-  stroke('gray');
+  // fill();
+  strokeWeight(.25);
+  stroke('white');
   fill('none');
   rect(tile.position.x, tile.position.y, tile.width, tile.height);
   pop();
 }
 
+// top left of my canvas
+// x of canvas minus the x of the tile
+// y of the canvas minus the y of the tile
+
 function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
   push();
-  translate(translateX, translateY);
   scale(scaleFactor, scaleFactor);
+  translate(translateX, translateY);
+
   let drawing = tile['drawing'];
   for (let i = 0; i < drawing.length; i++) { // foreach path in the drawing
     let path = drawing[i]; // grab the next path
@@ -117,14 +125,17 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
 function displayDrawing() {
   for(const tileId in tiles) {
     let tile = tiles[tileId];
+    // why does this work??
+    let translateX = tile.position.x / SCALEFACTOR - drawCanvasX;
+    let translateY = tile.position.y / SCALEFACTOR - drawCanvasY;
     drawTile(tile);
     if(!drawCanvasToggle) { // if the canvas is closed
-      drawTileDrawing(tile, 0.2, tile.position.x, tile.position.y);
+      drawTileDrawing(tile, SCALEFACTOR, translateX, translateY);
     } else {
       if(currentTile.tile == tileId) { // if the current tile is open
         drawTileDrawing(tile, 1.0, 0, 0);  // draw it BIG
       } else {
-        drawTileDrawing(tile, 0.2, tile.position.x, tile.position.y); // draw each other tile drawing scaled down
+        drawTileDrawing(tile, SCALEFACTOR, translateX, translateY); // draw each other tile drawing scaled down
       }
     }
   }
