@@ -1,6 +1,8 @@
 // Come to the imaginary bathroom for graffiti, letting go, reaching out, and moving on.
 
 
+// tile becomes 4 points - redo detecting a click in the tile 
+
 // TODO
 
 // TEXT

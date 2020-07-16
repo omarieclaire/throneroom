@@ -23,7 +23,7 @@ const SCALEFACTOR = 0.145;
 let toolButtons = {
   // write: {
   //   'x': graffitiCanvasX + graffitiCanvasW + toolSpacer,
-  //   'y': graffitiCanvasY,
+  //   'y': graffitiCanvasY + (toolWidth * 2) + (toolSpacer * 2),
   //   'width': toolWidth,
   //   'height': toolWidth,
   //   'text': 'write',
@@ -47,7 +47,7 @@ let toolButtons = {
   // },
   clear: {
     'x': graffitiCanvasX + graffitiCanvasW + toolSpacer,
-    'y': graffitiCanvasY + (toolWidth * 2) + (toolSpacer * 2),
+    'y': graffitiCanvasY,
     'width': toolWidth,
     'height': toolWidth,
     'text': 'clear',
@@ -57,7 +57,6 @@ let toolButtons = {
 };
 
 let currentTile = tiles[1];
-
 let toilet1;
 let toilet2;
 let tp1;
@@ -77,7 +76,9 @@ function preload() {
 
 function setup() {
   // canvas = createCanvas(900, 617, );
-  canvas = createCanvas(windowWidth, windowHeight, WEBGL);
+  canvas = createCanvas(windowWidth, windowHeight);
+  // graphics = createGraphics(200,200);
+  // graphics.background(255);
 
   textFont(firaFont, 36);
 
@@ -169,7 +170,7 @@ function setup() {
 }
 
 function startPath() {
-  if (graffitiCanvasOpen && inDrawCanvasCheck()) {
+  if (graffitiCanvasOpen && inGraffitiCanvasCheck()) {
     isDrawing = true; // set isdrawing to true
     currentPath = []; // reset current path to an empty object
     currentTile['drawing'].push(currentPath); // push the current path to the drawing object
@@ -182,7 +183,7 @@ function endPath() {
 
 function captureDrawing() {
   if (isDrawing) { // if person isdrawing
-    if (inDrawCanvasCheck()) { // and person isdrawing in the canvas
+    if (inGraffitiCanvasCheck()) { // and person isdrawing in the canvas
       let point = { // grab the x and y of each point
         x: mouseX,
         y: mouseY
@@ -368,7 +369,7 @@ function toggleGraffitiCanvas() { // open and close canvas
   }
 }
 
-function inDrawCanvasCheck() { // check if in the drawcanvas
+function inGraffitiCanvasCheck() { // check if in the drawcanvas
   if (mouseX > graffitiCanvasX && mouseX < graffitiCanvasX + graffitiCanvasW && mouseY > graffitiCanvasY && mouseY < graffitiCanvasY + graffitiCanvasH) {
     return true;
   } else {
@@ -376,36 +377,34 @@ function inDrawCanvasCheck() { // check if in the drawcanvas
   }
 }
 
-function draw3dTiles(){
-  let canvasTop = -windowHeight/3.8;
-  let canvasLeft = -windowWidth/3.5;
+function draw3dTiles() {
+  let canvasTop = -windowHeight / 3.8;
+  let canvasLeft = -windowWidth / 3.5;
   for (let i = 0; i < 10; i++) { // draw one column
-   push();
-   let y = canvasTop + (i * 25);
-   rotateY(.6);
-   translate(canvasLeft, y, 0);
-   plane(30, 20);
-   pop();
-   for (let u = 0; u < 5; u++) { // draw a row for each column
-     push();
-     let x = canvasLeft + (u * 35);
-     rotateY(.6);
-     translate(x, y, 0);
-     plane(30, 20);
-     pop();
-   }
- }
+    push();
+    let y = canvasTop + (i * 25);
+    rotateY(.6);
+    translate(canvasLeft, y, 0); //x, y, z
+    plane(30, 20);
+    pop();
+    for (let u = 0; u < 5; u++) { // draw a row for each column
+      push();
+      let x = canvasLeft + (u * 35);
+      rotateY(.6);
+      translate(x, y, 0);
+      plane(30, 20);
+      pop();
+    }
+  }
 }
 
 function draw3dTileRoom() {
   push();
-    draw3dTiles();
-    rotateY(PI/1.6); // something funny here with the rotate adding together
-    draw3dTiles();
-    pop();
-  }
-
-
+  draw3dTiles();
+  rotateY(PI / 1.6); // something funny here with the rotate adding together
+  draw3dTiles();
+  pop();
+}
 
 function drawGraffitiCanvas() {
   push();
@@ -419,7 +418,9 @@ function drawGraffitiCanvas() {
 }
 
 function toiletDraw() {
-  normalMaterial();
+  // normalMaterial();
+  // ambientLight(100);
+  // directionalLight(255, 255, 255, 0, 0, 1); // light from the front
   background('grey');
 
   // push();
@@ -452,7 +453,7 @@ function sinkDraw() {
 }
 
 function draw() {
-  translate(-width / 2, -height / 2, 0);
+  // translate(-width / 2, -height / 2, 0);
   if (scene == 'toilet') {
     toiletDraw();
   } else if (scene == 'mirror') {
