@@ -1,37 +1,3 @@
-// Come to the imaginary bathroom for graffiti, letting go, reaching out, and moving on.
-
-
-
-// TODO
-
-// TEXT
-// ~ touch drawing works on mobile? https://p5js.org/reference/#/p5/touchStarted?
-// ~fix draw order problem - big drawing > grafdrawcan > little drawings > toilet paper > tiles
-// ~ debug "taken"
-// ~drawing works on mobile?
-// ~make an animation on click
-// ~integrate second scene - timer makes button appear "go to sink"
-// ~integrate third scene - timer makes coundown appear
-// *click on words in text to go to other words in text?*
-// ~consider drawing tools - random color and random font (+font angle) when click on buttons
-// ~click on toilet paper for special tile with flush button - flush sound when done and animation
-// ~make sound effects - open tile, close tile, isdrawing
-// ~make fonts and integrate fonts and text angle
-// ~create entry and closing level
-// tile becomes 4 points - redo detecting a click in the tile
-// toilet thoughts - give the next person something to consider? what do you wish you could tell your younger self? what do you want to tell the next person in this bathroom
-
-// ~ integrate handwashing
-// ~ link to other video call - show off your makeup
-// ~more tiles? mathmatically place them?
-// add thematic colours to painting?
-// make a lineup for the bathroon?
-//
-// THINKING
-// ~how to handle clicks??? IF mouse on tile & canvas open -> save drawing, IF mouse on tile and canvas closed -> open canvas, ELSE if canvas open & mouse on canvas -> draw, ELSE if mouse on clickable object -> sound and animate
-
-
-
 let tiles = {
     1: {
       'writing': '',
@@ -759,3 +725,42 @@ let tiles = {
 for(const tileId in tiles) {
   tiles[tileId].taken = false;
 }
+
+
+// Come to the imaginary bathroom for graffiti, letting go, reaching out, and moving on.
+// toilet thoughts
+// go to your bathroom to establish a psychic link to this imaginary public bathroom
+// bathrooms are intimate spaces, special spaces, complicated spaces
+// sometimes the bathroom is the only place you can go to be alone
+// In bathrooms, people urinate, deficate, vomit, clean our bodies, put on makeup, use drugs, gossip, cry, masterbate.
+// Bathroom walls used to be one of the few places you could write to people anonomously.
+
+// TODO
+
+// TEXT
+// make drawing scale factor work - should be related to canvas width?
+// image with transparent bg?
+// drawing tools - random color (from list) and random font (+ font angle)
+
+// make an animation on click
+// integrate a "timer"
+// debug "taken"
+
+
+// integrate second scene - timer makes button appear "go to sink"
+// integrate third scene - timer makes coundown appear
+// click on toilet paper for special tile with flush button - flush sound when done and animation
+// make sound effects - open tile, close tile, isdrawing
+// make fonts and integrate fonts and text angle
+
+//  integrate handwashing
+//  link to other video call - show off your makeup
+// more tiles? mathmatically place them?
+// add thematic colours to painting?
+// make a lineup for the bathroom
+// make a final / close screen
+// click on words in text to go to other words in text?
+
+// THINKING
+// how to handle clicks??? IF mouse on tile & canvas open -> save drawing, IF mouse on tile and canvas closed -> open canvas, ELSE if canvas open & mouse on canvas -> draw, ELSE if mouse on clickable object -> sound and animate
+// if anyone wants me to read the tiles to them, I will!

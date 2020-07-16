@@ -8,8 +8,14 @@ let DBLUE = '#a5c7da';
 let LBLUE = '#f0fafc';
 let LPINK = '#fb9c96';
 let DPINK = '#f1635a';
-let toolWidth = 40;
-let toolSpacer = 10;
+let PURPLE = '#b25dff';
+let LYELLOW = '#ffd183';
+let DYELLOW = '#ffa304';
+let LPEACH = '#fedfcd';
+let DPEACH = '#ffbe99';
+
+let toolWidth = 50;
+let toolSpacer = 5;
 let currentPath = []; // (ARRAY WHERE THE CURRENT DRAWING IS BEING STORED)
 let tileId = 1;
 let angle = 2;
@@ -18,9 +24,9 @@ let graffitiCanvasOpen = false;
 let graffitiCanvasW = mywidth/2;
 let graffitiCanvasH = mywidth/3;
 let graffitiCanvasX = mywidth/4;
-let graffitiCanvasY = 50;
+let graffitiCanvasY = mywidth/20;
 let canvasToolsVisible = false;
-const SCALEFACTOR = 0.145;
+const SCALEFACTOR = 0.098 //0.145;
 
 let toolButtons = {
   // write: {
@@ -49,10 +55,10 @@ let toolButtons = {
   // },
   clear: {
     'x': graffitiCanvasX + graffitiCanvasW + toolSpacer,
-    'y': graffitiCanvasY,
+    'y': graffitiCanvasH + toolSpacer,
     'width': toolWidth,
     'height': toolWidth,
-    'text': 'clear',
+    'text': 'CLEAR',
     'select': false
   }
 
@@ -77,7 +83,7 @@ function preload() {
 
 function setup() {
   canvas = createCanvas(mywidth, myheight);
-  textFont(firaFont, 36);
+  textFont(firaFont, 40);
 
   var myAudio = document.createElement('audio');
   if (myAudio.canPlayType('audio/mpeg')) {
@@ -201,11 +207,11 @@ function drawTile(tile) {
   strokeWeight(0);
   //stroke(DBLUE);
   if (tile.taken) {
-    fill('green');
+    fill(DPINK);
   } else if (tile.writing != "" || tile.drawing.length > 0) {
-    fill(DBLUE);
+    fill(DPEACH);
   } else {
-    fill(255, 70);
+    fill(LPEACH);
   }
   rect(tile.position.x, tile.position.y, tile.width, tile.height);
   pop();
@@ -215,9 +221,9 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
   push();
   scale(scaleFactor, scaleFactor);
   translate(translateX, translateY);
-  stroke('black');
+  stroke("black");
   noFill();
-  strokeWeight(1);
+  strokeWeight(5);
 
   let drawing = tile['drawing'];
   for (let i = 0; i < drawing.length; i++) { // foreach path in the drawing
@@ -244,35 +250,25 @@ function drawTileWriting(tile, scaleFactor, x, y, w, h) {
 }
 
 function highlightOpen(x, y, w, h) {
-  push();
-  stroke(40);
-  fill('yellow');
+  noStroke();
+  noFill();
   rect(x, y, w, h);
-  pop();
 }
 
 function graffitiTools() {
   let toolSpacer = 10;
   for (const tool in toolButtons) {
     let btn = toolButtons[tool]
-    if (btn.select == true) {
-      fill(activeToolColor);
-    } else {
-      fill(inactiveToolColor)
-    }
+    fill(LYELLOW);
     rect(btn.x, btn.y, btn.width, btn.height);
-    push();
-    noStroke();
-    fill('white');
-    textAlign(CENTER);
+    fill('black');
+    textAlign(CENTER, CENTER);
     textSize(12);
     // let earlyTime = (new Date()).getTime();
     text(btn.text, btn.x, btn.y, btn.width, btn.height);
-    // console.count("text");
     // let lateTime = (new Date()).getTime();
     // let diffTime = earlyTime - lateTime;
     // console.log(diffTime);
-    pop();
   }
 }
 
@@ -287,7 +283,7 @@ function displayLargeTileGraffiti() {
 function displaySmallTileGraffiti() {
   for (const tileId in tiles) {
     let tile = tiles[tileId];
-    // why does this translate work??
+    // why does this translate work?
     let drawtranslateX = tile.position.x / SCALEFACTOR - graffitiCanvasX;
     let drawtranslateY = tile.position.y / SCALEFACTOR - graffitiCanvasY;
     let writetranslateX = tile.position.x / SCALEFACTOR;
@@ -327,6 +323,7 @@ function saveTile(tile) {
 function clearTile() {
   currentTile.drawing = [];
   currentTile.writing = "";
+  openKeyboard();
 }
 
 function detectMouseOnTool() {
@@ -341,13 +338,6 @@ function detectMouseOnTool() {
   }
   if (toolButtons.clear.select) {
     clearTile();
-    // } else if (toolButtons.write.select) {
-    //   textInputBox.show();
-    //   textInputBox.value(currentTile.writing);
-    // } else if (toolButtons.draw.select) {
-    //   textInputBox.hide();
-    // } else if (toolButtons.save.select) {
-    //   saveTile(currentTile);
   }
 }
 
@@ -411,29 +401,20 @@ function draw3dTileRoom() {
 
 function drawGraffitiCanvas() {
   push();
-  stroke('black');
+  stroke(DPEACH);
   strokeWeight(3);
   // noStroke();
 
-  fill(255, 255, 250);
+  fill(LPEACH);
   rect(graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH);
   pop();
 }
 
 function toiletDraw() {
-  // normalMaterial();
-  // ambientLight(100);
-  // directionalLight(255, 255, 255, 0, 0, 1); // light from the front
-  background('grey');
-
-  // push();
-  // texture(toilet1);
-  // plane(600, 400);
-  // pop();
-  // image(toilet1, -windowWidth/2.5, -windowHeight/2);
+  background(LBLUE);
+  image(toilet1, -15, 50);
   displaySmallTileGraffiti(); // show the drawing
-  // image(tp1, 670, 240);
-  // image(tp1, 0, 0);
+  image(tp1, 670, 240);
 
   // draw3dTileRoom();
 
