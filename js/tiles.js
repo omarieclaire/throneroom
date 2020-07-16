@@ -726,7 +726,6 @@ for(const tileId in tiles) {
   tiles[tileId].taken = false;
 }
 
-
 // Come to the imaginary bathroom for graffiti, letting go, reaching out, and moving on.
 // toilet thoughts
 // go to your bathroom to establish a psychic link to this imaginary public bathroom
