@@ -1,3 +1,5 @@
+let mywidth = window.innerWidth; // the p5 variables were throwing errors so i made my own
+let myheight = window.innerHeight;
 let database;
 let scene = 'toilet';
 let activeToolColor = 'green';
@@ -13,9 +15,9 @@ let tileId = 1;
 let angle = 2;
 let isDrawing = false;
 let graffitiCanvasOpen = false;
-let graffitiCanvasW = 440;
-let graffitiCanvasH = 280;
-let graffitiCanvasX = 200;
+let graffitiCanvasW = mywidth/2;
+let graffitiCanvasH = mywidth/3;
+let graffitiCanvasX = mywidth/4;
 let graffitiCanvasY = 50;
 let canvasToolsVisible = false;
 const SCALEFACTOR = 0.145;
@@ -63,7 +65,6 @@ let tp1;
 let tp2;
 let firaFont;
 
-// don't delete me
 function dataSent(data, err) {}
 
 function preload() {
@@ -75,28 +76,27 @@ function preload() {
 }
 
 function setup() {
-  // canvas = createCanvas(900, 617, );
-  canvas = createCanvas(windowWidth, windowHeight);
-  // graphics = createGraphics(200,200);
-  // graphics.background(255);
-
+  canvas = createCanvas(mywidth, myheight);
   textFont(firaFont, 36);
 
-  // toilet thoughts - give the next person something to consider? what do you wish you could tell your younger self? what do you want to tell the next person in this bathroom
   var myAudio = document.createElement('audio');
   if (myAudio.canPlayType('audio/mpeg')) {
     myAudio.setAttribute('src', 'audio/song.mp3');
   }
 
   function mouseFunctions() {
-    toggleGraffitiCanvas();
-    startPath(); // when mouse is PRESSED, START COLLECTING X AND Y POINTS
-    detectMouseOnTool();
+    toggleGraffitiCanvas(); // open or close graf canvas
+    startPath(); // collect x and y points
+    detectMouseOnTool(); // detect mouse on graf canvas tool
   }
 
-  canvas.mousePressed(mouseFunctions);
-  canvas.parent('canvascontainer'); // PARENT THE CANVAS TO THE CANVAS CONTAINER
-  canvas.mouseReleased(endPath); // WHEN MOUSE IS RELEASED, stop COLLECTING X AND Y POINTS
+  canvas.mousePressed(mouseFunctions); // run the mouse functions
+  canvas.touchStarted(startPath); //
+  canvas.parent('canvascontainer'); // parent the canvas to the canvas container
+  canvas.mouseReleased(endPath); // when mouse is releaed, stop collecting x and y points
+  canvas.touchEnded(endPath); // attach listener for
+
+
 
 
   // FIREBASE AUTH STUFF
@@ -170,10 +170,13 @@ function setup() {
 }
 
 function startPath() {
-  if (graffitiCanvasOpen && inGraffitiCanvasCheck()) {
+  if (graffitiCanvasOpen) {
+  // if (graffitiCanvasOpen && inGraffitiCanvasCheck()) { // this breaks drawing on mobile
     isDrawing = true; // set isdrawing to true
     currentPath = []; // reset current path to an empty object
     currentTile['drawing'].push(currentPath); // push the current path to the drawing object
+    return false;
+
   }
 }
 
@@ -435,7 +438,6 @@ function toiletDraw() {
   // draw3dTileRoom();
 
   if (graffitiCanvasOpen) { // if canvas is open
-    noFill(); // don't fill the draw stroke
     highlightOpen(currentTile.position.x, currentTile.position.y, currentTile.width, currentTile.height);
     drawGraffitiCanvas();
     graffitiTools();

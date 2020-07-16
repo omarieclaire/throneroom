@@ -1,13 +1,13 @@
 // Come to the imaginary bathroom for graffiti, letting go, reaching out, and moving on.
 
 
-// tile becomes 4 points - redo detecting a click in the tile 
 
 // TODO
 
 // TEXT
-// ~ set up actual site namecheap
+// ~ touch drawing works on mobile? https://p5js.org/reference/#/p5/touchStarted?
 // ~fix draw order problem - big drawing > grafdrawcan > little drawings > toilet paper > tiles
+// ~ debug "taken"
 // ~drawing works on mobile?
 // ~make an animation on click
 // ~integrate second scene - timer makes button appear "go to sink"
@@ -18,7 +18,9 @@
 // ~make sound effects - open tile, close tile, isdrawing
 // ~make fonts and integrate fonts and text angle
 // ~create entry and closing level
-//
+// tile becomes 4 points - redo detecting a click in the tile
+// toilet thoughts - give the next person something to consider? what do you wish you could tell your younger self? what do you want to tell the next person in this bathroom
+
 // ~ integrate handwashing
 // ~ link to other video call - show off your makeup
 // ~more tiles? mathmatically place them?
@@ -750,7 +752,7 @@ let tiles = {
         'x': 800,
         'y': 500
       }
-    },
+    }
   };
 
 // Set 'taken': false to every tile.
