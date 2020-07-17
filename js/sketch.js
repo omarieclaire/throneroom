@@ -1,9 +1,7 @@
-let mywidth = window.innerWidth; // the p5 variables were throwing errors so i made my own
+let mywidth = window.innerWidth; // the p5 variables were throwing errors (why?) so i made my own
 let myheight = window.innerHeight;
 let database;
 let scene = 'toilet';
-let activeToolColor = 'green';
-let inactiveToolColor = 'grey'
 let DBLUE = '#a5c7da';
 let LBLUE = '#f0fafc';
 let LPINK = '#fb9c96';
@@ -13,12 +11,10 @@ let LYELLOW = '#ffd183';
 let DYELLOW = '#ffa304';
 let LPEACH = '#fedfcd';
 let DPEACH = '#ffbe99';
-
 let toolWidth = 50;
 let toolSpacer = 5;
-let currentPath = []; // (ARRAY WHERE THE CURRENT DRAWING IS BEING STORED)
+let currentDrawPath = [];
 let tileId = 1;
-let angle = 2;
 let isDrawing = false;
 let graffitiCanvasOpen = false;
 let graffitiCanvasW = mywidth/2;
@@ -27,6 +23,16 @@ let graffitiCanvasX = mywidth/4;
 let graffitiCanvasY = mywidth/20;
 let canvasToolsVisible = false;
 const SCALEFACTOR = 0.098 //0.145;
+let currentTile = tiles[1];
+let toiletImg1;
+let toiletImg2;
+let tpImg1;
+let tpImg2;
+let mirrorImg1;
+let mirrorImg2;
+let sinkImg1;
+let sinkImg2;
+let firaFont;
 
 let toolButtons = {
   // write: {
@@ -61,51 +67,40 @@ let toolButtons = {
     'text': 'CLEAR',
     'select': false
   }
-
 };
-
-let currentTile = tiles[1];
-let toilet1;
-let toilet2;
-let tp1;
-let tp2;
-let firaFont;
 
 function dataSent(data, err) {}
 
 function preload() {
-  toilet1 = loadImage('img/toilet1.png');
-  toilet2 = loadImage('img/toilet2.png');
-  tp1 = loadImage('img/tp1.png');
-  tp2 = loadImage('img/tp2.png');
+  toiletImg1 = loadImage('img/toiletImg1.png');
+  toiletImg2 = loadImage('img/toiletImg2.png');
+  tpImg1 = loadImage('img/tpImg1.png');
+  tpImg2 = loadImage('img/tpImg2.png');
   firaFont = loadFont('fonts/FiraSans-Book.otf');
+
+  myAudio = document.createElement('audio');
+  if (myAudio.canPlayType('audio/mpeg')) {
+    myAudio.setAttribute('src', 'audio/tileopen.mp3');
+  }
 }
 
 function setup() {
   canvas = createCanvas(mywidth, myheight);
   textFont(firaFont, 40);
 
-  myAudio = document.createElement('audio');
-  if (myAudio.canPlayType('audio/mpeg')) {
-    myAudio.setAttribute('src', 'audio/tileopen.mp3');
-  }
-
   function mouseFunctions() {
     toggleGraffitiCanvas(); // open or close graf canvas
-    startPath(); // collect x and y points
+    startDrawPath(); // collect x and y points
     detectMouseOnTool(); // detect mouse on graf canvas tool
   }
 
   canvas.mousePressed(mouseFunctions); // run the mouse functions
-  canvas.touchStarted(startPath); //
+  canvas.touchStarted(startDrawPath); //
   canvas.parent('canvascontainer'); // parent the canvas to the canvas container
-  canvas.mouseReleased(endPath); // when mouse is releaed, stop collecting x and y points
-  canvas.touchEnded(endPath); // attach listener for
+  canvas.mouseReleased(endDrawPath); // when mouse is releaed, stop collecting x and y points
+  canvas.touchEnded(endDrawPath); // attach listener for
 
-
-
-
-  // FIREBASE AUTH STUFF
+  // FIREBASE AUTH TODO: change
   var config = {
     apiKey: 'AIzaSyAkqkz-UZyRSv_1QgfMjUeqX8mjZfg0MJE',
     authDomain: 'throne-room-club.firebaseapp.com',
@@ -120,73 +115,63 @@ function setup() {
   // showDrawing(params.id);
   // }
   var ref = database.ref('graffitiWall'); // get the graffitiWall
-  ref.on('value', gotData, errData); // trigger this anytime anything is changed in the database (err is in case of error)
-  ref.once('value', buildMap, errData); // buildMap at the start
+  ref.on('value', gotData, printErrors); // trigger this anytime anything is changed in the database (err is in case of error)
+  ref.once('value', buildMap, printErrors); // buildMap at the start
 
   function handleKeyDown(event) {
-    const key = event.key; //toLowerCase();
-
-    if (graffitiCanvasOpen) { // if canvas isopen
-
+    const key = event.key; // grab the key
+    if (graffitiCanvasOpen) { // if graffiti draw canvas is open
       switch (key) {
-        case "Backspace": // IE/Edge specific value
+        case 'Backspace': // IE/Edge specific value
           currentTile.writing = currentTile.writing.slice(0, -1);
           break;
-        case "Down": // IE/Edge specific value
-        case "ArrowDown":
-          // Do something for "down arrow" key press.
+        case 'Down': // IE/Edge specific value
+        case 'ArrowDown':
           break;
-        case "Up": // IE/Edge specific value
-        case "ArrowUp":
-          // Do something for "up arrow" key press.
+        case 'Up': // IE/Edge specific value
+        case 'ArrowUp':
           break;
-        case "Meta":
-        case "Alt":
-        case "Control":
-        case "CapsLock":
+        case 'Meta':
+        case 'Alt':
+        case 'Control':
+        case 'CapsLock':
           break;
-        case "Tab":
+        case 'Tab':
           break;
-        case "Left": // IE/Edge specific value
-        case "ArrowLeft":
-          // Do something for "left arrow" key press.
+        case 'Left': // IE/Edge specific value
+        case 'ArrowLeft':
           break;
-        case "Right": // IE/Edge specific value
-        case "ArrowRight":
-          // Do something for "right arrow" key press.
+        case 'Right': // IE/Edge specific value
+        case 'ArrowRight':
           break;
-        case "Enter":
-          // Do something for "enter" or "return" key press.
+        case 'Enter':
           break;
-        case "Shift":
-          // Do something for "enter" or "return" key press.
+        case 'Shift':
           break;
-        case "Esc": // IE/Edge specific value
-        case "Escape":
-          // Do something for "esc" key press.
+        case 'Esc': // IE/Edge specific value
+        case 'Escape':
           break;
         default:
           currentTile.writing += event.key; // add to the text
-          return; // Quit when this doesn't handle the key event.
+          return; // quit when this doesn't handle the key event
       }
     }
   }
-
-  document.addEventListener('keydown', handleKeyDown);
+  document.addEventListener('keydown', handleKeyDown); // listen for keys being pressed
 }
 
-function startPath() {
+function startDrawPath() {
   if (graffitiCanvasOpen) {
-  // if (graffitiCanvasOpen && inGraffitiCanvasCheck()) { // this breaks drawing on mobile
+  // if (graffitiCanvasOpen && inGraffitiCanvasCheck()) -> inGraffitiCanvasCheck here breaks drawing on mobile - why?
     isDrawing = true; // set isdrawing to true
-    currentPath = []; // reset current path to an empty object
-    currentTile['drawing'].push(currentPath); // push the current path to the drawing object
+    currentDrawPath = []; // reset current path to an empty object
+    currentTile['drawing'].push(currentDrawPath); // push the current path to the drawing object
     return false;
 
   }
 }
 
-function endPath() {
+function endDrawPath() {
   isDrawing = false; // set isdrawing to false
 }
 
@@ -197,7 +182,7 @@ function captureDrawing() {
         x: mouseX,
         y: mouseY
       };
-      currentPath.push(point); // push that x and y into the currentpath array
+      currentDrawPath.push(point); // push that x and y into the currentDrawPath array
     }
   }
 }
@@ -205,10 +190,9 @@ function captureDrawing() {
 function drawTile(tile) {
   push();
   strokeWeight(0);
-  //stroke(DBLUE);
   if (tile.taken) {
     fill(DPINK);
-  } else if (tile.writing != "" || tile.drawing.length > 0) {
+  } else if (tile.writing != '' || tile.drawing.length > 0) {
     fill(DPEACH);
   } else {
     fill(LPEACH);
@@ -221,7 +205,7 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
   push();
   scale(scaleFactor, scaleFactor);
   translate(translateX, translateY);
-  stroke("black");
+  stroke('black');
   noFill();
   strokeWeight(5);
 
@@ -245,11 +229,23 @@ function drawTileWriting(tile, scaleFactor, x, y, w, h) {
   fill('black');
   textSize(43);
   scale(scaleFactor, scaleFactor);
+
+//experimenting with textToPoints to see if it's faster - it is!
+
+  //if(tile.writingPoints) {
+    //beginShape();
+    //for(var i = 0 ; i < tile.writingPoints.length ; i++) {
+      //let p = tile.writingPoints[i];
+      //vertex(p.x, p.y);
+    //}
+    //endShape();
+  //}
+
   text(tile['writing'], x, y, w, h);
   pop();
 }
 
-function highlightOpen(x, y, w, h) {
+function highlightOpenTile(x, y, w, h) {
   noStroke();
   noFill();
   rect(x, y, w, h);
@@ -322,7 +318,7 @@ function saveTile(tile) {
 
 function clearTile() {
   currentTile.drawing = [];
-  currentTile.writing = "";
+  currentTile.writing = '';
   openKeyboard();
 }
 
@@ -342,19 +338,19 @@ function detectMouseOnTool() {
 }
 
 function toggleGraffitiCanvas() { // open and close canvas
-  const openedTile = currentTile; // grab the "current tile"
+  const openedTile = currentTile; // grab the 'current tile'
   let tile = detectMouseOnTile(); // grab mouse location (over which tile?)
   if (typeof(tile) !== 'undefined') { // if the mouse is actually clicking on a tile
     if (graffitiCanvasOpen) { //  if canvas is open (is being closed)
-      openedTile['taken'] = false; //  the opened tile should no longer be "taken" (reserved)
+      openedTile['taken'] = false; //  the opened tile should no longer be 'taken' (reserved)
       saveTile(openedTile); // save the opened tile
       // textInputBox.hide();
       graffitiCanvasOpen = !graffitiCanvasOpen; // toggle canvas
 
     } else { // if the canvas is closed (is being opened)
-      currentTile = tile // update "current tile" to the tile that was clicked
+      currentTile = tile // update 'current tile' to the tile that was clicked
       if (tile.taken === false) { // if the tile is not currently taken
-        tile['taken'] = true; // "take" (reserve) the tile
+        tile['taken'] = true; // 'take' (reserve) the tile
         saveTile(tile);
       }
       graffitiCanvasOpen = !graffitiCanvasOpen; // toggle canvas
@@ -370,26 +366,28 @@ function inGraffitiCanvasCheck() { // check if in the drawcanvas
   }
 }
 
-function draw3dTiles() {
-  let canvasTop = -windowHeight / 3.8;
-  let canvasLeft = -windowWidth / 3.5;
-  for (let i = 0; i < 10; i++) { // draw one column
-    push();
-    let y = canvasTop + (i * 25);
-    rotateY(.6);
-    translate(canvasLeft, y, 0); //x, y, z
-    plane(30, 20);
-    pop();
-    for (let u = 0; u < 5; u++) { // draw a row for each column
-      push();
-      let x = canvasLeft + (u * 35);
-      rotateY(.6);
-      translate(x, y, 0);
-      plane(30, 20);
-      pop();
-    }
-  }
-}
+// was testing WEBGL for speed reasons but couldn't figure out clicking on draw3dTiles
+
+// function draw3dTiles() {
+//   let canvasTop = -windowHeight / 3.8;
+//   let canvasLeft = -windowWidth / 3.5;
+//   for (let i = 0; i < 10; i++) { // draw one column
+//     push();
+//     let y = canvasTop + (i * 25);
+//     rotateY(.6);
+//     translate(canvasLeft, y, 0); //x, y, z
+//     plane(30, 20);
+//     pop();
+//     for (let u = 0; u < 5; u++) { // draw a row for each column
+//       push();
+//       let x = canvasLeft + (u * 35);
+//       rotateY(.6);
+//       translate(x, y, 0);
+//       plane(30, 20);
+//       pop();
+//     }
+//   }
+// }
 
 function draw3dTileRoom() {
   push();
@@ -403,46 +401,42 @@ function drawGraffitiCanvas() {
   push();
   stroke(DPEACH);
   strokeWeight(3);
-  // noStroke();
-
   fill(LPEACH);
   rect(graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH);
   pop();
 }
 
 
-
 function toiletDraw() {
   // let frameStartTime = millis();
-
   background(LBLUE);
-  image(toilet1, -15, 50);
-  displaySmallTileGraffiti(); // show the drawing
-  image(tp1, 670, 240);
+  image(toiletImg1, -15, 50);
+  displaySmallTileGraffiti(); // show all the small drawings/text
+  // draw3dTileRoom(); // Trying WEBGL for speed
+  image(tpImg1, 670, 240);
 
-  // draw3dTileRoom();
 
   if (graffitiCanvasOpen) { // if canvas is open
-    highlightOpen(currentTile.position.x, currentTile.position.y, currentTile.width, currentTile.height);
+    highlightOpenTile(currentTile.position.x, currentTile.position.y, currentTile.width, currentTile.height);
     drawGraffitiCanvas();
     graffitiTools();
-    displayLargeTileGraffiti(); // show the drawing
-    captureDrawing();
+    displayLargeTileGraffiti(); // show the open drawing/text
+    captureDrawing(); // run the code to catch the drawing
   }
-  // console.log("Amount of time to compute the frame:", millis() - frameStartTime);
-  // console.log("Current frame rate:", frameRate());
+  // console.log('Amount of time to compute the frame:', millis() - frameStartTime);
+  // console.log('Current frame rate:', frameRate());
 }
 
 function mirrorDraw() {
-
+  // image(mirrorImg1, -15, 50);
 }
 
 function sinkDraw() {
-
+  // image(toiletImg1, -15, 50);
 }
 
 function draw() {
-  // translate(-width / 2, -height / 2, 0);
+  // translate(-width / 2, -height / 2, 0); // tried WEBGL to speed things up
   if (scene == 'toilet') {
     toiletDraw();
   } else if (scene == 'mirror') {
@@ -464,23 +458,25 @@ function buildMap(data) {
     if (tileId !== currentTile.tile) { // do the updates
       tiles[tileId]['firebaseKey'] = key;
       tiles[tileId]['drawing'] = graffitiWall[key]['drawing'] || [];
-      tiles[tileId]['writing'] = graffitiWall[key]['writing'] || "";
+      tiles[tileId]['writing'] = graffitiWall[key]['writing'] || '';
+      //let graffiti = graffitiWall[key];
+      //let grafWriting = graffiti['writing'] || '';
+      //tiles[tileId]['writingPoints'] = firaFont.textToPoints(grafWriting, graffiti.position.x, graffiti.position.y) || [];
       tiles[tileId]['taken'] = graffitiWall[key]['taken'] || false;
     }
   }
 }
 
 //CALLBACK
-function gotData(data) {
+function gotData(data) {   // if anything changes in the database, update my tilemap
   buildMap(data);
-  // if anything changes in the database, update my tilemap
 }
 
-function errData(err) { // show me the errors
+function printErrors(err) { // show me the errors please!
   console.log(err);
 }
 
-window.addEventListener("beforeunload", function(event) {
+window.addEventListener('beforeunload', function(event) {
   currentTile['taken'] = false;
   saveTile(currentTile);
 });
