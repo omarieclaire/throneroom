@@ -732,7 +732,11 @@ let ySpacer = tileHeight + tileSpacer;
 let xSpacer = tileWidth + tileSpacer;
 
 for (const tileId in tiles) {
+  tiles[tileId].writing = ""; // set writing
+  tiles[tileId].drawing = []; // set writing
+  // tiles[tileId].tile = tileId; // set tileID to tile #
   tiles[tileId].taken = false; // Set 'taken': false to every tile.
+  tiles[tileId].firebaseKey = null; // Set 'taken': false to every tile.
   tiles[tileId].width = tileWidth; // set width
   tiles[tileId].height = tileHeight; // set height
 
