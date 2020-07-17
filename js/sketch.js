@@ -160,6 +160,10 @@ function setup() {
   document.addEventListener('keydown', handleKeyDown); // listen for keys being pressed
 }
 
+function windowResized() {
+  resizeCanvas(mywidth, myheight);
+}
+
 function startDrawPath() {
   if (graffitiCanvasOpen) {
   // if (graffitiCanvasOpen && inGraffitiCanvasCheck()) -> inGraffitiCanvasCheck here breaks drawing on mobile - why?
@@ -316,10 +320,14 @@ function saveTile(tile) {
   }
 }
 
+function openMobileKeyboard(){
+
+}
+
 function clearTile() {
   currentTile.drawing = [];
   currentTile.writing = '';
-  openKeyboard();
+  openMobileKeyboard();
 }
 
 function detectMouseOnTool() {
