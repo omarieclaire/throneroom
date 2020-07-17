@@ -85,9 +85,9 @@ function setup() {
   canvas = createCanvas(mywidth, myheight);
   textFont(firaFont, 40);
 
-  var myAudio = document.createElement('audio');
+  myAudio = document.createElement('audio');
   if (myAudio.canPlayType('audio/mpeg')) {
-    myAudio.setAttribute('src', 'audio/song.mp3');
+    myAudio.setAttribute('src', 'audio/tileopen.mp3');
   }
 
   function mouseFunctions() {
@@ -302,7 +302,7 @@ function detectMouseOnTile() { // returns undefined when not clicking on a tile
   for (const tileId in tiles) { // for each tile
     let tile = tiles[tileId] // grab the ID
     if (mouseX > tile['position']['x'] && mouseX < tile['position']['x'] + tile['width'] && mouseY > tile['position']['y'] && mouseY < tile['position']['y'] + tile['height']) {
-      // myAudio.play();
+      myAudio.play();
       return tiles[tileId]; // check if mouse is over it -> if yes, return that tile (can i just return tile?)
     }
   }
@@ -410,7 +410,11 @@ function drawGraffitiCanvas() {
   pop();
 }
 
+
+
 function toiletDraw() {
+  // let frameStartTime = millis();
+
   background(LBLUE);
   image(toilet1, -15, 50);
   displaySmallTileGraffiti(); // show the drawing
@@ -425,6 +429,8 @@ function toiletDraw() {
     displayLargeTileGraffiti(); // show the drawing
     captureDrawing();
   }
+  // console.log("Amount of time to compute the frame:", millis() - frameStartTime);
+  // console.log("Current frame rate:", frameRate());
 }
 
 function mirrorDraw() {
