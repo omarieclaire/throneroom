@@ -721,62 +721,33 @@ let tiles = {
   }
 };
 
-// Set 'taken': false to every tile.
+let numberOfRows = 10;
+let rowCounter = 0;
+let xVal = 0;
+let yVal = 0;
+let tileWidth = 70;
+let tileHeight = 40;
+let tileSpacer = 5;
+let ySpacer = tileHeight + tileSpacer;
+let xSpacer = tileWidth + tileSpacer;
 
 for (const tileId in tiles) {
-  tiles[tileId].taken = false;
+  tiles[tileId].taken = false; // Set 'taken': false to every tile.
+  tiles[tileId].width = tileWidth; // set width
+  tiles[tileId].height = tileHeight; // set height
+
+  tiles[tileId].position.x = xVal; // Set x
+  tiles[tileId].position.y = yVal; // Set y
+
+// is the code below written inefficiently?
+  yVal += ySpacer; // increment y val
+  if (rowCounter == numberOfRows) { // if we have drawn all the rows
+    rowCounter = 0; // reset rowcounter
+    yVal = 0; // set y to 0
+    xVal += xSpacer; // increment x val
+  }
+  rowCounter++; // increment rowCounter
 }
-
-// let i = 0;
-// let xVal = 0;
-// let yVal = 0;
-//
-// for (const tileId in tiles) {
-//
-//   if (i == 5) {
-//     i = 0;
-//     yVal = 100;
-//     xVal = xVal + 50;
-//   }
-//   i++;
-//   yVal = yVal + 100;
-//
-//   tiles[tileId].position.x = xVal;
-//   tiles[tileId].position.y = yVal;
-// }
-
-
-
-// for(const tileId in tiles) {
-//
-//   for (let i = 0; i < 10; i++) {
-//     yVal = yVal + 100;
-//     tiles[tileId].position.y = yVal;
-//       for (var k = 0; k < 10; k++) {
-//       xVal = xVal + 50;
-//       tiles[tileId].position.x = xVal;
-//     }
-//   }
-//
-// }
-
-//   for (let i = 0; i < 10; i++) { // draw one column
-//     push();
-//     let y = canvasTop + (i * 25);
-//     rotateY(.6);
-//     translate(canvasLeft, y, 0); //x, y, z
-//     plane(30, 20);
-//     pop();
-//     for (let u = 0; u < 5; u++) { // draw a row for each column
-//       push();
-//       let x = canvasLeft + (u * 35);
-//       rotateY(.6);
-//       translate(x, y, 0);
-//       plane(30, 20);
-//       pop();
-//     }
-//   }
-// }
 
 
 // Come to the imaginary bathroom for graffiti, letting go, reaching out, and moving on.

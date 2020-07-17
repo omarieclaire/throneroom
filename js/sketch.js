@@ -72,7 +72,7 @@ let toolButtons = {
 function dataSent(data, err) {}
 
 function preload() {
-  toiletImg1 = loadImage('img/toiletImg1.png');
+  toiletImg1 = loadImage('img/toiletImgThin1.png');
   toiletImg2 = loadImage('img/toiletImg2.png');
   tpImg1 = loadImage('img/tpImg1.png');
   tpImg2 = loadImage('img/tpImg2.png');
@@ -418,9 +418,10 @@ function drawGraffitiCanvas() {
 function toiletDraw() {
   // let frameStartTime = millis();
   background(LBLUE);
-  image(toiletImg1, -15, 50);
   displaySmallTileGraffiti(); // show all the small drawings/text
   // draw3dTileRoom(); // Trying WEBGL for speed
+  image(toiletImg1, mywidth/4, 0);
+
   image(tpImg1, 670, 240);
 
 
