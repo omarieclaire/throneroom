@@ -78,9 +78,9 @@ function preload() {
   tpImg2 = loadImage('img/tpImg2.png');
   firaFont = loadFont('fonts/FiraSans-Book.otf');
 
-  myAudio = document.createElement('audio');
-  if (myAudio.canPlayType('audio/mpeg')) {
-    myAudio.setAttribute('src', 'audio/tileopen.mp3');
+  openTileSound = document.createElement('audio');
+  if (openTileSound.canPlayType('audio/mpeg')) {
+    openTileSound.setAttribute('src', 'audio/tileopen.mp3');
   }
 }
 
@@ -302,7 +302,6 @@ function detectMouseOnTile() { // returns undefined when not clicking on a tile
   for (const tileId in tiles) { // for each tile
     let tile = tiles[tileId] // grab the ID
     if (mouseX > tile['position']['x'] && mouseX < tile['position']['x'] + tile['width'] && mouseY > tile['position']['y'] && mouseY < tile['position']['y'] + tile['height']) {
-      myAudio.play();
       return tiles[tileId]; // check if mouse is over it -> if yes, return that tile (can i just return tile?)
     }
   }
@@ -350,13 +349,14 @@ function toggleGraffitiCanvas() { // open and close canvas
   let tile = detectMouseOnTile(); // grab mouse location (over which tile?)
   if (typeof(tile) !== 'undefined') { // if the mouse is actually clicking on a tile
     if (graffitiCanvasOpen) { //  if canvas is open (is being closed)
-      openedTile['taken'] = false; //  the opened tile should no longer be 'taken' (reserved)
-      saveTile(openedTile); // save the opened tile
-      // textInputBox.hide();
-      graffitiCanvasOpen = !graffitiCanvasOpen; // toggle canvas
-
+      if (inGraffitiCanvasCheck() == false) { // if not in graf canvas - prevents accidental closing
+        openedTile['taken'] = false; //  the opened tile should no longer be 'taken' (reserved)
+        saveTile(openedTile); // save the opened tile
+        graffitiCanvasOpen = !graffitiCanvasOpen; // toggle canvas
+      }
     } else { // if the canvas is closed (is being opened)
       currentTile = tile // update 'current tile' to the tile that was clicked
+      openTileSound.play();
       if (tile.taken === false) { // if the tile is not currently taken
         tile['taken'] = true; // 'take' (reserve) the tile
         saveTile(tile);
