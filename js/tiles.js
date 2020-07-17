@@ -30,30 +30,7 @@ for (var i = 0; i < numberofTiles; i++) {
      xVal += xSpacer; // increment x val
    }
    rowCounter++; // increment rowCounter
-
 }
-
-// for (const tileId in tiles) {
-//   tiles[tileId].tile = tileId; // set tileID to tile #
-//   tiles[tileId].writing = ""; // set writing
-//   tiles[tileId].drawing = []; // set writing
-//   tiles[tileId].taken = false; // Set 'taken': false to every tile.
-//   tiles[tileId].firebaseKey = null; // Set 'taken': false to every tile.
-//   tiles[tileId].width = tileWidth; // set width
-//   tiles[tileId].height = tileHeight; // set height
-//
-//   tiles[tileId].position.x = xVal; // Set x
-//   tiles[tileId].position.y = yVal; // Set y
-//
-//   yVal += ySpacer; // increment y val
-//   if (rowCounter == numberOfRows) { // if we have drawn all the rows
-//     rowCounter = 0; // reset rowcounter
-//     yVal = 0; // set y to 0
-//     xVal += xSpacer; // increment x val
-//   }
-//   rowCounter++; // increment rowCounter
-// }
-
 
 // Come to the imaginary bathroom for graffiti, letting go, reaching out, and moving on.
 // toilet thoughts
@@ -66,10 +43,9 @@ for (var i = 0; i < numberofTiles; i++) {
 // TODO
 
 // TEXT
+// should I draw *all present* mouse cursors? so you can *feel t* the others?
 // make drawing scale factor work - should be related to canvas width?
-// image with transparent bg?
 // drawing tools - random color (from list) and random font (+ font angle)
-
 // make an animation on click
 // integrate a "timer"
 // debug "taken"
@@ -93,3 +69,6 @@ for (var i = 0; i < numberofTiles; i++) {
 // THINKING
 // how to handle clicks??? IF mouse on tile & canvas open -> save drawing, IF mouse on tile and canvas closed -> open canvas, ELSE if canvas open & mouse on canvas -> draw, ELSE if mouse on clickable object -> sound and animate
 // if anyone wants me to read the tiles to them, I will!
+
+// thanks
+// aaron, august, sukanya, julia

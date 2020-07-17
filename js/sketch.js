@@ -158,6 +158,8 @@ function setup() {
     }
   }
   document.addEventListener('keydown', handleKeyDown); // listen for keys being pressed
+
+  noLoop();
 }
 
 function windowResized() {
@@ -317,6 +319,7 @@ function saveTile(tile) {
     let ref = database.ref('graffitiWall/' + tile['firebaseKey']);
     ref.update(tile);
   }
+  redraw();
 }
 
 function openMobileKeyboard(){
@@ -353,8 +356,10 @@ function toggleGraffitiCanvas() { // open and close canvas
         openedTile['taken'] = false; //  the opened tile should no longer be 'taken' (reserved)
         saveTile(openedTile); // save the opened tile
         graffitiCanvasOpen = !graffitiCanvasOpen; // toggle canvas
+        noLoop();
       }
     } else { // if the canvas is closed (is being opened)
+      loop();
       currentTile = tile // update 'current tile' to the tile that was clicked
       openTileSound.play();
       if (tile.taken === false) { // if the tile is not currently taken
@@ -414,15 +419,22 @@ function drawGraffitiCanvas() {
   pop();
 }
 
+function changeImage (){
+  // let toiletImage = image(toiletImg2, mywidth/4, 0);
+}
+
 
 function toiletDraw() {
-  // let frameStartTime = millis();
+  let frameStartTime = millis();
   background(LBLUE);
   displaySmallTileGraffiti(); // show all the small drawings/text
   // draw3dTileRoom(); // Trying WEBGL for speed
-  image(toiletImg1, mywidth/4, 0);
+  let toiletImage = image(toiletImg1, mywidth/4, 0);
+  // toiletImage.mouseOver(changeImage);
 
   image(tpImg1, 670, 240);
+
+  // tpImg.mouseover();
 
 
   if (graffitiCanvasOpen) { // if canvas is open
@@ -474,6 +486,7 @@ function buildMap(data) {
       tiles[tileId]['taken'] = graffitiWall[key]['taken'] || false;
     }
   }
+  redraw(); // redraw everytime there is an update in the database
 }
 
 //CALLBACK
