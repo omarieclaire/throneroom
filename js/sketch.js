@@ -171,6 +171,7 @@ function startDrawPath() {
   // if (graffitiCanvasOpen && inGraffitiCanvasCheck()) -> inGraffitiCanvasCheck here breaks drawing on mobile - why?
     isDrawing = true; // set isdrawing to true
     currentDrawPath = []; // reset current path to an empty object
+    console.log(currentTile);
     currentTile['drawing'].push(currentDrawPath); // push the current path to the drawing object
     return false;
 
