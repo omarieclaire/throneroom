@@ -99,7 +99,8 @@ function calculateGraffitiCanvasWidth(canvasWidth, canvasHeight) {
 }
 
 function calculateGraffitiCanvasHeight(canvasWidth, canvasHeight) {
-  return 0.5 * canvasWidth;
+  let graffitiWidth = calculateGraffitiCanvasWidth(canvasWidth, canvasHeight);
+  return 4 / 7 * graffitiWidth;
 }
 
 function calculateGraffitiCanvasPositionX(canvasWidth, canvasHeight) {
@@ -131,8 +132,8 @@ function scaleAllTheThings(userWindowWidth, userWindowHeight) {
 
   toiletImg1.resize(0, canvasHeight);
   toiletImg2.resize(0, canvasHeight);
-  toiletPaperImg1.resize(0, canvasHeight/4.4);
-  toiletPaperImg2.resize(0, canvasHeight/4.4);
+  toiletPaperImg1.resize(0, canvasHeight / 4.4);
+  toiletPaperImg2.resize(0, canvasHeight / 4.4);
 
 
   toolWidth = 50;
@@ -166,6 +167,8 @@ function setup() {
 
   function mouseClickFunctions() {
     detectMouseOnTool(); // detect mouse on graf canvas tool
+    sceneSwitch(); // detect mouse on scene switch arrow
+
     toggleGraffitiCanvas(); // open or close graf canvas
     startDrawPath(); // collect x and y points
   }
@@ -258,16 +261,15 @@ function startDrawPath() {
 }
 
 function hoverOnImg() {
-    // console.log("in fun");
-    let imgX = window.innerWidth / 3.5;
-    let imgY = 0;
-    let imgW = 200;
-    let imgH = 600;
-    // if (mouseX < 200) {
-    if (mouseX > imgX && mouseX < imgX + imgW && mouseY > imgY && mouseY < imgY + imgH) {
-    image(toiletImg2, window.innerWidth/2 - toiletImg1.width/2, 0);
-    } else {
-    }
+  // console.log("in fun");
+  let imgX = window.innerWidth / 3.5;
+  let imgY = 0;
+  let imgW = 200;
+  let imgH = 600;
+  // if (mouseX < 200) {
+  if (mouseX > imgX && mouseX < imgX + imgW && mouseY > imgY && mouseY < imgY + imgH) {
+    image(toiletImg2, window.innerWidth / 2 - toiletImg1.width / 2, 0);
+  } else {}
 }
 
 
@@ -494,21 +496,51 @@ function drawGraffitiCanvas() {
   pop();
 }
 
+function sceneSwitch() {
+  if (inTriangleCheck()) { // if click on button
+    if (scene == 'toilet') {
+      mirrorDraw();
+    } else if (scene == 'mirror') {
+      sinkDraw();
+    } else if (scene == 'sink') {
+      endDraw();
+    }
+  }
+}
+
+function inTriangleCheck() {
+  // function inTriangleCheck(px, py, x1, y1, x2, y2, x3, y3) {
+  // var areaOrig = floor(abs((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1)));
+  // var area1 = floor(abs((x1 - px) * (y2 - py) - (x2 - px) * (y1 - py)));
+  // var area2 = floor(abs((x2 - px) * (y3 - py) - (x3 - px) * (y2 - py)));
+  // var area3 = floor(abs((x3 - px) * (y1 - py) - (x1 - px) * (y3 - py)));
+  // if (area1 + area2 + area3 <= areaOrig) {
+
+  if (true) {
+    //return true;
+    console.log('true');
+  }
+  return false;
+  console.log('false');
+}
+
+
+function sceneSwitchArrow() {
+  stroke(DYELLOW);
+  strokeWeight(7);
+  let length = 400 * SCALEFACTOR
+  let y1 = window.innerHeight / 1.2;
+  let y2 = y1 + length * 2;
+  let x3 = window.innerWidth - length;
+  let y3 = y1 + length;
+  let x1x2 = x3 - length * 1.5;
+  triangle(x1x2, y1, x1x2, y2, x3, y3)
+}
+
 function leaveSceneTimer() {
   var timeoutID;
-  timeoutID = window.setTimeout(leaveButton, 3 * 1000);
-
-  function leaveButton() {
-    stroke(DYELLOW);
-    strokeWeight(7);
-    let length = 200 * SCALEFACTOR
-    let x1x2 = window.innerWidth/1.25;
-    let y1 = window.innerWidth/2.4;
-    let y2 = y1 + length * 2;
-    let x3 = x1x2 + length * 2;
-    let y3 = y1 + length;
-    triangle(x1x2, y1, x1x2, y2, x3, y3)
-  }
+  timeoutID = window.setTimeout(sceneSwitchArrow, 3 * 1000); // change this to be longer
+  sceneSwitchArrow();
 }
 
 
@@ -516,9 +548,9 @@ function toiletDraw() {
   // let frameStartTime = millis();
   background(LBLUE);
   displaySmallTileGraffiti(); // show all the small drawings/text
-  image(toiletImg1, window.innerWidth/2 - toiletImg1.width/2, 0);
+  image(toiletImg1, window.innerWidth / 2 - toiletImg1.width / 2, 0);
 
-  image(toiletPaperImg1, window.innerWidth/1.5 - toiletPaperImg1.width/1.5, 240);
+  image(toiletPaperImg1, window.innerWidth / 1.5, 240);
 
   if (graffitiCanvasOpen) { // if canvas is open
     highlightOpenTile(currentTile.position.x, currentTile.position.y, currentTile.width, currentTile.height);
@@ -533,15 +565,14 @@ function toiletDraw() {
 }
 
 function mirrorDraw() {
-  // image(mirrorImg1, -15, 50);
+  //image(mirrorImg1, -15, 50);
 }
 
 function sinkDraw() {
-  // image(toiletImg1, -15, 50);
+  image(sinkImg1, -15, 50);
 }
 
 function draw() {
-  // translate(-width / 2, -height / 2, 0); // tried WEBGL to speed things up
   if (scene == 'toilet') {
     toiletDraw();
   } else if (scene == 'mirror') {
