@@ -260,18 +260,21 @@ function startDrawPath() {
   }
 }
 
-function hoverOnImg() {
-  let imgX = window.innerWidth / 2  - toiletImg1.width / 2;
-  let imgY = 0;
-  let imgW = toiletImg1.width;
-  let imgH = toiletImg2.height;
-  // if (mouseX < 200) {
-  if (mouseX > imgX && mouseX < imgX + imgW && mouseY > imgY && mouseY < imgY + imgH) {
-    image(toiletImg2, window.innerWidth / 2 - toiletImg1.width / 2, 0);
+function hover(x, y, w, h, img2, img1){
+  if (mouseX > x && mouseX < x + w && mouseY > y && mouseY < y + h) {
+    image(img2, x, y);
   } else {
-    image(toiletImg1, window.innerWidth / 2 - toiletImg1.width / 2, 0);
+    image(img1, x, y);
   }
 }
+
+function hoverOnImg() {
+  // image(toiletPaperImg1, window.innerWidth / 1.5, 240);
+  hover(window.innerWidth / 2  - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height, toiletImg2, toiletImg1);  // toilet hover
+  hover(window.innerWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height, toiletPaperImg2, toiletPaperImg1);  // tp hover
+}
+
+
 
 
 
@@ -550,7 +553,6 @@ function toiletDraw() {
   background(LBLUE);
   displaySmallTileGraffiti(); // show all the small drawings/text
   image(toiletImg1, window.innerWidth / 2 - toiletImg1.width / 2, 0);
-
   image(toiletPaperImg1, window.innerWidth / 1.5, 240);
 
   if (graffitiCanvasOpen) { // if canvas is open
