@@ -162,7 +162,7 @@ function setup() {
 
   scaleAllTheThings(canvasWidth, canvasHeight);
 
-  canvas.mouseOver(hoverOnImg);
+  canvas.mouseMoved(hoverOnImg);
   textFont(firaFont, 40);
 
   function mouseClickFunctions() {
@@ -261,15 +261,16 @@ function startDrawPath() {
 }
 
 function hoverOnImg() {
-  // console.log("in fun");
-  let imgX = window.innerWidth / 3.5;
+  let imgX = window.innerWidth / 2  - toiletImg1.width / 2;
   let imgY = 0;
-  let imgW = 200;
-  let imgH = 600;
+  let imgW = toiletImg1.width;
+  let imgH = toiletImg2.height;
   // if (mouseX < 200) {
   if (mouseX > imgX && mouseX < imgX + imgW && mouseY > imgY && mouseY < imgY + imgH) {
     image(toiletImg2, window.innerWidth / 2 - toiletImg1.width / 2, 0);
-  } else {}
+  } else {
+    image(toiletImg1, window.innerWidth / 2 - toiletImg1.width / 2, 0);
+  }
 }
 
 
