@@ -1,5 +1,7 @@
 // make drawing scale factor work - should be related to canvas width
 
+// how to make hover work? hover not recognized when not drawing.
+
 // drawing tools - random color (from list) and random font (+ font angle)
 // make an animation on hover
 // integrate a "timer"
@@ -8,6 +10,7 @@
 // third scene - timer makes coundown appear
 // sound effects - open tile, close tile, isdrawing
 // fonts and integrate fonts and text angle
+// if canvas is bigger than X constrain it to a manageable size
 
 // QUESTIONS
 // can I do "responsive" with
