@@ -118,6 +118,16 @@ function calculateSmallImgHeight(canvasWidth, canvasHeight) {
   return canvasWidth / 10;
 }
 
+function calculateScaleFactor(tileArea) {
+  // equation of a line is: y = slope * x + intercept
+  // for us, y = canvas height and x is scalefactor.
+  // 38288.931216931225
+  let slope = 50000;
+  let intercept = -909.0822433862436;
+
+  return (tileArea - intercept) / slope;
+}
+
 function scaleAllTheThings(userWindowWidth, userWindowHeight) {
   let canvasWidth = calculateCanvasWidth(userWindowWidth, userWindowHeight);
   let canvasHeight = calculateCanvasHeight(userWindowWidth, userWindowHeight);
@@ -131,10 +141,19 @@ function scaleAllTheThings(userWindowWidth, userWindowHeight) {
 
   toolWidth = 50;
   toolSpacer = 5;
-  SCALEFACTOR = 0.085 //0.145;
+  //SCALEFACTOR = 0.085 //0.145;
+
+  // wxh = 1108 x 454, scalefactor = 0.075
+  // wxh =  565 x 351, scalefactor = 0.036
+
+  // tile area = 1320.2311111111112, scale = 0.053
+  // tile area =  458.7301587301587, scale = 0.0305
+
+  console.log(`canvasWidth = ${canvasWidth}\ncanvasHeight = ${canvasHeight}`);
+  console.log(`tileArea = ${tiles[0].width * tiles[0].height}`);
+  //SCALEFACTOR = 0.0305;
+  SCALEFACTOR = calculateScaleFactor(currentTile.width * currentTile.height);
 }
-
-
 
 function setup() {
 
@@ -142,10 +161,12 @@ function setup() {
   let canvasHeight = calculateCanvasHeight(window.innerWidth, window.innerHeight);
   canvas = createCanvas(canvasWidth, canvasHeight);
 
-  scaleAllTheThings(canvasWidth, canvasHeight);
-
   tiles = tileFactory(canvasWidth, canvasHeight);
   currentTile = tiles[0];
+
+  scaleAllTheThings(canvasWidth, canvasHeight);
+
+
 
   textFont(firaFont, 40);
 
@@ -225,7 +246,10 @@ function setup() {
 }
 
 function windowResized() {
-  resizeCanvas(window.innerWidth, window.innerWidth);
+  let canvasWidth = calculateCanvasWidth(window.innerWidth, window.innerHeight);
+  let canvasHeight = calculateCanvasHeight(window.innerWidth, window.innerHeight);
+  resizeCanvas(canvasWidth, canvasHeight);
+  scaleAllTheThings();
 }
 
 function startDrawPath() {
@@ -233,7 +257,6 @@ function startDrawPath() {
     // if (graffitiCanvasOpen && inGraffitiCanvasCheck()) -> inGraffitiCanvasCheck here breaks drawing on mobile - why?
     isDrawing = true; // set isdrawing to true
     currentDrawPath = []; // reset current path to an empty object
-    console.log(currentTile);
     currentTile['drawing'].push(currentDrawPath); // push the current path to the drawing object
     return false;
 
@@ -560,7 +583,7 @@ function buildMap(data) {
   for (let i = 0; i < keys.length; i++) { // for each key
     let key = keys[i]; // grab the key
     let tileId = graffitiWall[key]['tile']; // grab the tileID
-    if (tileId !== currentTile.tile) { // do the updates
+    if (tileId !== currentTile.tile && typeof(tiles[tileId]) !== 'undefined') { // do the updates
       tiles[tileId]['firebaseKey'] = key;
       tiles[tileId]['drawing'] = graffitiWall[key]['drawing'] || [];
       tiles[tileId]['writing'] = graffitiWall[key]['writing'] || '';

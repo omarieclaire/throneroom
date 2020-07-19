@@ -49,16 +49,36 @@
 // if anyone wants me to read the tiles to them, I will!
 // thanks aaron, august, sukanya, julia
 
-function tileFactory(canvasWidth, canvasHeight) {
+function tileFactory(canvasWidth, canvasHeight, existingTiles) {
 
-  let tiles = {};
-  let numberofTiles = 150
-  let numberOfColumns = 10;
+  let numColumns;
+  let numRows;
   let tileSpacer = 5;
+  let numberOfTiles = 8 * 15; //120;
 
-  let canvasHeightMinusSpaces = canvasHeight/1.5 - (numberOfColumns - 1) * tileSpacer;  // to get the height of the tile take the total canvas height and remove the spacers (for 10 tiles, there will be 9 spaces)
-  let tileHeight = canvasHeightMinusSpaces / numberOfColumns;   // now take the remaining canvas space after removing the spacers & divide that by the number of tiles in a row; that will be the tile height.
-  let tileWidth = 7/4 * tileHeight;   // to get the tileWidth - use the original tile ratio (70/40 or 7/4)
+  if(canvasWidth <= canvasHeight) {
+    // taller
+    numColumns = 8;
+    numRows = 15;
+
+  } else {
+    // wider
+    numColumns = 15;
+    numRows = 8;
+  }
+
+  let tileWidth = (canvasWidth - tileSpacer * numColumns) / numColumns;
+  let tileHeight = 4 / 7 * tileWidth;
+
+  // if we pass in existingTiles use that, otherwise use {}
+  let tiles = existingTiles || {};
+
+  let numberOfColumns = numRows;
+
+
+  //let canvasWidthMinusSpaces = canvasWidth/1.5 - (numberOfColumns - 1) * tileSpacer;  // to get the height of the tile take the total canvas height and remove the spacers (for 10 tiles, there will be 9 spaces)
+  //let tileWidth = canvasWidthMinusSpaces / numberOfColumns;   // now take the remaining canvas space after removing the spacers & divide that by the number of tiles in a row; that will be the tile height.
+  //let tileHeight = 4/7 * tileWidth;   // to get the tileWidth - use the original tile ratio (70/40 or 7/4)
 
   let rowCounter = 0;
   let xVal = 0;
@@ -66,18 +86,28 @@ function tileFactory(canvasWidth, canvasHeight) {
   let ySpacer = tileHeight + tileSpacer;
   let xSpacer = tileWidth + tileSpacer;
 
-  for (var i = 0; i < numberofTiles; i++) {
-     tiles[i] = {}; // make each empty "tile object"
-     tiles[i].tile = i; // set tileID to tile #
-     tiles[i].writing = ""; // set writing
-     tiles[i].drawing = []; // set writing
-     tiles[i].taken = false; // Set 'taken': false to every tile.
-     tiles[i].firebaseKey = null; // Set 'taken': false to every tile.
-     tiles[i].width = tileWidth; // set width
-     tiles[i].height = tileHeight; // set height
-     tiles[i].position = {}; // Set x
-     tiles[i].position.x = xVal; // Set x
-     tiles[i].position.y = yVal; // Set y
+  for (var i = 0; i < numberOfTiles; i++) {
+    rowCounter++; // increment rowCounter
+
+    let tile = tiles[i];
+    if(typeof(tile) === 'undefined') {
+      // tile does not exist, so lets create a blank tile
+      tiles[i] = {}; // make each empty "tile object"
+      tiles[i].tile = i; // set tileID to tile #
+      tiles[i].writing = ""; // set writing
+      tiles[i].drawing = []; // set writing
+      tiles[i].taken = false; // Set 'taken': false to every tile.
+      tiles[i].firebaseKey = null; // Set 'taken': false to every tile.
+      tiles[i].width = tileWidth; // set width
+      tiles[i].height = tileHeight; // set height
+      tiles[i].position = {}; // Set x
+      tiles[i].position.x = xVal; // Set x
+      tiles[i].position.y = yVal; // Set y
+    } else {
+      // only update the x and y
+      tile.position.x = xVal;
+      tile.position.y = yVal;
+    }
 
      yVal += ySpacer; // increment y val
      if (rowCounter === numberOfColumns) { // if we have drawn all the rows
@@ -85,7 +115,6 @@ function tileFactory(canvasWidth, canvasHeight) {
        yVal = 0; // set y to 0
        xVal += xSpacer; // increment x val
      }
-     rowCounter++; // increment rowCounter
   }
   return tiles;
 }
