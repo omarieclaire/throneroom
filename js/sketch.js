@@ -16,8 +16,6 @@ let tileId = 1;
 let isDrawing = false;
 let graffitiCanvasOpen = false;
 let canvasToolsVisible = false;
-let toolWidth;
-let toolSpacer;
 let graffitiCanvasW;
 let graffitiCanvasH;
 let graffitiCanvasX;
@@ -37,45 +35,7 @@ let sinkImg2;
 let firaFont;
 let tiles;
 let triangleParams;
-toolWidth = 50;
-toolSpacer = 5;
 
-let toolButtons = {
-  // write: {
-  //   'x': graffitiCanvasX + graffitiCanvasW + toolSpacer,
-  //   'y': graffitiCanvasY + (toolWidth * 2) + (toolSpacer * 2),
-  //   'width': toolWidth,
-  //   'height': toolWidth,
-  //   'text': 'write',
-  //   'select': false
-  // },
-  // draw: {
-  //   'x': graffitiCanvasX + graffitiCanvasW + toolSpacer,
-  //   'y': graffitiCanvasY + toolWidth + toolSpacer,
-  //   'width': toolWidth,
-  //   'height': toolWidth,
-  //   'text': 'draw',
-  //   'select': false
-  // },
-  // save: {
-  //   'x': graffitiCanvasX + graffitiCanvasW + toolSpacer,
-  //   'y': graffitiCanvasY + (toolWidth * 3) + (toolSpacer * 3),
-  //   'width': toolWidth,
-  //   'height': toolWidth,
-  //   'text': 'save',
-  //   'select': false
-  // },
-  clear: {
-    // 'x': graffitiCanvasX + graffitiCanvasW + toolSpacer,
-    // 'y': graffitiCanvasH + toolSpacer,
-    'x': window.innerWidth - toolWidth * 1.5,
-    'y': toolWidth,
-    'width': toolWidth,
-    'height': toolWidth,
-    'text': 'CLEAR',
-    'select': false
-  }
-};
 
 function dataSent(data, err) {}
 
@@ -165,6 +125,49 @@ function scaleAllTheThings(userWindowWidth, userWindowHeight) {
   SCALEFACTOR = calculateScaleFactor(currentTile.width * currentTile.height);
 }
 
+function makeToolButtons(x, y, w, h) {
+  let toolWidth = 50;
+  let toolSpacer = 5;
+  return {
+    write: {
+      'x': x + w + toolSpacer,
+      'y': y,
+      'width': toolWidth,
+      'height': toolWidth,
+      'text': 'write',
+      'select': false
+    },
+    // draw: {
+    //   'x': graffitiCanvasX + graffitiCanvasW + toolSpacer,
+    //   'y': graffitiCanvasY + toolWidth + toolSpacer,
+    //   'width': toolWidth,
+    //   'height': toolWidth,
+    //   'text': 'draw',
+    //   'select': false
+    // },
+    // save: {
+    //   'x': graffitiCanvasX + graffitiCanvasW + toolSpacer,
+    //   'y': graffitiCanvasY + (toolWidth * 3) + (toolSpacer * 3),
+    //   'width': toolWidth,
+    //   'height': toolWidth,
+    //   'text': 'save',
+    //   'select': false
+    // },
+    clear: {
+      'x': x + w + toolSpacer,
+      'y': y + toolWidth + toolSpacer,
+
+      // 'y': h + toolSpacer,
+      // 'x': window.innerWidth - toolWidth * 1.5,
+      // 'y': toolWidth,
+      'width': toolWidth,
+      'height': toolWidth,
+      'text': 'CLEAR',
+      'select': false
+    }
+  };
+}
+
 function setup() {
   leaveSceneTimer(5000);
 
@@ -197,6 +200,8 @@ function setup() {
     }
     redraw();
   }
+
+  toolButtons = makeToolButtons(graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH);
 
   canvas.mousePressed(mouseClickFunctions); // run the mouse functions
   canvas.touchStarted(startDrawPath); //
@@ -487,7 +492,8 @@ function detectMouseOnTool() {
       btn.select = false;
     }
   }
-  return false;}
+  return false;
+}
 
 function toggleGraffitiCanvas() { // open and close canvas
   const previousCurrentTile = currentTile; // set opentile to the last value of currenttile ( this is whatever it was last time this ran)
@@ -498,29 +504,29 @@ function toggleGraffitiCanvas() { // open and close canvas
   // console.log(`tileClicked is ${tileClicked ? tileClicked.tile : "empty"}`);
 
   // if (typeof(tileClicked) !== 'undefined') { // if the mouse is clicking on a tile // trying to comment this out so closing is easier with less tiles
-    if (graffitiCanvasOpen) { //  if canvas being closed
-      if (inGraffitiCanvasCheck() == false) { // prevents accidental closing
-        previousCurrentTile['taken'] = false; //  remove hold on previousCurrentTile
-        saveTile(previousCurrentTile); // save the previousCurrentTile
-        graffitiCanvasOpen = !graffitiCanvasOpen; // toggle canvas state
-        noLoop(); // stop looping draw - for speed
-      }
-
-    } else { // if canvas is being opened
-      // console.log(`previousCurrentTile is ${previousCurrentTile.tile}`);
-      // console.log(`tileClicked is ${tileClicked.tile}`);
-      loop(); // start looping draw
-      currentTile = tileClicked // update 'current tile' to the tile that was clicked
-      // console.log(`previousCurrentTile is ${previousCurrentTile.tile}`);
-      // console.log(`tileClicked is ${tileClicked.tile}`);
-      // openTileSound.play();
-
-      if (currentTile.taken === false) { // if the tile is not currently taken
-        currentTile['taken'] = true; // 'take' (reserve) the tile
-        saveTile(currentTile);
-      }
-      graffitiCanvasOpen = !graffitiCanvasOpen; // toggle canvas
+  if (graffitiCanvasOpen) { //  if canvas being closed
+    if (inGraffitiCanvasCheck() == false) { // prevents accidental closing
+      previousCurrentTile['taken'] = false; //  remove hold on previousCurrentTile
+      saveTile(previousCurrentTile); // save the previousCurrentTile
+      graffitiCanvasOpen = !graffitiCanvasOpen; // toggle canvas state
+      noLoop(); // stop looping draw - for speed
     }
+
+  } else { // if canvas is being opened
+    // console.log(`previousCurrentTile is ${previousCurrentTile.tile}`);
+    // console.log(`tileClicked is ${tileClicked.tile}`);
+    loop(); // start looping draw
+    currentTile = tileClicked // update 'current tile' to the tile that was clicked
+    // console.log(`previousCurrentTile is ${previousCurrentTile.tile}`);
+    // console.log(`tileClicked is ${tileClicked.tile}`);
+    // openTileSound.play();
+
+    if (currentTile.taken === false) { // if the tile is not currently taken
+      currentTile['taken'] = true; // 'take' (reserve) the tile
+      saveTile(currentTile);
+    }
+    graffitiCanvasOpen = !graffitiCanvasOpen; // toggle canvas
+  }
   // }
 }
 

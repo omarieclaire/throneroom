@@ -1,4 +1,13 @@
-// split detectMouseOnTool into on function that checks and another that takes action
+// first a fucntion to tell you what you clikced on
+//
+// if mouse X and mouse Y blaba
+// set the var for what did I click on
+//
+//
+// then handle each thing clicked on differently
+
+
+
 
 
 // how can I make multiple timers in the setup when they are triggered by different things?
