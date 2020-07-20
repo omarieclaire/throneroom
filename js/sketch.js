@@ -460,7 +460,7 @@ function hoverOnImg() {
 
 
 function openMobileKeyboard() {
-input.focus();
+  input();
 }
 
 function clearTile() {
