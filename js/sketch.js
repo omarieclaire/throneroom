@@ -168,8 +168,8 @@ function scaleAllTheThings(userWindowWidth, userWindowHeight) {
 function setup() {
   leaveSceneTimer(5000);
 
-  // input = createInput();
-  // input.position(-100, -100);
+  input = createInput();
+  input.position(-100, -100);
 
   let canvasWidth = calculateCanvasWidth(window.innerWidth, window.innerHeight);
   let canvasHeight = calculateCanvasHeight(window.innerWidth, window.innerHeight);
@@ -460,13 +460,13 @@ function hoverOnImg() {
 
 
 function openMobileKeyboard() {
-
+input.focus();
 }
 
 function clearTile() {
   currentTile.drawing = [];
   currentTile.writing = '';
-  // openMobileKeyboard();
+  openMobileKeyboard();
 }
 
 
