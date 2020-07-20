@@ -1,4 +1,5 @@
 
+// how can I make multiple timers in the setup when they are triggered by different things?
 // drawing tools - random color (from list) and random font (+ font angle)
 // make an animation on hover
 // integrate a "timer"

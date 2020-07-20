@@ -37,6 +37,8 @@ let sinkImg2;
 let firaFont;
 let tiles;
 let triangleParams;
+toolWidth = 50;
+toolSpacer = 5;
 
 let toolButtons = {
   // write: {
@@ -64,8 +66,10 @@ let toolButtons = {
   //   'select': false
   // },
   clear: {
-    'x': graffitiCanvasX + graffitiCanvasW + toolSpacer,
-    'y': graffitiCanvasH + toolSpacer,
+    // 'x': graffitiCanvasX + graffitiCanvasW + toolSpacer,
+    // 'y': graffitiCanvasH + toolSpacer,
+    'x': window.innerWidth-toolWidth*1.5,
+    'y': toolWidth,
     'width': toolWidth,
     'height': toolWidth,
     'text': 'CLEAR',
@@ -110,8 +114,8 @@ function calculateGraffitiCanvasHeight(canvasWidth, canvasHeight) {
   return 4 / 7 * graffitiWidth;
 }
 
-function calculateGraffitiCanvasPositionX(canvasWidth, canvasHeight) {
-  return canvasWidth / 8;
+function calculateGraffitiCanvasPositionX(canvasWidth, canvasHeight, graffitiCanvasW) {
+  return canvasWidth / 2 - graffitiCanvasW / 2 ;
 }
 
 function calculateGraffitiCanvasPositionY(canvasWidth, canvasHeight) {
@@ -134,7 +138,7 @@ function scaleAllTheThings(userWindowWidth, userWindowHeight) {
 
   graffitiCanvasW = calculateGraffitiCanvasWidth(canvasWidth, canvasHeight);
   graffitiCanvasH = calculateGraffitiCanvasHeight(canvasWidth, canvasHeight);
-  graffitiCanvasX = calculateGraffitiCanvasPositionX(canvasWidth, canvasHeight);
+  graffitiCanvasX = calculateGraffitiCanvasPositionX(canvasWidth, canvasHeight, graffitiCanvasW);
   graffitiCanvasY = calculateGraffitiCanvasPositionY(canvasWidth, canvasHeight);
 
   toiletImg1.resize(0, canvasHeight);
@@ -146,8 +150,7 @@ function scaleAllTheThings(userWindowWidth, userWindowHeight) {
   sinkImg1.resize(0, canvasHeight);
   sinkImg2.resize(0, canvasHeight);
 
-  toolWidth = 50;
-  toolSpacer = 5;
+
   //SCALEFACTOR = 0.085 //0.145;
 
   // wxh = 1108 x 454, scalefactor = 0.075
@@ -164,6 +167,9 @@ function scaleAllTheThings(userWindowWidth, userWindowHeight) {
 
 function setup() {
   leaveSceneTimer(5000);
+
+  // input = createInput();
+  // input.position(-100, -100);
 
   let canvasWidth = calculateCanvasWidth(window.innerWidth, window.innerHeight);
   let canvasHeight = calculateCanvasHeight(window.innerWidth, window.innerHeight);
@@ -184,10 +190,10 @@ function setup() {
     if (inTriangleCheck()) {
       scene = 'mirror';
       redraw();
-    } else {
+    } else if (detectMouseOnTool()) { // why does this work?
       detectMouseOnTool(); // detect mouse on graf canvas tool
-      sceneSwitch(); // detect mouse on scene switch arrow
-
+    } else {
+      sceneSwitch(); // detect mouse on scene switch arrow -- do I even need this now?
       toggleGraffitiCanvas(); // open or close graf canvas
       startDrawPath(); // collect x and y points
     }
@@ -365,8 +371,10 @@ function highlightOpenTile(x, y, w, h) {
 function graffitiTools() {
   let toolSpacer = 10;
   for (const tool in toolButtons) {
-    let btn = toolButtons[tool]
-    fill(LYELLOW);
+    let btn = toolButtons[tool];
+    console.log(btn.y);
+    fill(DBLUE);
+    // rect(10, 10, 100, 100);
     rect(btn.x, btn.y, btn.width, btn.height);
     fill('black');
     textAlign(CENTER, CENTER);
@@ -407,7 +415,7 @@ function displaySmallTileGraffiti() {
 
 function detectMouseOnTile() { // returns undefined when not clicking on a tile
   for (const tileId in tiles) { // for each tile
-    let tile = tiles[tileId] // grab the ID
+    let tile = tiles[tileId]; // grab the ID
     if (mouseX > tile['position']['x'] && mouseX < tile['position']['x'] + tile['width'] && mouseY > tile['position']['y'] && mouseY < tile['position']['y'] + tile['height']) {
       return tiles[tileId]; // check if mouse is over it -> if yes, return that tile (can i just return tile?)
     }
@@ -464,7 +472,7 @@ function clearTile() {
 
 function detectMouseOnTool() {
   for (const tool in toolButtons) {
-    let btn = toolButtons[tool]
+    let btn = toolButtons[tool];
     if (mouseX > btn.x && mouseX < btn.x + btn.width && mouseY > btn.y && mouseY < btn.y + btn.height) {
       btn.select = true;
     } else {
@@ -473,7 +481,7 @@ function detectMouseOnTool() {
   }
   if (toolButtons.clear.select) {
     clearTile();
-    // return true;
+    return true;
   }
 }
 
@@ -612,7 +620,7 @@ function toiletDraw() {
   if (graffitiCanvasOpen) { // if canvas is open
     highlightOpenTile(currentTile.position.x, currentTile.position.y, currentTile.width, currentTile.height);
     drawGraffitiCanvas();
-    // graffitiTools();
+    graffitiTools();
     displayLargeTileGraffiti(); // show the open drawing/text
     captureDrawing(); // run the code to catch the drawing
   }
