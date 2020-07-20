@@ -44,6 +44,7 @@ let reallyFree;
 let syifana;
 let tiles;
 let triangleParams;
+let eventBuffer = [];
 
 let fonts = [
   acki,
@@ -66,6 +67,13 @@ let paintColors = [
   // LPEACH,
   // DPEACH
 ];
+
+function createUUID() {
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, function(c) {
+    return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  });
+}
+const SESSION_ID = createUUID();
 
 function dataSent(data, err) {}
 
@@ -206,6 +214,8 @@ function makeToolButtons(x, y, w, h) {
   };
 }
 
+
+
 function setup() {
   leaveSceneTimer(5000);
 
@@ -253,13 +263,7 @@ function setup() {
   };
   firebase.initializeApp(config);
   database = firebase.database();
-  // var params = getURLParams(); // get URL params for permalink
-  // if (params.id) {
-  // showDrawing(params.id);
-  // }
-  var ref = database.ref('graffitiWall'); // get the graffitiWall
-  ref.on('value', gotData, printErrors); // trigger this anytime anything is changed in the database (err is in case of error)
-  ref.once('value', buildMap, printErrors); // buildMap at the start
+  initializeFromSnapshot(firebase);
 
   function handleKeyDown(event) {
     const key = event.key; // grab the key
@@ -267,6 +271,11 @@ function setup() {
       switch (key) {
         case 'Backspace': // IE/Edge specific value
           currentTile.writing = currentTile.writing.slice(0, -1);
+          let writingEvent = {
+            tile: currentTile.tile,
+            type: 'remove_character',
+          };
+          eventBuffer.push(writingEvent);
           break;
         case 'Down': // IE/Edge specific value
         case 'ArrowDown':
@@ -297,6 +306,12 @@ function setup() {
 
         default:
           currentTile.writing += event.key; // add to the text
+          let dbEvent = {
+            type: 'add_character',
+            tile: currentTile.tile,
+            char: event.key
+          };
+          eventBuffer.push(dbEvent);
           return; // quit when this doesn't handle the key event
       }
     }
@@ -388,7 +403,14 @@ function startDrawPath() {
 }
 
 function endDrawPath() {
+
   isDrawing = false; // set isdrawing to false
+  let event = {
+    type: 'add_stroke',
+    tile: currentTile.tile,
+    stroke: currentDrawPath
+  };
+  eventBuffer.push(event);
 }
 
 function captureDrawing() {
@@ -542,6 +564,18 @@ function saveTile(tile) {
   } else { // already exists in the database, so UPDATE the entry in the database
     let ref = database.ref('graffitiWall/' + tile['firebaseKey']);
     ref.update(tile);
+  }
+  if(eventBuffer.length > 0) {
+    let newBuffer = collapseEventBuffer(eventBuffer);
+    let ref = database.ref('log');
+    // submit all the events in order
+    let promise = ref.push(newBuffer[0]);
+    let tail = newBuffer.slice(1);
+    for(const i in tail) {
+      promise = promise.then(function() {
+        return ref.push(tail[i]);
+      });
+    }
   }
   redraw();
 }
@@ -773,8 +807,7 @@ function draw() {
 }
 
 // integrate buildmap into tilemap
-function buildMap(data) {
-  let graffitiWall = data.val(); // grab all database entries
+function buildMap(graffitiWall) {
   let keys = graffitiWall ? Object.keys(graffitiWall) : []; // grab keys - if keys isn't empty
   for (let i = 0; i < keys.length; i++) { // for each key
     let key = keys[i]; // grab the key
@@ -794,8 +827,108 @@ function buildMap(data) {
 
 //CALLBACK
 function gotData(data) { // if anything changes in the database, update my tilemap
-  buildMap(data);
+  buildMap(data.val());
 }
+
+// this function collapses consecutive "add_character"
+// events and smash them into a single event.
+// events into a single writing event
+function collapseEventBuffer(buffer) {
+
+  let msg = "";
+  let newBuffer = [];
+
+  for(let i in buffer) {
+    let event = buffer[i];
+    if(event.type === 'add_character') {
+      msg += event.char;
+    } else if(event.type === 'remove_character') {
+      msg = msg.slice(0,-1);
+    } else {
+      newBuffer.push(event);
+    }
+  }
+
+  if(msg.length > 0) {
+    newBuffer.push({
+      tile: buffer[0].tile,
+      type: 'update_writing',
+      writing: msg
+    });
+  }
+  return newBuffer;
+}
+
+function takeSnapshot() {
+  database.ref('log').push({
+    type: 'snapshot',
+    session: SESSION_ID
+  });
+}
+
+function handleEvent(event, key) {
+  if(event.type === 'add_stroke') {
+
+    // assume .tile has id, and .stroke
+    let tileId = event.tile;
+    tiles[tileId].drawing.push(event.stroke);
+
+  } else if(event.type === 'update_writing') {
+
+    let tileId = event.tile;
+    tiles[tileId].writing = event.writing;
+
+  } else if(event.type === 'clear_tile') {
+
+    // assume .tile has id
+    let tileId = event.tile;
+    tiles[tileId].drawing.clear();
+    tiles[tileId].writing = "";
+    tiles[tileId].taken = false;
+
+  } else if(event.type === 'snapshot') {
+    // only take snapshots from your current session
+    // otherwise skip the snapshot events
+    if(event.session === SESSION_ID) {
+      let ref = database.ref('snapshot');
+      ref.push({
+        tiles: tiles,
+        key: key,
+        session: SESSION_ID
+      });
+    }
+  } else {
+    console.log(`received event type we could not handle: ${event.type}`);
+  }
+  redraw();
+}
+
+function initializeFromSnapshot(firebase) {
+  let database = firebase.database();
+
+  database
+    .ref('/snapshot')
+    .orderByKey()
+    .limitToLast(1)
+    .once('child_added', function(snap) {
+      let snapshot = snap.val();
+      let snapshotKey = snapshot.key;
+      buildMap(snapshot.tiles);
+      // new reference
+      let ref =
+        database
+          .ref('/log')
+          .orderByKey()
+          .startAt(snapshotKey);
+
+      return ref.on('child_added', function(data) {
+        let event = data.val();
+        let key = data.key;
+        handleEvent(event, key);
+      }, printErrors);
+    }, printErrors);
+}
+
 
 function printErrors(err) { // show me the errors please!
   console.log(err);
