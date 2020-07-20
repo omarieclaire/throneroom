@@ -141,10 +141,10 @@ function scaleAllTheThings(userWindowWidth, userWindowHeight) {
   toiletImg2.resize(0, canvasHeight);
   toiletPaperImg1.resize(0, canvasHeight / 4.4);
   toiletPaperImg2.resize(0, canvasHeight / 4.4);
-  mirrorImg1.resize(0, canvasHeight / 4.4);
-  mirrorImg1.resize(0, canvasHeight / 4.4);
-  sinkImg1.resize(0, canvasHeight / 4.4);
-  sinkImg1.resize(0, canvasHeight / 4.4);
+  mirrorImg1.resize(0, canvasHeight);
+  mirrorImg2.resize(0, canvasHeight);
+  sinkImg1.resize(0, canvasHeight);
+  sinkImg2.resize(0, canvasHeight);
 
   toolWidth = 50;
   toolSpacer = 5;
@@ -163,7 +163,7 @@ function scaleAllTheThings(userWindowWidth, userWindowHeight) {
 }
 
 function setup() {
-  leaveSceneTimer();
+  leaveSceneTimer(5000);
 
   let canvasWidth = calculateCanvasWidth(window.innerWidth, window.innerHeight);
   let canvasHeight = calculateCanvasHeight(window.innerWidth, window.innerHeight);
@@ -181,7 +181,7 @@ function setup() {
   textFont(firaFont, 40);
 
   function mouseClickFunctions() {
-    if(inTriangleCheck()) {
+    if (inTriangleCheck()) {
       scene = 'mirror';
       redraw();
     } else {
@@ -436,12 +436,18 @@ function hover(x, y, w, h, img2, img1) {
 }
 
 function hoverOnImg() {
-  // image(toiletPaperImg1, window.innerWidth / 1.5, 240);
-  hover(window.innerWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height, toiletImg2, toiletImg1); // toilet hover
-  hover(window.innerWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height, toiletPaperImg2, toiletPaperImg1); // tp hover
-  // hover(window.innerWidth / 2 - mirrorImg1.width / 2, 0, mirrorImg1.width, mirrorImg2.height, mirrorImg2, mirrorImg1); // mirror hover
-  // hover(window.innerWidth / 2 - sinkImg1.width / 2, 0, sinkImg1.width, sinkImg2.height, sinkImg2, sinkImg1); // sink hover
+  if (scene == 'toilet') {
+    hover(window.innerWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height, toiletImg2, toiletImg1); // toilet hover
+    hover(window.innerWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height, toiletPaperImg2, toiletPaperImg1); // tp hover
 
+  } else if (scene == 'mirror') {
+    redraw();
+    hover(window.innerWidth / 2 - mirrorImg1.width / 2, 0, mirrorImg1.width, mirrorImg2.height, mirrorImg2, mirrorImg1); // mirror hover
+
+  } else if (scene == 'sink') {
+    redraw();
+    hover(window.innerWidth / 2 - sinkImg1.width / 2, 0, sinkImg1.width, sinkImg2.height, sinkImg2, sinkImg1); // sink hover
+  }
 }
 
 
@@ -525,8 +531,15 @@ function drawGraffitiCanvas() {
 
 function sceneSwitch() {
   if (inTriangleCheck()) { // if click on button
-    console.log('in tri');
-    scene == 'mirror';
+    if (scene == 'line') {
+      scene = 'toilet';
+    } else if (scene == 'toilet') {
+      scene = 'sink';
+    } else if (scene == 'mirror') {
+      scene = 'sink';
+    } else if (scene == 'sink') {
+      scene = 'end'
+    }
   }
 }
 
@@ -561,8 +574,8 @@ function sceneSwitchArrow() {
   redraw();
 }
 
-function leaveSceneTimer() {
-  window.setTimeout(sceneSwitchArrow, 1000); // change this to be longer
+function leaveSceneTimer(waitTime) {
+  window.setTimeout(sceneSwitchArrow, waitTime); // change this to be longer
 }
 
 function inTriangleCheck() {
@@ -603,7 +616,7 @@ function toiletDraw() {
     displayLargeTileGraffiti(); // show the open drawing/text
     captureDrawing(); // run the code to catch the drawing
   }
-  if(sceneSwitchArrowViz == true) {
+  if (sceneSwitchArrowViz == true) {
     drawSceneArrow();
   }
   // console.log('Amount of time to compute the frame:', millis() - frameStartTime);
@@ -616,7 +629,7 @@ function mirrorDraw() {
 }
 
 function sinkDraw() {
-  // image(sinkImg1, window.innerWidth / 2 - sinkImg1.width / 2, 0);
+  image(sinkImg1, window.innerWidth / 2 - sinkImg1.width / 2, 0);
 }
 
 function draw() {
