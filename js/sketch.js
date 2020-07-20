@@ -9,6 +9,7 @@ let LYELLOW = '#ffd183';
 let DYELLOW = '#ffa304';
 let LPEACH = '#fedfcd';
 let DPEACH = '#ffbe99';
+let sceneSwitchArrowViz = false;
 let turnaround;
 let currentDrawPath = [];
 let tileId = 1;
@@ -35,6 +36,7 @@ let sinkImg1;
 let sinkImg2;
 let firaFont;
 let tiles;
+let triangleParams;
 
 let toolButtons = {
   // write: {
@@ -74,13 +76,18 @@ let toolButtons = {
 function dataSent(data, err) {}
 
 function preload() {
-  toiletImg1 = loadImage('img/toiletImgThin1.png');
-  toiletImg2 = loadImage('img/toiletImgThin2.png');
+  toiletImg1 = loadImage('img/toiletImg1.png');
+  toiletImg2 = loadImage('img/toiletImg2.png');
   toiletPaperImg1 = loadImage('img/tpImg1.png');
   toiletPaperImg2 = loadImage('img/tpImg2.png');
+  mirrorImg1 = loadImage('img/mirrorImg1.png');
+  mirrorImg2 = loadImage('img/mirrorImg2.png');
+  sinkImg1 = loadImage('img/sinkImg1.png');
+  sinkImg2 = loadImage('img/sinkImg2.png');
   firaFont = loadFont('fonts/FiraSans-Book.otf');
 
   openTileSound = document.createElement('audio');
+
   if (openTileSound.canPlayType('audio/mpeg')) {
     openTileSound.setAttribute('src', 'audio/tileopen.mp3');
   }
@@ -134,7 +141,10 @@ function scaleAllTheThings(userWindowWidth, userWindowHeight) {
   toiletImg2.resize(0, canvasHeight);
   toiletPaperImg1.resize(0, canvasHeight / 4.4);
   toiletPaperImg2.resize(0, canvasHeight / 4.4);
-
+  mirrorImg1.resize(0, canvasHeight / 4.4);
+  mirrorImg1.resize(0, canvasHeight / 4.4);
+  sinkImg1.resize(0, canvasHeight / 4.4);
+  sinkImg1.resize(0, canvasHeight / 4.4);
 
   toolWidth = 50;
   toolSpacer = 5;
@@ -153,6 +163,8 @@ function scaleAllTheThings(userWindowWidth, userWindowHeight) {
 }
 
 function setup() {
+  leaveSceneTimer();
+
   let canvasWidth = calculateCanvasWidth(window.innerWidth, window.innerHeight);
   let canvasHeight = calculateCanvasHeight(window.innerWidth, window.innerHeight);
   canvas = createCanvas(canvasWidth, canvasHeight);
@@ -160,17 +172,26 @@ function setup() {
   tiles = tileFactory(canvasWidth, canvasHeight);
   currentTile = tiles[0];
 
+  // 20 is the length of the triangle
+  triangleParams = createTriangleParameters(20);
+
   scaleAllTheThings(canvasWidth, canvasHeight);
 
   canvas.mouseMoved(hoverOnImg);
   textFont(firaFont, 40);
 
   function mouseClickFunctions() {
-    detectMouseOnTool(); // detect mouse on graf canvas tool
-    sceneSwitch(); // detect mouse on scene switch arrow
+    if(inTriangleCheck()) {
+      scene = 'mirror';
+      redraw();
+    } else {
+      detectMouseOnTool(); // detect mouse on graf canvas tool
+      sceneSwitch(); // detect mouse on scene switch arrow
 
-    toggleGraffitiCanvas(); // open or close graf canvas
-    startDrawPath(); // collect x and y points
+      toggleGraffitiCanvas(); // open or close graf canvas
+      startDrawPath(); // collect x and y points
+    }
+    redraw();
   }
 
   canvas.mousePressed(mouseClickFunctions); // run the mouse functions
@@ -260,24 +281,6 @@ function startDrawPath() {
   }
 }
 
-function hover(x, y, w, h, img2, img1){
-  if (mouseX > x && mouseX < x + w && mouseY > y && mouseY < y + h) {
-    image(img2, x, y);
-  } else {
-    image(img1, x, y);
-  }
-}
-
-function hoverOnImg() {
-  // image(toiletPaperImg1, window.innerWidth / 1.5, 240);
-  hover(window.innerWidth / 2  - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height, toiletImg2, toiletImg1);  // toilet hover
-  hover(window.innerWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height, toiletPaperImg2, toiletPaperImg1);  // tp hover
-}
-
-
-
-
-
 function endDrawPath() {
   isDrawing = false; // set isdrawing to false
 }
@@ -329,6 +332,7 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
   }
   pop();
 }
+
 
 function drawTileWriting(tile, scaleFactor, x, y, w, h) {
   push();
@@ -423,6 +427,24 @@ function saveTile(tile) {
   redraw();
 }
 
+function hover(x, y, w, h, img2, img1) {
+  if (mouseX > x && mouseX < x + w && mouseY > y && mouseY < y + h) {
+    image(img2, x, y);
+  } else {
+    image(img1, x, y);
+  }
+}
+
+function hoverOnImg() {
+  // image(toiletPaperImg1, window.innerWidth / 1.5, 240);
+  hover(window.innerWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height, toiletImg2, toiletImg1); // toilet hover
+  hover(window.innerWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height, toiletPaperImg2, toiletPaperImg1); // tp hover
+  // hover(window.innerWidth / 2 - mirrorImg1.width / 2, 0, mirrorImg1.width, mirrorImg2.height, mirrorImg2, mirrorImg1); // mirror hover
+  // hover(window.innerWidth / 2 - sinkImg1.width / 2, 0, sinkImg1.width, sinkImg2.height, sinkImg2, sinkImg1); // sink hover
+
+}
+
+
 function openMobileKeyboard() {
 
 }
@@ -432,6 +454,7 @@ function clearTile() {
   currentTile.writing = '';
   // openMobileKeyboard();
 }
+
 
 function detectMouseOnTool() {
   for (const tool in toolButtons) {
@@ -502,49 +525,67 @@ function drawGraffitiCanvas() {
 
 function sceneSwitch() {
   if (inTriangleCheck()) { // if click on button
-    if (scene == 'toilet') {
-      mirrorDraw();
-    } else if (scene == 'mirror') {
-      sinkDraw();
-    } else if (scene == 'sink') {
-      endDraw();
-    }
+    console.log('in tri');
+    scene == 'mirror';
   }
 }
 
-function inTriangleCheck() {
-  // function inTriangleCheck(px, py, x1, y1, x2, y2, x3, y3) {
-  // var areaOrig = floor(abs((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1)));
-  // var area1 = floor(abs((x1 - px) * (y2 - py) - (x2 - px) * (y1 - py)));
-  // var area2 = floor(abs((x2 - px) * (y3 - py) - (x3 - px) * (y2 - py)));
-  // var area3 = floor(abs((x3 - px) * (y1 - py) - (x1 - px) * (y3 - py)));
-  // if (area1 + area2 + area3 <= areaOrig) {
-
-  if (true) {
-    //return true;
-    console.log('true');
-  }
-  return false;
-  console.log('false');
-}
-
-
-function sceneSwitchArrow() {
-  stroke(DYELLOW);
-  strokeWeight(7);
-  let length = 400 * SCALEFACTOR
+function createTriangleParameters(length) {
   let y1 = window.innerHeight / 1.2;
   let y2 = y1 + length * 2;
   let x3 = window.innerWidth - length;
   let y3 = y1 + length;
-  let x1x2 = x3 - length * 1.5;
-  triangle(x1x2, y1, x1x2, y2, x3, y3)
+  let x1 = x3 - length * 1.5;
+
+  return {
+    length: length,
+    y1: y1,
+    y2: y2,
+    x3: x3,
+    y3: y3,
+    x1: x1,
+    x2: x1
+  };
+
+}
+
+function drawSceneArrow() {
+  stroke(DYELLOW);
+  strokeWeight(7);
+  let params = triangleParams;
+  triangle(params.x1, params.y1, params.x2, params.y2, params.x3, params.y3);
+}
+
+function sceneSwitchArrow() {
+  sceneSwitchArrowViz = true;
+  redraw();
 }
 
 function leaveSceneTimer() {
-  var timeoutID;
-  timeoutID = window.setTimeout(sceneSwitchArrow, 3 * 1000); // change this to be longer
-  sceneSwitchArrow();
+  window.setTimeout(sceneSwitchArrow, 1000); // change this to be longer
+}
+
+function inTriangleCheck() {
+  // function inTriangleCheck(px, py, x1, y1, x2, y2, x3, y3) {
+  let px = mouseX;
+  let py = mouseY;
+  //let {x1, y1, x2, y2, x3, y3} = triangleParams;
+  let x1 = triangleParams.x1;
+  let y1 = triangleParams.y1;
+  let x2 = triangleParams.x2;
+  let y2 = triangleParams.y2;
+  let x3 = triangleParams.x3;
+  let y3 = triangleParams.y2;
+
+  var areaOrig = floor(abs((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1)));
+  var area1 = floor(abs((x1 - px) * (y2 - py) - (x2 - px) * (y1 - py)));
+  var area2 = floor(abs((x2 - px) * (y3 - py) - (x3 - px) * (y2 - py)));
+  var area3 = floor(abs((x3 - px) * (y1 - py) - (x1 - px) * (y3 - py)));
+  if (area1 + area2 + area3 <= areaOrig) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 
@@ -562,17 +603,20 @@ function toiletDraw() {
     displayLargeTileGraffiti(); // show the open drawing/text
     captureDrawing(); // run the code to catch the drawing
   }
+  if(sceneSwitchArrowViz == true) {
+    drawSceneArrow();
+  }
   // console.log('Amount of time to compute the frame:', millis() - frameStartTime);
   // console.log('Current frame rate:', frameRate());
-  leaveSceneTimer();
 }
 
 function mirrorDraw() {
-  //image(mirrorImg1, -15, 50);
+  background(LBLUE);
+  image(mirrorImg1, window.innerWidth / 2 - mirrorImg1.width / 2, 0);
 }
 
 function sinkDraw() {
-  image(sinkImg1, -15, 50);
+  // image(sinkImg1, window.innerWidth / 2 - sinkImg1.width / 2, 0);
 }
 
 function draw() {

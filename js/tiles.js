@@ -1,4 +1,3 @@
-// how to make hover work? hover not recognized when not drawing.
 
 // drawing tools - random color (from list) and random font (+ font angle)
 // make an animation on hover
