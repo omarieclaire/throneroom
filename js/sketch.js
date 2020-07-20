@@ -68,7 +68,7 @@ let toolButtons = {
   clear: {
     // 'x': graffitiCanvasX + graffitiCanvasW + toolSpacer,
     // 'y': graffitiCanvasH + toolSpacer,
-    'x': window.innerWidth-toolWidth*1.5,
+    'x': window.innerWidth - toolWidth * 1.5,
     'y': toolWidth,
     'width': toolWidth,
     'height': toolWidth,
@@ -115,7 +115,7 @@ function calculateGraffitiCanvasHeight(canvasWidth, canvasHeight) {
 }
 
 function calculateGraffitiCanvasPositionX(canvasWidth, canvasHeight, graffitiCanvasW) {
-  return canvasWidth / 2 - graffitiCanvasW / 2 ;
+  return canvasWidth / 2 - graffitiCanvasW / 2;
 }
 
 function calculateGraffitiCanvasPositionY(canvasWidth, canvasHeight) {
@@ -188,12 +188,10 @@ function setup() {
 
   function mouseClickFunctions() {
     if (inTriangleCheck()) {
-      scene = 'mirror';
-      redraw();
-    } else if (detectMouseOnTool()) { // why does this work?
-      detectMouseOnTool(); // detect mouse on graf canvas tool
-    } else {
       sceneSwitch(); // detect mouse on scene switch arrow -- do I even need this now?
+    } else if (detectMouseOnTool()) { // why does this work?
+      drawTool(); // use draw tool
+    } else {
       toggleGraffitiCanvas(); // open or close graf canvas
       startDrawPath(); // collect x and y points
     }
@@ -469,21 +467,27 @@ function clearTile() {
   openMobileKeyboard();
 }
 
+function drawTool() {
+  if (toolButtons.clear.select) {
+    clearTile();
+    return true;
+  } else {
+    return false;
+  }
+}
+
 
 function detectMouseOnTool() {
   for (const tool in toolButtons) {
     let btn = toolButtons[tool];
     if (mouseX > btn.x && mouseX < btn.x + btn.width && mouseY > btn.y && mouseY < btn.y + btn.height) {
       btn.select = true;
+      return true;
     } else {
       btn.select = false;
     }
   }
-  if (toolButtons.clear.select) {
-    clearTile();
-    return true;
-  }
-}
+  return false;}
 
 function toggleGraffitiCanvas() { // open and close canvas
   const previousCurrentTile = currentTile; // set opentile to the last value of currenttile ( this is whatever it was last time this ran)
@@ -493,7 +497,7 @@ function toggleGraffitiCanvas() { // open and close canvas
   // console.log(`previousCurrentTile is ${previousCurrentTile.tile}`);
   // console.log(`tileClicked is ${tileClicked ? tileClicked.tile : "empty"}`);
 
-  if (typeof(tileClicked) !== 'undefined') { // if the mouse is actually clicking on a tile
+  // if (typeof(tileClicked) !== 'undefined') { // if the mouse is clicking on a tile // trying to comment this out so closing is easier with less tiles
     if (graffitiCanvasOpen) { //  if canvas being closed
       if (inGraffitiCanvasCheck() == false) { // prevents accidental closing
         previousCurrentTile['taken'] = false; //  remove hold on previousCurrentTile
@@ -517,7 +521,7 @@ function toggleGraffitiCanvas() { // open and close canvas
       }
       graffitiCanvasOpen = !graffitiCanvasOpen; // toggle canvas
     }
-  }
+  // }
 }
 
 function inGraffitiCanvasCheck() { // check if in the drawcanvas
@@ -538,16 +542,14 @@ function drawGraffitiCanvas() {
 }
 
 function sceneSwitch() {
-  if (inTriangleCheck()) { // if click on button
-    if (scene == 'line') {
-      scene = 'toilet';
-    } else if (scene == 'toilet') {
-      scene = 'sink';
-    } else if (scene == 'mirror') {
-      scene = 'sink';
-    } else if (scene == 'sink') {
-      scene = 'end'
-    }
+  if (scene == 'line') {
+    scene = 'toilet';
+  } else if (scene == 'toilet') {
+    scene = 'sink';
+  } else if (scene == 'mirror') {
+    scene = 'sink';
+  } else if (scene == 'sink') {
+    scene = 'end'
   }
 }
 
