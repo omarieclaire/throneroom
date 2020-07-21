@@ -1,21 +1,14 @@
-// change scene fix
-
+// WHEN to draw random colors, random fonts, randon font angles  - without flickering
+// add colors to image object
 
 // how can I make multiple timers in the setup when they are triggered by different things?
-// drawing tools - random color (from list) and random font (+ font angle)
 // make an animation on hover
-// integrate a "timer"
 // keyboard focus for mobile?
-// second scene - timer makes button appear "go to sink"
-// third scene - timer makes coundown appear
 // sound effects - open tile, close tile, isdrawing
-// fonts and integrate fonts and text angle
 // if canvas is bigger than X constrain it to a manageable size
 // vertical vs horizontal logic for sceneSwitchArrow
-
-
-// QUESTIONS
-// can I do "responsive" with
+// hover bug
+// click anywhere BUT the canvas to close the canvas
 
 // LATER
 // debug "taken"

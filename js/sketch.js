@@ -1,4 +1,8 @@
 let database;
+let currentColor = 'black';
+let currentFont = 'acki';
+let currentAngle = '-30';
+
 let scene = 'toilet';
 let DBLUE = '#a5c7da';
 let LBLUE = '#f0fafc';
@@ -11,7 +15,10 @@ let LPEACH = '#fedfcd';
 let DPEACH = '#ffbe99';
 let sceneSwitchArrowViz = false;
 let turnaround;
-let currentDrawPath = [];
+let currentDrawPath = {
+  path: [],
+  color: 'black'
+};
 let tileId = 1;
 let isDrawing = false;
 let graffitiCanvasOpen = false;
@@ -47,19 +54,18 @@ let triangleParams;
 let eventBuffer = [];
 
 let paintColors = [
-  // DBLUE,
-  // LBLUE,
+  DBLUE,
+  LBLUE,
   LPINK,
   DPINK,
-  // PURPLE,
-  // LYELLOW,
-  // DYELLOW,
-  // LPEACH,
-  // DPEACH
+  PURPLE,
+  LYELLOW,
+  DYELLOW,
+  DPEACH
 ];
 
 function createUUID() {
-  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, function(c) {
+  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, function(c) {
     return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
   });
 }
@@ -225,6 +231,7 @@ function setup() {
   scaleAllTheThings(canvasWidth, canvasHeight);
 
   canvas.mouseMoved(hoverOnImg);
+
   textFont(incon, 50);
 
   function mouseClickFunctions() {
@@ -386,7 +393,10 @@ function startDrawPath() {
   if (graffitiCanvasOpen) {
     // if (graffitiCanvasOpen && inGraffitiCanvasCheck()) -> inGraffitiCanvasCheck here breaks drawing on mobile - why?
     isDrawing = true; // set isdrawing to true
-    currentDrawPath = []; // reset current path to an empty
+    currentDrawPath = {
+      path: [], // reset current path to an empty
+      color: currentColor
+    };
     currentTile['drawing'].push(currentDrawPath); // push the current path to the drawing object
     return false;
   }
@@ -396,9 +406,9 @@ function endDrawPath() {
 
   isDrawing = false; // set isdrawing to false
   let event = {
-    type: 'add_stroke',
+    type: 'add_path',
     tile: currentTile.tile,
-    stroke: currentDrawPath
+    path: currentDrawPath
   };
   eventBuffer.push(event);
 }
@@ -410,7 +420,7 @@ function captureDrawing() {
         x: mouseX,
         y: mouseY
       };
-      currentDrawPath.push(point); // push that x and y into the currentDrawPath array
+      currentDrawPath.path.push(point); // push that x and y into the currentDrawPath array
     }
   }
 }
@@ -429,34 +439,40 @@ function drawTile(tile) {
   pop();
 }
 
-function chooseColor(){
-  let color;
-  color = random(paintColors);
-  return color;
+function chooseColor() {
+  // let currentColor;
+  return random(paintColors);
 }
 
-function chooseFont(){
-  let myfont;
-  myfont = random('acki', 'amali', 'candy', 'clemina', 'jsKang', 'reallyFree', 'syifana');
-  return myfont;
+function chooseFont() {
+  let currentfont;
+  fonts = [acki, amali, candy, clemina, jsKang, reallyFree, syifana];
+  currentfont = random(fonts);
+  return currentfont;
+}
+
+function chooseTextAngle() {
+  let currentAngle;
+  // angles = [];
+  currentAngle = random(-233, 36);
+  return currentAngle;
 }
 
 function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
   push();
   scale(scaleFactor, scaleFactor);
   translate(translateX, translateY);
-  stroke(chooseColor());
   noFill();
   strokeWeight(5);
-  let myFont = chooseFont();
-  textFont(myFont, 50);
+  textFont(incon, 50);
   let drawing = tile['drawing'];
   for (let i = 0; i < drawing.length; i++) { // foreach path in the drawing
-    let path = drawing[i]; // grab the next path
-    if (typeof(path) !== 'undefined') {
+    let pathObject = drawing[i]; // grab the next path
+    if (typeof(pathObject.path) !== 'undefined') {
+      stroke(pathObject.color);
       beginShape(); // draw
-      for (let j = 0; j < path.length; j++) { // for each coordinate in the path
-        vertex(path[j].x, path[j].y); // mark each vertex and draw a line between
+      for (let j = 0; j < pathObject.path.length; j++) { // for each coordinate in the path
+        vertex(pathObject.path[j].x, pathObject.path[j].y); // mark each vertex and draw a line between
       }
       endShape();
     }
@@ -468,7 +484,9 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
 function drawTileWriting(tile, scaleFactor, x, y, w, h) {
   push();
   noStroke();
-  fill('black');
+  textFont(currentFont, 50);
+
+  fill(currentColor);
   textSize(43);
   scale(scaleFactor, scaleFactor);
 
@@ -482,7 +500,7 @@ function drawTileWriting(tile, scaleFactor, x, y, w, h) {
   //}
   //endShape();
   //}
-
+  //rotate(0.5);
   text(tile['writing'], x, y, w, h);
   pop();
 }
@@ -556,13 +574,13 @@ function saveTile(tile) {
     let ref = database.ref('graffitiWall/' + tile['firebaseKey']);
     ref.update(tile);
   }
-  if(eventBuffer.length > 0) {
+  if (eventBuffer.length > 0) {
     let newBuffer = collapseEventBuffer(eventBuffer);
     let ref = database.ref('log');
     // submit all the events in order
     let promise = ref.push(newBuffer[0]);
     let tail = newBuffer.slice(1);
-    for(const i in tail) {
+    for (const i in tail) {
       promise = promise.then(function() {
         return ref.push(tail[i]);
       });
@@ -583,7 +601,6 @@ function hoverOnImg() {
   if (scene == 'toilet') {
     hover(window.innerWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height, toiletImg2, toiletImg1); // toilet hover
     hover(window.innerWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height, toiletPaperImg2, toiletPaperImg1); // tp hover
-
   } else if (scene == 'mirror') {
     redraw();
     hover(window.innerWidth / 2 - mirrorImg1.width / 2, 0, mirrorImg1.width, mirrorImg2.height, mirrorImg2, mirrorImg1); // mirror hover
@@ -600,7 +617,10 @@ function openMobileKeyboard() {
 }
 
 function clearTile() {
-  currentTile.drawing = [];
+  currentTile.drawing = {
+    path: [],
+    color: 'black'
+  };
   currentTile.writing = '';
   openMobileKeyboard();
 }
@@ -634,12 +654,6 @@ function detectMouseOnTool() {
 
 function toggleGraffitiCanvas(tileClicked) { // open and close canvas
   const previousCurrentTile = currentTile; // set opentile to the last value of currenttile ( this is whatever it was last time this ran)
-
-  // console.log(`currentTile is ${currentTile.tile}`);
-  // console.log(`previousCurrentTile is ${previousCurrentTile.tile}`);
-  // console.log(`tileClicked is ${tileClicked ? tileClicked.tile : "empty"}`);
-
-  // if (typeof(tileClicked) !== 'undefined') { // if the mouse is clicking on a tile // trying to comment this out so closing is easier with less tiles
   if (graffitiCanvasOpen) { //  if canvas being closed
     if (inGraffitiCanvasCheck() == false) { // prevents accidental closing
       previousCurrentTile['taken'] = false; //  remove hold on previousCurrentTile
@@ -647,23 +661,19 @@ function toggleGraffitiCanvas(tileClicked) { // open and close canvas
       graffitiCanvasOpen = !graffitiCanvasOpen; // toggle canvas state
       noLoop(); // stop looping draw - for speed
     }
-
   } else { // if canvas is being opened
-    // console.log(`previousCurrentTile is ${previousCurrentTile.tile}`);
-    // console.log(`tileClicked is ${tileClicked.tile}`);
+    currentColor = chooseColor();
+    currentFont = chooseFont();
+    currentAngle = chooseTextAngle();
     loop(); // start looping draw
     currentTile = tileClicked // update 'current tile' to the tile that was clicked
-    // console.log(`previousCurrentTile is ${previousCurrentTile.tile}`);
-    // console.log(`tileClicked is ${tileClicked.tile}`);
     // openTileSound.play();
-
     if (currentTile.taken === false) { // if the tile is not currently taken
       currentTile['taken'] = true; // 'take' (reserve) the tile
       saveTile(currentTile);
     }
     graffitiCanvasOpen = !graffitiCanvasOpen; // toggle canvas
   }
-  // }
 }
 
 function inGraffitiCanvasCheck() { // check if in the drawcanvas
@@ -756,10 +766,6 @@ function inSceneSwitchArrowCheck() {
 
 function toiletDraw() {
   // let frameStartTime = millis();
-  background(LBLUE);
-  displaySmallTileGraffiti(); // show all the small drawings/text
-  image(toiletImg1, window.innerWidth / 2 - toiletImg1.width / 2, 0);
-  image(toiletPaperImg1, window.innerWidth / 1.5, 240);
 
   if (graffitiCanvasOpen) { // if canvas is open
     highlightOpenTile(currentTile.position.x, currentTile.position.y, currentTile.width, currentTile.height);
@@ -767,10 +773,20 @@ function toiletDraw() {
     graffitiTools();
     displayLargeTileGraffiti(); // show the open drawing/text
     captureDrawing(); // run the code to catch the drawing
+
+  } else {
+
+    background(LBLUE);
+    displaySmallTileGraffiti(); // show all the small drawings/text
+    image(toiletImg1, window.innerWidth / 2 - toiletImg1.width / 2, 0);
+    image(toiletPaperImg1, window.innerWidth / 1.5, 240);
+
+    if (sceneSwitchArrowViz == true) {
+      drawSceneSwitchArrow();
+    }
+
   }
-  if (sceneSwitchArrowViz == true) {
-    drawSceneSwitchArrow();
-  }
+
   // console.log('Amount of time to compute the frame:', millis() - frameStartTime);
   // console.log('Current frame rate:', frameRate());
 }
@@ -829,18 +845,18 @@ function collapseEventBuffer(buffer) {
   let msg = "";
   let newBuffer = [];
 
-  for(let i in buffer) {
+  for (let i in buffer) {
     let event = buffer[i];
-    if(event.type === 'add_character') {
+    if (event.type === 'add_character') {
       msg += event.char;
-    } else if(event.type === 'remove_character') {
-      msg = msg.slice(0,-1);
+    } else if (event.type === 'remove_character') {
+      msg = msg.slice(0, -1);
     } else {
       newBuffer.push(event);
     }
   }
 
-  if(msg.length > 0) {
+  if (msg.length > 0) {
     newBuffer.push({
       tile: buffer[0].tile,
       type: 'update_writing',
@@ -858,29 +874,31 @@ function takeSnapshot() {
 }
 
 function handleEvent(event, key) {
-  if(event.type === 'add_stroke') {
-
+  if (event.type === 'add_path') {
     // assume .tile has id, and .stroke
     let tileId = event.tile;
-    tiles[tileId].drawing.push(event.stroke);
+    tiles[tileId].drawing.push(event.path);
 
-  } else if(event.type === 'update_writing') {
+  } else if (event.type === 'update_writing') {
 
     let tileId = event.tile;
     tiles[tileId].writing = event.writing;
 
-  } else if(event.type === 'clear_tile') {
+  } else if (event.type === 'clear_tile') {
 
     // assume .tile has id
     let tileId = event.tile;
-    tiles[tileId].drawing.clear();
+    tiles[tileId].drawing = {
+      path: [],
+      color: 'black'
+    };
     tiles[tileId].writing = "";
     tiles[tileId].taken = false;
 
-  } else if(event.type === 'snapshot') {
+  } else if (event.type === 'snapshot') {
     // only take snapshots from your current session
     // otherwise skip the snapshot events
-    if(event.session === SESSION_ID) {
+    if (event.session === SESSION_ID) {
       let ref = database.ref('snapshot');
       ref.push({
         tiles: tiles,
@@ -891,33 +909,55 @@ function handleEvent(event, key) {
   } else {
     console.log(`received event type we could not handle: ${event.type}`);
   }
+  console.log('redraw');
   redraw();
 }
 
 function initializeFromSnapshot(firebase) {
   let database = firebase.database();
+  let snapshotRef = database.ref('/snapshot');
 
-  database
-    .ref('/snapshot')
-    .orderByKey()
-    .limitToLast(1)
-    .once('child_added', function(snap) {
-      let snapshot = snap.val();
-      let snapshotKey = snapshot.key;
-      buildMap(snapshot.tiles);
-      // new reference
+  snapshotRef.once('value', function(snapshot) {
+    let dbSnapshot = snapshot.val();
+
+    if (dbSnapshot === null) {
+      // no snapshots exist, start from beginning of log
       let ref =
         database
-          .ref('/log')
-          .orderByKey()
-          .startAt(snapshotKey);
+        .ref('/log')
+        .orderByKey()
 
       return ref.on('child_added', function(data) {
         let event = data.val();
         let key = data.key;
         handleEvent(event, key);
       }, printErrors);
-    }, printErrors);
+    } else {
+      // snapshots exist, so start from the most
+      // recent snapshot
+      database
+        .ref('/snapshot')
+        .orderByKey()
+        .limitToLast(1)
+        .once('child_added', function(snap) {
+          let snapshot = snap.val();
+          let snapshotKey = snapshot.key;
+          buildMap(snapshot.tiles);
+          // new reference
+          let ref =
+            database
+            .ref('/log')
+            .orderByKey()
+            .startAt(snapshotKey);
+
+          return ref.on('child_added', function(data) {
+            let event = data.val();
+            let key = data.key;
+            handleEvent(event, key);
+          }, printErrors);
+        }, printErrors);
+    }
+  });
 }
 
 
