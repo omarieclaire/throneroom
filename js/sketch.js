@@ -32,10 +32,40 @@ let mirrorImg1;
 let mirrorImg2;
 let sinkImg1;
 let sinkImg2;
-let firaFont;
+
+let incon;
+
+let acki;
+let amali;
+let candy;
+let clemina;
+let jsKang;
+let reallyFree;
+let syifana;
 let tiles;
 let triangleParams;
 
+let fonts = [
+  acki,
+  amali,
+  candy,
+  clemina,
+  jsKang,
+  reallyFree,
+  syifana
+];
+
+let paintColors = [
+  // DBLUE,
+  // LBLUE,
+  LPINK,
+  DPINK,
+  // PURPLE,
+  // LYELLOW,
+  // DYELLOW,
+  // LPEACH,
+  // DPEACH
+];
 
 function dataSent(data, err) {}
 
@@ -48,7 +78,15 @@ function preload() {
   mirrorImg2 = loadImage('img/mirrorImg2.png');
   sinkImg1 = loadImage('img/sinkImg1.png');
   sinkImg2 = loadImage('img/sinkImg2.png');
-  firaFont = loadFont('fonts/FiraSans-Book.otf');
+
+  incon = loadFont('fonts/Incon.ttf');
+  acki = loadFont('fonts/Acki.ttf');
+  amali = loadFont('fonts/Amali.ttf');
+  candy = loadFont('fonts/Candy.ttf');
+  clemina = loadFont('fonts/Clemina.otf');
+  jsKang = loadFont('fonts/JsKang.ttf');
+  reallyFree = loadFont('fonts/ReallyFree.ttf');
+  syifana = loadFont('fonts/Syifana.ttf');
 
   openTileSound = document.createElement('audio');
 
@@ -187,14 +225,14 @@ function setup() {
   scaleAllTheThings(canvasWidth, canvasHeight);
 
   canvas.mouseMoved(hoverOnImg);
-  textFont(firaFont, 40);
+  textFont(incon, 50);
 
   function mouseClickFunctions() {
-    let itemClicked = whatWasClicked(); // step 1: what was clicked.
-    let clicked = itemClicked['clicked']; // assume itemClicked is an object with two fields: clicked and entity.
-    let item = itemClicked['item'];
-    clickActions(clicked, item); // step 2: respond to what was clicked.
-    redraw();
+    let itemClicked = whatWasClicked(); // all this does is determine what was clicked
+    let clicked = itemClicked['clicked']; // grab clicked
+    let item = itemClicked['item']; // grab item
+    clickActions(clicked, item); // call func
+    redraw(); //redraw after every click action
   }
 
   toolButtons = makeToolButtons(graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH);
@@ -278,8 +316,7 @@ function windowResized() {
 
 
 function whatWasClicked() {
-
-  let arrow = inTriangleCheck();
+  let arrow = inSceneSwitchArrowCheck();
   if (arrow) {
     return {
       clicked: 'arrowClicked',
@@ -380,14 +417,26 @@ function drawTile(tile) {
   pop();
 }
 
+function chooseColor(){
+  let color;
+  color = random(paintColors);
+  return color;
+}
+
+function chooseFont(){
+  let font;
+  font = random(fonts);
+  return font;
+}
+
 function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
   push();
   scale(scaleFactor, scaleFactor);
   translate(translateX, translateY);
-  stroke('black');
+  stroke(chooseColor());
   noFill();
   strokeWeight(5);
-
+  // textFont(chooseFont(), 50);
   let drawing = tile['drawing'];
   for (let i = 0; i < drawing.length; i++) { // foreach path in the drawing
     let path = drawing[i]; // grab the next path
@@ -613,7 +662,7 @@ function sceneSwitch() {
   if (scene == 'line') {
     scene = 'toilet';
   } else if (scene == 'toilet') {
-    scene = 'sink';
+    scene = 'mirror';
   } else if (scene == 'mirror') {
     scene = 'sink';
   } else if (scene == 'sink') {
@@ -640,24 +689,24 @@ function createTriangleParameters(length) {
 
 }
 
-function drawSceneArrow() {
+function drawSceneSwitchArrow() {
   stroke(DYELLOW);
   strokeWeight(7);
   let params = triangleParams;
   triangle(params.x1, params.y1, params.x2, params.y2, params.x3, params.y3);
 }
 
-function sceneSwitchArrow() {
-  sceneSwitchArrowViz = true;
+function redrawSceneSwitchArrow() {
+  sceneSwitchArrowViz = true; // keep drawing the arrow
   redraw();
 }
 
 function leaveSceneTimer(waitTime) {
-  window.setTimeout(sceneSwitchArrow, waitTime); // change this to be longer
+  window.setTimeout(redrawSceneSwitchArrow, waitTime); // change this to be longer
 }
 
-function inTriangleCheck() {
-  // function inTriangleCheck(px, py, x1, y1, x2, y2, x3, y3) {
+function inSceneSwitchArrowCheck() {
+  // function inSceneSwitchArrowCheck(px, py, x1, y1, x2, y2, x3, y3) {
   let px = mouseX;
   let py = mouseY;
   //let {x1, y1, x2, y2, x3, y3} = triangleParams;
@@ -695,7 +744,7 @@ function toiletDraw() {
     captureDrawing(); // run the code to catch the drawing
   }
   if (sceneSwitchArrowViz == true) {
-    drawSceneArrow();
+    drawSceneSwitchArrow();
   }
   // console.log('Amount of time to compute the frame:', millis() - frameStartTime);
   // console.log('Current frame rate:', frameRate());
@@ -707,6 +756,7 @@ function mirrorDraw() {
 }
 
 function sinkDraw() {
+  background(LBLUE);
   image(sinkImg1, window.innerWidth / 2 - sinkImg1.width / 2, 0);
 }
 
