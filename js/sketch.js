@@ -190,14 +190,10 @@ function setup() {
   textFont(firaFont, 40);
 
   function mouseClickFunctions() {
-    if (inTriangleCheck()) {
-      sceneSwitch(); // detect mouse on scene switch arrow -- do I even need this now?
-    } else if (detectMouseOnTool()) { // why does this work?
-      drawTool(); // use draw tool
-    } else {
-      toggleGraffitiCanvas(); // open or close graf canvas
-      startDrawPath(); // collect x and y points
-    }
+    let itemClicked = whatWasClicked(); // step 1: what was clicked.
+    let clicked = itemClicked['clicked']; // assume itemClicked is an object with two fields: clicked and entity.
+    let item = itemClicked['item'];
+    clickActions(clicked, item); // step 2: respond to what was clicked.
     redraw();
   }
 
@@ -275,18 +271,82 @@ function setup() {
 function windowResized() {
   let canvasWidth = calculateCanvasWidth(window.innerWidth, window.innerHeight);
   let canvasHeight = calculateCanvasHeight(window.innerWidth, window.innerHeight);
+  console.log(`resize: w = ${canvasWidth}, h = ${canvasHeight}`);
   resizeCanvas(canvasWidth, canvasHeight);
   scaleAllTheThings();
+}
+
+
+function whatWasClicked() {
+
+  let arrow = inTriangleCheck();
+  if (arrow) {
+    return {
+      clicked: 'arrowClicked',
+      item: undefined
+    };
+  }
+
+  // is the canvas open? if so, check if we've clicked on either:
+  // a. a tool, or
+  // b. the canvas
+  if (graffitiCanvasOpen) {
+    let tool = detectMouseOnTool();
+    if (typeof(tool) !== 'undefined') {
+      return {
+        clicked: 'toolClicked',
+        item: tool
+      };
+    }
+
+    let canvas = inGraffitiCanvasCheck();
+    if (canvas) {
+      return {
+        clicked: 'canvasClicked',
+        item: undefined // i have no idea
+      };
+    }
+  }
+
+  let tile = detectMouseOnTile(); // click on a tile?
+  if (typeof(tile) !== 'undefined') { //clicked on a tile.
+    return {
+      clicked: 'tileClicked',
+      item: tile // findme
+    };
+  }
+
+  return {
+    clicked: 'nothing',
+    item: undefined
+  };
+}
+
+function clickActions(wasClicked, item) {
+  if (wasClicked == 'arrowClicked') {
+    sceneSwitch();
+  } else if (wasClicked == 'toolClicked') {
+    handleToolClick(item);
+  } else if (wasClicked == 'canvasClicked') {
+    startDrawPath()
+  } else if (wasClicked == 'tileClicked') {
+    toggleGraffitiCanvas(item);
+    startDrawPath();
+  } else if (wasClicked == 'nothing') {
+    // do nothing
+  } else {
+    // we should never end up here
+    console.log(`ERROR: clickActions received item it cannot handle. wasClicked=${wasClicked} item=${item}`);
+  }
 }
 
 function startDrawPath() {
   if (graffitiCanvasOpen) {
     // if (graffitiCanvasOpen && inGraffitiCanvasCheck()) -> inGraffitiCanvasCheck here breaks drawing on mobile - why?
     isDrawing = true; // set isdrawing to true
-    currentDrawPath = []; // reset current path to an empty object
+    currentDrawPath = []; // reset current path to an empty
     currentTile['drawing'].push(currentDrawPath); // push the current path to the drawing object
     return false;
-
   }
 }
 
@@ -375,7 +435,6 @@ function graffitiTools() {
   let toolSpacer = 10;
   for (const tool in toolButtons) {
     let btn = toolButtons[tool];
-    console.log(btn.y);
     fill(DBLUE);
     // rect(10, 10, 100, 100);
     rect(btn.x, btn.y, btn.width, btn.height);
@@ -463,7 +522,7 @@ function hoverOnImg() {
 
 
 function openMobileKeyboard() {
-  input();
+  //input();
 }
 
 function clearTile() {
@@ -472,32 +531,35 @@ function clearTile() {
   openMobileKeyboard();
 }
 
-function drawTool() {
-  if (toolButtons.clear.select) {
+function handleToolClick(tool) {
+  if (tool.text === 'write') {
+    // TODO
+  } else if (tool.text === 'CLEAR') {
     clearTile();
-    return true;
+
   } else {
-    return false;
+    // do nothing
+    console.log(`ERROR: handleToolClick received a text it could not handle: tool=${JSON.stringify(tool)}`);
   }
 }
 
 
 function detectMouseOnTool() {
+  var buttonClicked;
   for (const tool in toolButtons) {
     let btn = toolButtons[tool];
     if (mouseX > btn.x && mouseX < btn.x + btn.width && mouseY > btn.y && mouseY < btn.y + btn.height) {
       btn.select = true;
-      return true;
+      buttonClicked = btn;
     } else {
       btn.select = false;
     }
   }
-  return false;
+  return buttonClicked;
 }
 
-function toggleGraffitiCanvas() { // open and close canvas
+function toggleGraffitiCanvas(tileClicked) { // open and close canvas
   const previousCurrentTile = currentTile; // set opentile to the last value of currenttile ( this is whatever it was last time this ran)
-  let tileClicked = detectMouseOnTile(); // grab mouse location (over which tile when clicking)
 
   // console.log(`currentTile is ${currentTile.tile}`);
   // console.log(`previousCurrentTile is ${previousCurrentTile.tile}`);

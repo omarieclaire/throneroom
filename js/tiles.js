@@ -7,6 +7,13 @@
 // then handle each thing clicked on differently
 
 
+// havea funct that returns the string tile when tile is clicked
+// want to return the string tile and the tile that was clicked
+// update the function that detects what was clicked to return both the string and the "entity" related to that click
+// sometimes that will be undefined. the way you return both things is by packaging them as an object and returning that object
+//
+// need to update all other functions so they can accept the object
+
 
 
 
