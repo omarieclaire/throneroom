@@ -45,16 +45,6 @@ let syifana;
 let tiles;
 let triangleParams;
 
-let fonts = [
-  acki,
-  amali,
-  candy,
-  clemina,
-  jsKang,
-  reallyFree,
-  syifana
-];
-
 let paintColors = [
   // DBLUE,
   // LBLUE,
@@ -424,9 +414,9 @@ function chooseColor(){
 }
 
 function chooseFont(){
-  let font;
-  font = random(fonts);
-  return font;
+  let myfont;
+  myfont = random('acki', 'amali', 'candy', 'clemina', 'jsKang', 'reallyFree', 'syifana');
+  return myfont;
 }
 
 function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
@@ -436,7 +426,8 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
   stroke(chooseColor());
   noFill();
   strokeWeight(5);
-  // textFont(chooseFont(), 50);
+  let myFont = chooseFont();
+  textFont(myFont, 50);
   let drawing = tile['drawing'];
   for (let i = 0; i < drawing.length; i++) { // foreach path in the drawing
     let path = drawing[i]; // grab the next path
