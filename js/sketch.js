@@ -220,8 +220,7 @@ function snapshotter() {
 }
 
 function setup() {
-  leaveSceneTimer(5000);
-
+  leaveSceneTimer(1000);
   input = createInput();
   input.position(-100, -100);
 
@@ -864,7 +863,7 @@ function toggleGraffitiCanvas(tileClicked) { // open and close canvas
     currentAngle = chooseTextAngle();
     loop(); // start looping draw
     currentTile = tileClicked // update 'current tile' to the tile that was clicked
-    // openTileSound.play();
+    openTileSound.play();
     if (currentTile.taken === false) { // if the tile is not currently taken
       currentTile['taken'] = true; // 'take' (reserve) the tile
       saveTile(currentTile);
@@ -893,10 +892,13 @@ function drawGraffitiCanvas() {
 function sceneSwitch() {
   if (scene == 'line') {
     scene = 'toilet';
+    leaveSceneTimer(3000);
   } else if (scene == 'toilet') {
     scene = 'mirror';
+    leaveSceneTimer(3000);
   } else if (scene == 'mirror') {
     scene = 'sink';
+    leaveSceneTimer(3000);
   } else if (scene == 'sink') {
     scene = 'end'
   }
@@ -974,7 +976,6 @@ function lineupDraw(){
   text(lineText, 0, 0, 1200, 500);
 
   pop();
-  leaveSceneTimer(3000);
 }
 
 function toiletDraw() {
