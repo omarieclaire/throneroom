@@ -1,15 +1,11 @@
 //////// BUGS ////////
-// drawSceneSwitchArrow is hovering weird.
-// double click on arrow moves me forward two scenes
 // drawings aren't scaling on mobile :(
-// timers appearing when they shouldn't
-// tiles all load the same font?
+// tile font loading late
 // after hitting clear, can't draw
 // stop hardclick on mobile
 
 
 //////// TODO ////////
-// debug entry music sound playing
  // figure out where to put - writingSound.play(); and pause
 // make toilet paper tile - a off-white draw canvas that doesn't call save when closing, instead calls a sound and animation
 // debug "width" and "height" - make global variables and use them everywhere?
@@ -30,6 +26,7 @@
 // CHOOSE sound or reading in lineup
 // choose light or dark in lineup
 // anything to say before you go? (text in last scene)
+// make small images for mirror and sink scene
 
 //////// LATER ////////
 // refactor code so canvas is only the drawcanvas

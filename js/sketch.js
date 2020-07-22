@@ -43,8 +43,7 @@ let mirrorImg2;
 let sinkImg1;
 let sinkImg2;
 
-let incon;
-
+let monospace;
 let acki;
 let amali;
 let candy;
@@ -98,6 +97,7 @@ function preload() {
   mirrorImg2 = loadImage('img/mirrorImg2.png');
   sinkImg1 = loadImage('img/sinkImg1.png');
   sinkImg2 = loadImage('img/sinkImg2.png');
+  // monospace = loadFont('monospace');
 
   incon = loadFont('fonts/Incon.ttf');
   acki = loadFont('fonts/Acki.ttf');
@@ -275,8 +275,8 @@ function snapshotter() {
 }
 
 function setup() {
-  // input = createInput();
-  // input.position(-100, -100);
+  input = createInput(); // make input for text
+  input.position(0, 0);
   let canvasWidth = calculateCanvasWidth(window.innerWidth, window.innerHeight);
   let canvasHeight = calculateCanvasHeight(window.innerWidth, window.innerHeight);
   canvas = createCanvas(canvasWidth, canvasHeight);
@@ -917,7 +917,8 @@ function clearTile() {
 
 function handleToolClick(tool) {
   if (tool.text === 'write') {
-    // TODO
+    input.elt.focus();
+    console.log('focus!');
   } else if (tool.text === 'CLEAR') {
     clearTile();
 
@@ -1071,7 +1072,7 @@ function startTimer(){
 }
 
 function preLineupDraw(){
-  let lineText = "Enter bathroom?";
+  let lineText = "Enter the bathroom?";
   push();
   background('black');
   textFont(incon);
