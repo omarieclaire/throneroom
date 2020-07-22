@@ -1,18 +1,16 @@
 //////// BUGS ////////
-// drawings aren't scaling on mobile
+// drawSceneSwitchArrow is hovering weird.
+// double click on arrow moves me forward two scenes
+// drawings aren't scaling on mobile :(
 // timers appearing when they shouldn't
 // tiles all load the same font?
-// arrow flickering in at beginning - it's the hover?
-// can't click on TP
 // after hitting clear, can't draw
 // stop hardclick on mobile
 
 
-
-
 //////// TODO ////////
-// create and integrate sound effects - open tile, close tile, isdrawing, makeup, water washing and voice washing
-// need to click on a button to play first sound;
+// debug entry music sound playing
+ // figure out where to put - writingSound.play(); and pause
 // make toilet paper tile - a off-white draw canvas that doesn't call save when closing, instead calls a sound and animation
 // debug "width" and "height" - make global variables and use them everywhere?
 // make "device orientation" function that impacts the placement of toolbuttons and the sceneSwitch arrow (center/bottom for mobile)
@@ -22,10 +20,12 @@
 // after 26 characters without a space or linebreak, insert a space
 // click anywhere BUT the opengraffitidrawcanvas to close the canvas
 // select color palette for drawing
+// timer should only start after you click
 // improve images
 // improve sounds
 
 //////// IF TIME ////////
+// water flowing image on click for sink scene
 // make scale better
 // CHOOSE sound or reading in lineup
 // choose light or dark in lineup

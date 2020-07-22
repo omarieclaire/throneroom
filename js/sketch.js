@@ -4,8 +4,8 @@ let screenOrientation;
 let currentColor = 'black';
 let currentFont = 'acki';
 let currentAngle = '1';
-let scene = 'line';
-let timer = 5;
+let scene = 'preline';
+let timerCount = 5;
 
 let DBLUE = '#a5c7da';
 let LBLUE = '#f0fafc';
@@ -56,7 +56,6 @@ let tiles;
 let triangleParams;
 let isMobile = window.innerWidth <= 800;
 let eventBuffer = [];
-// let lastItemHovered;
 
 let paintColors = [
   DBLUE,
@@ -320,8 +319,6 @@ function setup() {
   // canvas.mouseMoved(mouseHoverFunctions); // run the mouse functions
   // canvas.mouseOut(mouseHoverFunctions); // run the mouse functions
 
-  // canvas.mouseMoved(hoverOnImg);
-
 
   canvas.touchStarted(startDrawPath); //
   canvas.parent('canvascontainer'); // parent the canvas to the canvas container
@@ -408,22 +405,21 @@ function windowResized() {
 function whatWasClicked() {
 
   let arrow = arrowMouseCheck();
-  if (arrow) {
+  if (arrow && sceneSwitchArrowViz) {
     return {
       clicked: 'arrowClicked',
       item: undefined
     };
   }
-  if (scene == 'line') {
-    if (true) {
+  let join = joinLine();
+  if (scene == 'preline') {
+    if (join) {
       return {
-        clicked: 'startClicked',
+        clicked: 'joinLineClicked',
         item: undefined
       };
     }
   }
-
-
 
   if (scene == 'toilet') { // only check this stuff in the toilet scene
     if (graffitiCanvasOpen) { // if canvas open
@@ -480,9 +476,11 @@ function whatWasClicked() {
 }
 
 function clickActions(wasClicked, item) {
-  if (wasClicked == 'startClicked') {
-    startTimer();
+  if (wasClicked == 'joinLineClicked') {
+    lineupSound.play();
+    sceneSwitch();
   } else if (wasClicked == 'arrowClicked') {
+    sceneSwitchArrowViz = false;
     sceneSwitch();
   } else if (wasClicked == 'toolClicked') {
     handleToolClick(item);
@@ -622,26 +620,40 @@ function smallImgMouseCheck() {
   }
 }
 
+function joinLine(){
+  if (mouseX > 0 && mouseX < window.innerWidth && mouseY > 0 && mouseY < window.innerHeight) {
+    console.log(`join line true`);
+    return true;
+  } else {
+    return false;
+  }
+}
+
+
 function hoverOnImg() {
   if (!graffitiCanvasOpen) {
     if (scene == 'toilet') {
       hoverReplace(window.innerWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height, toiletImg2, toiletImg1); // toilet hover
       hoverReplace(window.innerWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height, toiletPaperImg2, toiletPaperImg1); // tp hover
     } else if (scene == 'mirror') {
-      // redraw();
+      redraw();
       hoverReplace(window.innerWidth / 2 - mirrorImg1.width / 2, 0, mirrorImg1.width, mirrorImg2.height, mirrorImg2, mirrorImg1); // mirror hover
 
     } else if (scene == 'sink') {
-      // redraw();
+      redraw();
       hoverReplace(window.innerWidth / 2 - sinkImg1.width / 2, 0, sinkImg1.width, sinkImg2.height, sinkImg2, sinkImg1); // sink hover
     }
-    if (arrowMouseCheck()) {
+    // if (arrowMouseCheck() && sceneSwitchArrowViz == true) {
+    if (sceneSwitchArrowViz && arrowMouseCheck()) {
+      console.log(`hover time! sceneSwitchArrowViz and arrowMouseCheck are both true`);
       drawSceneSwitchArrow(DYELLOW, LYELLOW);
-    } else {
+    } else if (sceneSwitchArrowViz) {
       drawSceneSwitchArrow(DBLUE, LBLUE);
+      console.log(`hover "else" time!`);
+    } else {
+      // do nothing
     }
   }
-
 }
 
 function largeImgDeal() {
@@ -653,7 +665,6 @@ function largeImgDeal() {
     // mirror sound and animation
   } else if (scene == 'sink') {
     waterSound.play();
-
     // sink sound and animation
   }
 }
@@ -661,7 +672,6 @@ function largeImgDeal() {
 function smallImgDeal() {
   if (scene == 'toilet') {
     tpSound.play();
-
     // toilet paper canvas
   } else if (scene == 'mirror') {
     // makeup window
@@ -892,9 +902,9 @@ function hoverReplace(x, y, w, h, img2, img1) {
 
 
 
-function openMobileKeyboard() {
-  //input();
-}
+// function openMobileKeyboard() {
+//   //input();
+// }
 
 function clearTile() {
   currentTile.drawing = {
@@ -902,7 +912,7 @@ function clearTile() {
     color: 'black'
   };
   currentTile.writing = '';
-  openMobileKeyboard();
+  // openMobileKeyboard();
 }
 
 function handleToolClick(tool) {
@@ -975,18 +985,23 @@ function drawGraffitiCanvas() {
 }
 
 function sceneSwitch() {
-  if (scene == 'line') {
+  if (scene == 'preline') {
+    scene = 'line';
+  } else if (scene == 'line') {
     scene = 'toilet';
     leaveSceneTimer(3000);
     noLoop(); // stop toilet from looping
   } else if (scene == 'toilet') {
     scene = 'mirror';
+    redraw();
     leaveSceneTimer(3000);
   } else if (scene == 'mirror') {
     scene = 'sink';
+    redraw();
     leaveSceneTimer(3000);
   } else if (scene == 'sink') {
     scene = 'end'
+    redraw();
   }
 }
 
@@ -1009,6 +1024,7 @@ function createTriangleParameters(length) {
 }
 
 function drawSceneSwitchArrow(outercolor, innercolor) {
+  sceneSwitchArrowViz = true;
   push();
   stroke(outercolor);
   fill(innercolor);
@@ -1023,7 +1039,7 @@ function redrawSceneSwitchArrow() {
   redraw();
 }
 
-function leaveSceneTimer(waitTime) {
+function leaveSceneTimer(waitTime) { // used to set the timeouts
   window.setTimeout(redrawSceneSwitchArrow, waitTime); // change this to be longer
 }
 
@@ -1051,22 +1067,36 @@ function arrowMouseCheck() {
 }
 
 function startTimer(){
-  lineupSound.play();
+
 }
 
-
-function lineupDraw() {
-  let lineText = "You are in line for the bathroom \n (" + timer + ")";
+function preLineupDraw(){
+  let lineText = "Enter bathroom?";
   push();
   background('black');
-  if (frameCount % 60 == 0 && timer > 0) { // if the frameCount is divisible by 60, then a second has passed. it will stop at 0
-    timer--;
+  textFont(incon);
+  textAlign(CENTER, CENTER);
+  fill(DBLUE);
+  rectMode(CENTER);
+  text(lineText, window.innerWidth / 2, window.innerHeight / 2, window.innerWidth / 1.5, window.innerHeight / 2);
+  pop();
+}
+
+function lineupDraw() {
+  let lineText = "You are in line for the bathroom \n (" + timerCount + ")";
+  push();
+  background('black');
+
+  if (frameCount % 60 == 0 && timerCount > -1) { // if the frameCount is divisible by 60, a second has passed. it will stop at 0
+    timerCount--;
   }
-  if (timer == 0) {
+  if (timerCount == -1) {
+    timerCount = 0;
     lineupSound.pause();
-    drawSceneSwitchArrow(DYELLOW, LYELLOW);
+    drawSceneSwitchArrow(DBLUE, LBLUE);
+    noLoop();
   }
-  // lineupSound.play();
+
   textFont(incon);
   textAlign(CENTER, CENTER);
   fill(DBLUE);
@@ -1077,25 +1107,20 @@ function lineupDraw() {
 
 function toiletDraw() {
   // let frameStartTime = millis();
-
   if (graffitiCanvasOpen) { // if canvas is open
     // highlightOpenTile(currentTile.position.x, currentTile.position.y, currentTile.width, currentTile.height);
     drawGraffitiCanvas();
     graffitiTools(DBLUE);
     displayLargeTileGraffiti(); // show the open drawing/text
     captureDrawing(); // run the code to catch the drawing
-
   } else {
-
     background(LBLUE);
     displaySmallTileGraffiti(); // show all the small drawings/text
     image(toiletImg1, window.innerWidth / 2 - toiletImg1.width / 2, 0);
     image(toiletPaperImg1, window.innerWidth / 1.5, 240);
-
-    if (sceneSwitchArrowViz == true) {
-      drawSceneSwitchArrow(DYELLOW, LYELLOW);
-    }
-
+    // if (sceneSwitchArrowViz == true) {
+    //   drawSceneSwitchArrow(DYELLOW, LYELLOW);
+    // }
   }
 
   // console.log('Amount of time to compute the frame:', millis() - frameStartTime);
@@ -1128,7 +1153,9 @@ function endDraw() {
 }
 
 function draw() {
-  if (scene == 'line') {
+  if (scene == 'preline') {
+    preLineupDraw();
+  } else if (scene == 'line') {
     lineupDraw();
   } else if (scene == 'toilet') {
     toiletDraw();
