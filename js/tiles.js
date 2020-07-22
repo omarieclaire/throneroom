@@ -20,6 +20,7 @@
 // timer should only start after you click
 // improve images
 // improve sounds
+// improve functionality of lettersound
 
 //////// IF TIME ////////
 // water flowing image on click for sink scene

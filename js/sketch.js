@@ -344,10 +344,9 @@ function setup() {
   initializeFromSnapshot(firebase);
 
   function handleKeyDown(event) {
-    letterSound.play();
-
     const key = event.key; // grab the key
     if (graffitiCanvasOpen) { // if graffiti draw canvas is open
+      letterSound.play();
       switch (key) {
         case 'Backspace': // IE/Edge specific value
           currentTile.writing = currentTile.writing.slice(0, -1);
