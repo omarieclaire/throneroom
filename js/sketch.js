@@ -784,6 +784,7 @@ function saveTile(tile) {
         return ref.push(tail[i]);
       });
     }
+    eventBuffer = [];
   }
   redraw();
 }
