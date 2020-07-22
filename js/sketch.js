@@ -1,8 +1,9 @@
 let database;
+let screenOrientation;
+
 let currentColor = 'black';
 let currentFont = 'acki';
 let currentAngle = '1';
-
 let scene = 'line';
 let timer = 5;
 
@@ -53,6 +54,7 @@ let reallyFree;
 let syifana;
 let tiles;
 let triangleParams;
+let isMobile = window.innerWidth <= 800;
 let eventBuffer = [];
 // let lastItemHovered;
 
@@ -62,7 +64,7 @@ let paintColors = [
   // LPINK,
   DPINK,
   // PURPLE,
-  LYELLOW,
+  // LYELLOW,
   DYELLOW,
   DPEACH
 ];
@@ -95,12 +97,58 @@ function preload() {
   reallyFree = loadFont('fonts/ReallyFree.ttf');
   syifana = loadFont('fonts/Syifana.ttf');
 
+  lineupSound = document.createElement('audio');
+  arrowSound = document.createElement('audio');
   openTileSound = document.createElement('audio');
+  writingSound = document.createElement('audio');
+  flushToiletSound = document.createElement('audio');
+  tpSound = document.createElement('audio');
+  mirrorSound = document.createElement('audio');
+  // makeupSound = document.createElement('audio');
+  waterSound = document.createElement('audio');
+  leavingSound = document.createElement('audio');
 
+
+  if (lineupSound.canPlayType('audio/mpeg')) {
+    lineupSound.setAttribute('src', 'audio/lineupSound.mp3');
+  }
+  if (arrowSound.canPlayType('audio/mpeg')) {
+    arrowSound.setAttribute('src', 'audio/arrowSound.mp3');
+  }
   if (openTileSound.canPlayType('audio/mpeg')) {
-    openTileSound.setAttribute('src', 'audio/tileopen.mp3');
+    openTileSound.setAttribute('src', 'audio/openTileSound.mp3');
+  }
+  if (writingSound.canPlayType('audio/mpeg')) {
+    writingSound.setAttribute('src', 'audio/writingSound.mp3');
+  }
+  if (flushToiletSound.canPlayType('audio/mpeg')) {
+    flushToiletSound.setAttribute('src', 'audio/flushToiletSound.mp3');
+  }
+  if (tpSound.canPlayType('audio/mpeg')) {
+    tpSound.setAttribute('src', 'audio/tpSound.mp3');
+  }
+  if (openTileSound.canPlayType('audio/mpeg')) {
+    openTileSound.setAttribute('src', 'audio/openTileSound.mp3');
+  }
+  if (mirrorSound.canPlayType('audio/mpeg')) {
+    mirrorSound.setAttribute('src', 'audio/mirrorSound.mp3');
+  }
+  if (waterSound.canPlayType('audio/mpeg')) {
+    waterSound.setAttribute('src', 'audio/waterSound.mp3');
+  }
+  if (leavingSound.canPlayType('audio/mpeg')) {
+    leavingSound.setAttribute('src', 'audio/leavingSound.mp3');
   }
 }
+
+// lineupSound
+// openTileSound
+// writingSound
+// flushToiletSound
+// tpSound
+// mirrorSound
+// waterSound
+// leavingSound
 
 function calculateCanvasWidth(userWindowWidth, userWindowHeight) { // for now does nothing
   return userWindowWidth;
@@ -171,7 +219,7 @@ function scaleAllTheThings(userWindowWidth, userWindowHeight) {
 }
 
 function makeToolButtons(x, y, w, h) {
-  let toolWidth = 50;
+  let toolWidth = 30;
   let toolSpacer = 5;
   return {
     write: {
@@ -222,23 +270,15 @@ function snapshotter() {
 }
 
 function setup() {
-
-  input = createInput();
-  input.position(-100, -100);
-
+  // input = createInput();
+  // input.position(-100, -100);
   let canvasWidth = calculateCanvasWidth(window.innerWidth, window.innerHeight);
   let canvasHeight = calculateCanvasHeight(window.innerWidth, window.innerHeight);
   canvas = createCanvas(canvasWidth, canvasHeight);
-
   tiles = tileFactory(canvasWidth, canvasHeight);
   currentTile = tiles[0];
-
-  // 20 is the length of the triangle
   triangleParams = createTriangleParameters(40);
-
   scaleAllTheThings(canvasWidth, canvasHeight);
-
-
   textFont(incon, 50);
 
   function mouseClickFunctions() {
@@ -360,6 +400,7 @@ function windowResized() {
 }
 
 function whatWasClicked() {
+
   let arrow = arrowMouseCheck();
   if (arrow) {
     return {
@@ -367,28 +408,41 @@ function whatWasClicked() {
       item: undefined
     };
   }
-  if (graffitiCanvasOpen) { // if canvas open
-    let tool = toolMouseCheck(); // grab tool (or undefined)
-    if (typeof(tool) !== 'undefined') {
+  if (scene == 'line') {
+    if (true) {
       return {
-        clicked: 'toolClicked',
-        item: tool
-      };
-    }
-    let canvas = inGraffitiCanvasMouseCheck();
-    if (canvas) {
-      return {
-        clicked: 'canvasClicked',
+        clicked: 'startClicked',
         item: undefined
       };
     }
   }
-  let tile = tileMouseCheck(); // click on a tile?
-  if (typeof(tile) !== 'undefined') { //clicked on a tile.
-    return {
-      clicked: 'tileClicked',
-      item: tile // findme
-    };
+
+
+
+  if (scene == 'toilet') { // only check this stuff in the toilet scene
+    if (graffitiCanvasOpen) { // if canvas open
+      let tool = toolMouseCheck(); // grab tool (or undefined)
+      if (typeof(tool) !== 'undefined') {
+        return {
+          clicked: 'toolClicked',
+          item: tool
+        };
+      }
+      let canvas = inGraffitiCanvasMouseCheck();
+      if (canvas) {
+        return {
+          clicked: 'canvasClicked',
+          item: undefined
+        };
+      }
+    }
+    let tile = tileMouseCheck(); // click on a tile?
+    if (typeof(tile) !== 'undefined') { //clicked on a tile.
+      return {
+        clicked: 'tileClicked',
+        item: tile // findme
+      };
+    }
   }
   let bigImg = bigImgMouseCheck(); // click?
   if (bigImg) {
@@ -413,12 +467,15 @@ function whatWasClicked() {
 }
 
 function clickActions(wasClicked, item) {
-  if (wasClicked == 'arrowClicked') {
+  if (wasClicked == 'startClicked') {
+    startTimer();
+  } else if (wasClicked == 'arrowClicked') {
     sceneSwitch();
   } else if (wasClicked == 'toolClicked') {
     handleToolClick(item);
   } else if (wasClicked == 'canvasClicked') {
     startDrawPath()
+    writingSound.play();
   } else if (wasClicked == 'bigImgClicked') {
     largeImgDeal()
   } else if (wasClicked == 'smallImgClicked') {
@@ -558,11 +615,11 @@ function hoverOnImg() {
       hoverReplace(window.innerWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height, toiletImg2, toiletImg1); // toilet hover
       hoverReplace(window.innerWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height, toiletPaperImg2, toiletPaperImg1); // tp hover
     } else if (scene == 'mirror') {
-      redraw();
+      // redraw();
       hoverReplace(window.innerWidth / 2 - mirrorImg1.width / 2, 0, mirrorImg1.width, mirrorImg2.height, mirrorImg2, mirrorImg1); // mirror hover
 
     } else if (scene == 'sink') {
-      redraw();
+      // redraw();
       hoverReplace(window.innerWidth / 2 - sinkImg1.width / 2, 0, sinkImg1.width, sinkImg2.height, sinkImg2, sinkImg1); // sink hover
     }
     if (arrowMouseCheck()) {
@@ -576,22 +633,28 @@ function hoverOnImg() {
 
 function largeImgDeal() {
   if (scene == 'toilet') {
+    flushToiletSound.play();
     // flush toilet animation and sound
   } else if (scene == 'mirror') {
+    mirrorSound.play();
     // mirror sound and animation
   } else if (scene == 'sink') {
+    waterSound.play();
+
     // sink sound and animation
   }
 }
 
 function smallImgDeal() {
-    if (scene == 'toilet') {
-      // toilet paper canvas
-    } else if (scene == 'mirror') {
-      // makeup window
-    } else if (scene == 'sink') {
-      // hand wash window
-    }
+  if (scene == 'toilet') {
+    tpSound.play();
+
+    // toilet paper canvas
+  } else if (scene == 'mirror') {
+    // makeup window
+  } else if (scene == 'sink') {
+    // hand wash window
+  }
 }
 
 function startDrawPath() {
@@ -685,14 +748,18 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
   pop();
 }
 
-
 function drawTileWriting(tile, scaleFactor, x, y, w, h) {
   push();
   noStroke();
-  textFont(currentFont, 70);
-
+  // here is where you want to scale for mobile
+  if(isMobile) {
+    textFont(currentFont, 20); // good size for mobile
+  } else {
+    textFont(currentFont, 80); // good size for desktop
+  }
   fill(currentColor);
   scale(scaleFactor, scaleFactor);
+
 
   //experimenting with textToPoints to see if it's faster - it is!
 
@@ -968,23 +1035,27 @@ function arrowMouseCheck() {
   }
 }
 
+function startTimer(){
+  lineupSound.play();
+}
 
 
-function lineupDraw(){
+function lineupDraw() {
   let lineText = "You are in line for the bathroom \n (" + timer + ")";
   push();
   background('black');
   if (frameCount % 60 == 0 && timer > 0) { // if the frameCount is divisible by 60, then a second has passed. it will stop at 0
-    timer --;
+    timer--;
   }
   if (timer == 0) {
     drawSceneSwitchArrow(DYELLOW, LYELLOW);
   }
+  // lineupSound.play();
   textFont(incon);
   textAlign(CENTER, CENTER);
   fill(DBLUE);
   rectMode(CENTER);
-  text(lineText, window.innerWidth/2, window.innerHeight/2, window.innerWidth/1.5, window.innerHeight/2);
+  text(lineText, window.innerWidth / 2, window.innerHeight / 2, window.innerWidth / 1.5, window.innerHeight / 2);
   pop();
 }
 
@@ -1025,17 +1096,19 @@ function sinkDraw() {
   image(sinkImg1, window.innerWidth / 2 - sinkImg1.width / 2, 0);
 }
 
-function endDraw(){
+function endDraw() {
   let lineText = "Goodbye"
-  background(DBLUE);
   push();
-  textFont(incon, 50);
+  background('black');
+  leavingSound.play();
+  textFont(incon);
   textAlign(CENTER, CENTER);
-  // text(lineText, 0, 0, canvasWidth, canvasHeight);
-  fill(DYELLOW);
-  text(lineText, 0, 0, 1200, 500);
-
+  fill(DBLUE);
+  rectMode(CENTER);
+  text(lineText, window.innerWidth / 2, window.innerHeight / 2, window.innerWidth / 1.5, window.innerHeight / 2);
   pop();
+
+
 }
 
 function draw() {
