@@ -69,6 +69,18 @@ let paintColors = [
   DPEACH
 ];
 
+let lineupSound;
+let arrowSound;
+let openTileSound;
+let closeTileSound;
+let writingSound;
+let flushToiletSound;
+let tpSound;
+let mirrorSound;
+let waterSound;
+let leavingSound;
+let writingSoundIsPlaying = false;
+
 function createUUID() {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, function(c) {
     return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
@@ -100,6 +112,7 @@ function preload() {
   lineupSound = document.createElement('audio');
   arrowSound = document.createElement('audio');
   openTileSound = document.createElement('audio');
+  closeTileSound = document.createElement('audio');
   writingSound = document.createElement('audio');
   flushToiletSound = document.createElement('audio');
   tpSound = document.createElement('audio');
@@ -107,6 +120,7 @@ function preload() {
   // makeupSound = document.createElement('audio');
   waterSound = document.createElement('audio');
   leavingSound = document.createElement('audio');
+
 
 
   if (lineupSound.canPlayType('audio/mpeg')) {
@@ -118,6 +132,9 @@ function preload() {
   if (openTileSound.canPlayType('audio/mpeg')) {
     openTileSound.setAttribute('src', 'audio/openTileSound.mp3');
   }
+  if (closeTileSound.canPlayType('audio/mpeg')) {
+    closeTileSound.setAttribute('src', 'audio/closeTileSound.mp3');
+  }
   if (writingSound.canPlayType('audio/mpeg')) {
     writingSound.setAttribute('src', 'audio/writingSound.mp3');
   }
@@ -126,9 +143,6 @@ function preload() {
   }
   if (tpSound.canPlayType('audio/mpeg')) {
     tpSound.setAttribute('src', 'audio/tpSound.mp3');
-  }
-  if (openTileSound.canPlayType('audio/mpeg')) {
-    openTileSound.setAttribute('src', 'audio/openTileSound.mp3');
   }
   if (mirrorSound.canPlayType('audio/mpeg')) {
     mirrorSound.setAttribute('src', 'audio/mirrorSound.mp3');
@@ -141,14 +155,6 @@ function preload() {
   }
 }
 
-// lineupSound
-// openTileSound
-// writingSound
-// flushToiletSound
-// tpSound
-// mirrorSound
-// waterSound
-// leavingSound
 
 function calculateCanvasWidth(userWindowWidth, userWindowHeight) { // for now does nothing
   return userWindowWidth;
@@ -658,6 +664,7 @@ function smallImgDeal() {
 }
 
 function startDrawPath() {
+  writingSound.play();
   if (graffitiCanvasOpen) {
     // if (graffitiCanvasOpen && inGraffitiCanvasMouseCheck()) -> inGraffitiCanvasMouseCheck here breaks drawing on mobile - why?
     isDrawing = true; // set isdrawing to true
@@ -667,17 +674,18 @@ function startDrawPath() {
     };
     currentTile['drawing'].push(currentDrawPath); // push the current path to the drawing object
     return false;
+
   }
 }
 
 function endDrawPath() {
-
   isDrawing = false; // set isdrawing to false
   let event = {
     type: 'add_path',
     tile: currentTile.tile,
     path: currentDrawPath
   };
+  writingSound.pause();
   eventBuffer.push(event);
 }
 
@@ -751,8 +759,7 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
 function drawTileWriting(tile, scaleFactor, x, y, w, h) {
   push();
   noStroke();
-  // here is where you want to scale for mobile
-  if(isMobile) {
+  if(isMobile) { // scale for mobile
     textFont(currentFont, 20); // good size for mobile
   } else {
     textFont(currentFont, 80); // good size for desktop
@@ -922,18 +929,19 @@ function toggleGraffitiCanvas(tileClicked) { // open and close canvas
   const previousCurrentTile = currentTile; // set opentile to the last value of currenttile ( this is whatever it was last time this ran)
   if (graffitiCanvasOpen) { //  if canvas being closed
     if (inGraffitiCanvasMouseCheck() == false) { // prevents accidental closing
+      openTileSound.play();
       previousCurrentTile['taken'] = false; //  remove hold on previousCurrentTile
       saveTile(previousCurrentTile); // save the previousCurrentTile
       graffitiCanvasOpen = !graffitiCanvasOpen; // toggle canvas state
       noLoop(); // stop looping draw - for speed
     }
   } else { // if canvas is being opened
+    closeTileSound.play();
     currentColor = chooseColor();
     currentFont = chooseFont();
     currentAngle = chooseTextAngle();
     loop(); // start looping draw
     currentTile = tileClicked // update 'current tile' to the tile that was clicked
-    openTileSound.play();
     if (currentTile.taken === false) { // if the tile is not currently taken
       currentTile['taken'] = true; // 'take' (reserve) the tile
       saveTile(currentTile);
@@ -1048,6 +1056,7 @@ function lineupDraw() {
     timer--;
   }
   if (timer == 0) {
+    lineupSound.pause();
     drawSceneSwitchArrow(DYELLOW, LYELLOW);
   }
   // lineupSound.play();

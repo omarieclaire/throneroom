@@ -7,6 +7,9 @@
 // after hitting clear, can't draw
 // stop hardclick on mobile
 
+
+
+
 //////// TODO ////////
 // create and integrate sound effects - open tile, close tile, isdrawing, makeup, water washing and voice washing
 // need to click on a button to play first sound;
@@ -23,6 +26,7 @@
 // improve sounds
 
 //////// IF TIME ////////
+// make scale better
 // CHOOSE sound or reading in lineup
 // choose light or dark in lineup
 // anything to say before you go? (text in last scene)
