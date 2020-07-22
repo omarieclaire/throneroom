@@ -383,6 +383,13 @@ function whatWasClicked() {
       };
     }
   }
+  let tile = tileMouseCheck(); // click on a tile?
+  if (typeof(tile) !== 'undefined') { //clicked on a tile.
+    return {
+      clicked: 'tileClicked',
+      item: tile // findme
+    };
+  }
   let bigImg = bigImgMouseCheck(); // click?
   if (bigImg) {
     return {
@@ -398,13 +405,7 @@ function whatWasClicked() {
       item: undefined
     };
   }
-  let tile = tileMouseCheck(); // click on a tile?
-  if (typeof(tile) !== 'undefined') { //clicked on a tile.
-    return {
-      clicked: 'tileClicked',
-      item: tile // findme
-    };
-  }
+
   return {
     clicked: 'nothing',
     item: undefined

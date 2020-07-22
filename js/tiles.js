@@ -3,7 +3,7 @@
 // integrate random fonts and random text angles
 // is there something wrong with text? why does it overlap?
 
-// add alt text to the lineup: (why are you here?)
+// add alt text to the lineup: (why are you here anyway?)
 
 // put arrow in center
 // how can I make multiple timers in the setup when they are triggered by different things?
