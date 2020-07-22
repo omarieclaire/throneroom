@@ -52,7 +52,7 @@ let syifana;
 let tiles;
 let triangleParams;
 let eventBuffer = [];
-let lastItemHovered;
+// let lastItemHovered;
 
 let paintColors = [
   DBLUE,
@@ -249,26 +249,28 @@ function setup() {
     redraw(); //redraw after every click action
   }
 
-  function mouseHoverFunctions() {
-    let previousItem = lastItemHovered;
-    let itemHovered = whatWasHovered();
-    let hovered = itemHovered['hovered']; // grab hovered
-    let item = itemHovered['item']; // grab item
-
-    if(typeof(lastItemHovered) === 'undefined' || previousItem.hovered === itemHovered.hovered) {
-      hoverActions(hovered, item, lastItemHovered); // call func
-    } else {
-      hoverOffActions(previousItem.hovered, previousItem.item); // call func
-      hoverActions(hovered, item); // call func
-    }
-    // redraw(); //redraw after every click action
-    lastItemHovered = itemHovered;
-  }
+  // function mouseHoverFunctions() {
+  //   let previousItem = lastItemHovered;
+  //   let itemHovered = whatWasHovered();
+  //   let hovered = itemHovered['hovered']; // grab hovered
+  //   let item = itemHovered['item']; // grab item
+  //
+  //   if(typeof(lastItemHovered) === 'undefined' || previousItem.hovered === itemHovered.hovered) {
+  //     hoverActions(hovered, item, lastItemHovered); // call func
+  //   } else {
+  //     hoverOffActions(previousItem.hovered, previousItem.item); // call func
+  //     hoverActions(hovered, item); // call func
+  //   }
+  //   // redraw(); //redraw after every click action
+  //   lastItemHovered = itemHovered;
+  // }
 
   toolButtons = makeToolButtons(graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH);
 
   canvas.mousePressed(mouseClickFunctions); // run the mouse functions
-  canvas.mouseMoved(mouseHoverFunctions); // run the mouse functions
+  canvas.mouseMoved(hoverOnImg);
+
+  // canvas.mouseMoved(mouseHoverFunctions); // run the mouse functions
   // canvas.mouseOut(mouseHoverFunctions); // run the mouse functions
 
   // canvas.mouseMoved(hoverOnImg);
@@ -416,7 +418,7 @@ function clickActions(wasClicked, item) {
   } else if (wasClicked == 'canvasClicked') {
     startDrawPath()
   } else if (wasClicked == 'bigImgClicked') {
-    bigImgDeal()
+    largeImgDeal()
   } else if (wasClicked == 'smallImgClicked') {
     smallImgDeal()
   } else if (wasClicked == 'tileClicked') {
@@ -431,94 +433,94 @@ function clickActions(wasClicked, item) {
 }
 ///////////////////////////////
 //////// HOVERLAND ////////////
-function whatWasHovered() {
-  let arrow = arrowMouseCheck();
-  if (arrow) {
-    return {
-      hovered: 'arrowHovered',
-      item: undefined
-    };
-  }
-  if (graffitiCanvasOpen) { // if canvas open
-    let tool = toolMouseCheck(); // grab tool (or undefined)
-    if (typeof(tool) !== 'undefined') {
-      return {
-        hovered: 'toolHovered',
-        item: tool
-      };
-    }
-  }
-  if (!graffitiCanvasOpen) { // only do this stuff when canvas is closed
-    let bigImg = bigImgMouseCheck(); //
-    if (bigImg) {
-      return {
-        hovered: 'bigImgHovered',
-        item: undefined
-      };
-    }
-    let smallImg = smallImgMouseCheck();
-    if (smallImg) {
-      return {
-        hovered: 'smallImgHovered',
-        item: undefined
-      };
-    }
-    let tile = tileMouseCheck(); // click on a tile?
-    if (typeof(tile) !== 'undefined') { //hovered on a tile.
-      return {
-        hovered: 'tileHovered',
-        item: tile // findme
-      };
-    }
-  }
-  return {
-    hovered: 'nothing',
-    item: undefined
-  };
-}
+// function whatWasHovered() {
+//   let arrow = arrowMouseCheck();
+//   if (arrow) {
+//     return {
+//       hovered: 'arrowHovered',
+//       item: undefined
+//     };
+//   }
+//   if (graffitiCanvasOpen) { // if canvas open
+//     let tool = toolMouseCheck(); // grab tool (or undefined)
+//     if (typeof(tool) !== 'undefined') {
+//       return {
+//         hovered: 'toolHovered',
+//         item: tool
+//       };
+//     }
+//   }
+//   if (!graffitiCanvasOpen) { // only do this stuff when canvas is closed
+//     let bigImg = bigImgMouseCheck(); //
+//     if (bigImg) {
+//       return {
+//         hovered: 'bigImgHovered',
+//         item: undefined
+//       };
+//     }
+//     let smallImg = smallImgMouseCheck();
+//     if (smallImg) {
+//       return {
+//         hovered: 'smallImgHovered',
+//         item: undefined
+//       };
+//     }
+//     let tile = tileMouseCheck(); // click on a tile?
+//     if (typeof(tile) !== 'undefined') { //hovered on a tile.
+//       return {
+//         hovered: 'tileHovered',
+//         item: tile // findme
+//       };
+//     }
+//   }
+//   return {
+//     hovered: 'nothing',
+//     item: undefined
+//   };
+// }
 
 ///////////////////////////////
 //////// HOVERLAND ////////////
-function hoverActions(wasHovered, item) {
-  if (wasHovered == 'arrowHovered') {
-    drawSceneSwitchArrow(DBLUE, LBLUE);
-  } else if (wasHovered == 'toolHovered') {
-    graffitiTools(DBLUE);
-  } else if (wasHovered == 'bigImgHovered') {
-    bigImgDeal();
-  } else if (wasHovered == 'smallImgHovered') {
-    smallImgDeal();
-  } else if (wasHovered == 'tileHovered') {
-    while (wasHovered == 'tileHovered') {
-      // highlightHoveredTile(item, true);
-    }
-  } else if (wasHovered == 'nothing') {
-    // do nothing
-  } else {
-    // we should never end up here
-    console.log(`ERROR: hoverActions received item it cannot handle. wasHovered=${wasHovered} item=${item}`);
-  }
-}
-
-function hoverOffActions(wasHovered, item) {
-  if (wasHovered == 'arrowHovered') {
-    drawSceneSwitchArrow(DYELLOW, LYELLOW);
-  } else if (wasHovered == 'toolHovered') {
-    graffitiTools(LBLUE);
-  } else if (wasHovered == 'bigImgHovered') {
-    bigImgDeal();
-  } else if (wasHovered == 'smallImgHovered') {
-    smallImgDeal();
-  } else if (wasHovered == 'tileHovered') {
-    console.log(JSON.stringify(item));
-    // highlightHoveredTile(item, false);
-  } else if (wasHovered == 'nothing') {
-    // do nothing
-  } else {
-    // we should never end up here
-    console.log(`ERROR: hoverActions received item it cannot handle. wasHovered=${wasHovered} item=${item}`);
-  }
-}
+// function hoverActions(wasHovered, item) {
+//   if (wasHovered == 'arrowHovered') {
+//     drawSceneSwitchArrow(DBLUE, LBLUE);
+//   } else if (wasHovered == 'toolHovered') {
+//     graffitiTools(DBLUE);
+//   } else if (wasHovered == 'bigImgHovered') {
+//     largeImgDeal();
+//   } else if (wasHovered == 'smallImgHovered') {
+//     smallImgDeal();
+//   } else if (wasHovered == 'tileHovered') {
+//     while (wasHovered == 'tileHovered') {
+//       // highlightHoveredTile(item, true);
+//     }
+//   } else if (wasHovered == 'nothing') {
+//     // do nothing
+//   } else {
+//     // we should never end up here
+//     console.log(`ERROR: hoverActions received item it cannot handle. wasHovered=${wasHovered} item=${item}`);
+//   }
+// }
+//
+// function hoverOffActions(wasHovered, item) {
+//   if (wasHovered == 'arrowHovered') {
+//     drawSceneSwitchArrow(DYELLOW, LYELLOW);
+//   } else if (wasHovered == 'toolHovered') {
+//     graffitiTools(LBLUE);
+//   } else if (wasHovered == 'bigImgHovered') {
+//     largeImgDeal();
+//   } else if (wasHovered == 'smallImgHovered') {
+//     smallImgDeal();
+//   } else if (wasHovered == 'tileHovered') {
+//     console.log(JSON.stringify(item));
+//     // highlightHoveredTile(item, false);
+//   } else if (wasHovered == 'nothing') {
+//     // do nothing
+//   } else {
+//     // we should never end up here
+//     console.log(`ERROR: hoverActions received item it cannot handle. wasHovered=${wasHovered} item=${item}`);
+//   }
+// }
 
 function bigImgMouseCheck() {
   if (scene == 'toilet') {
@@ -548,16 +550,47 @@ function smallImgMouseCheck() {
   }
 }
 
-function bigImgDeal() {
-  console.log('big img deal');
+function hoverOnImg() {
+  if (!graffitiCanvasOpen) {
+    if (scene == 'toilet') {
+      hoverReplace(window.innerWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height, toiletImg2, toiletImg1); // toilet hover
+      hoverReplace(window.innerWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height, toiletPaperImg2, toiletPaperImg1); // tp hover
+    } else if (scene == 'mirror') {
+      redraw();
+      hoverReplace(window.innerWidth / 2 - mirrorImg1.width / 2, 0, mirrorImg1.width, mirrorImg2.height, mirrorImg2, mirrorImg1); // mirror hover
 
+    } else if (scene == 'sink') {
+      redraw();
+      hoverReplace(window.innerWidth / 2 - sinkImg1.width / 2, 0, sinkImg1.width, sinkImg2.height, sinkImg2, sinkImg1); // sink hover
+    }
+    if (arrowMouseCheck()) {
+      drawSceneSwitchArrow(DYELLOW, LYELLOW);
+    } else {
+      drawSceneSwitchArrow(DBLUE, LBLUE);
+    }
+  }
+
+}
+
+function largeImgDeal() {
+  if (scene == 'toilet') {
+    // flush toilet animation and sound
+  } else if (scene == 'mirror') {
+    // mirror sound and animation
+  } else if (scene == 'sink') {
+    // sink sound and animation
+  }
 }
 
 function smallImgDeal() {
-  console.log('small img deal');
-
+    if (scene == 'toilet') {
+      // toilet paper canvas
+    } else if (scene == 'mirror') {
+      // makeup window
+    } else if (scene == 'sink') {
+      // hand wash window
+    }
 }
-
 
 function startDrawPath() {
   if (graffitiCanvasOpen) {
@@ -763,13 +796,13 @@ function hoverCheck(x, y, w, h) {
   }
 }
 
-// function hoverCheck(x, y, w, h, img2, img1) {
-//   if (mouseX > x && mouseX < x + w && mouseY > y && mouseY < y + h) {
-//     image(img2, x, y);
-//   } else {
-//     image(img1, x, y);
-//   }
-// }
+function hoverReplace(x, y, w, h, img2, img1) {
+  if (mouseX > x && mouseX < x + w && mouseY > y && mouseY < y + h) {
+    image(img2, x, y);
+  } else {
+    image(img1, x, y);
+  }
+}
 
 
 
