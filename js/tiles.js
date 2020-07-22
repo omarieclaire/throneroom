@@ -3,6 +3,7 @@
 // tile font loading late
 // after hitting clear, can't draw
 // stop hardclick on mobile
+// triangle click not working perfectly
 
 
 //////// TODO ////////

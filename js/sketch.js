@@ -918,10 +918,9 @@ function clearTile() {
 function handleToolClick(tool) {
   if (tool.text === 'write') {
     input.elt.focus();
-    console.log('focus!');
+    // console.log('focus!');
   } else if (tool.text === 'CLEAR') {
     clearTile();
-
   } else {
     // do nothing
     console.log(`ERROR: handleToolClick received a text it could not handle: tool=${JSON.stringify(tool)}`);

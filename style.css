@@ -10,12 +10,11 @@ body {
 
 input {
   outline: none;
-  resize: none;
   color: transparent;
   background: transparent;
   resize: none;
   border: 0 none;
-  font-size: 0px;
+  font-size: 5px;
   width: 0px;
   height: 0px;
 }
