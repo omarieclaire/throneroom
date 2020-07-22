@@ -4,6 +4,8 @@ let currentFont = 'acki';
 let currentAngle = '1';
 
 let scene = 'line';
+let timer = 5;
+
 let DBLUE = '#a5c7da';
 let LBLUE = '#f0fafc';
 let LPINK = '#fb9c96';
@@ -220,7 +222,7 @@ function snapshotter() {
 }
 
 function setup() {
-  leaveSceneTimer(1000);
+
   input = createInput();
   input.position(-100, -100);
 
@@ -232,7 +234,7 @@ function setup() {
   currentTile = tiles[0];
 
   // 20 is the length of the triangle
-  triangleParams = createTriangleParameters(20);
+  triangleParams = createTriangleParameters(40);
 
   scaleAllTheThings(canvasWidth, canvasHeight);
 
@@ -345,7 +347,7 @@ function setup() {
   }
   document.addEventListener('keydown', handleKeyDown); // listen for keys being pressed
 
-  noLoop();
+  // noLoop();
   snapshotter();
 }
 
@@ -893,6 +895,7 @@ function sceneSwitch() {
   if (scene == 'line') {
     scene = 'toilet';
     leaveSceneTimer(3000);
+    noLoop(); // stop toilet from looping
   } else if (scene == 'toilet') {
     scene = 'mirror';
     leaveSceneTimer(3000);
@@ -920,7 +923,6 @@ function createTriangleParameters(length) {
     x1: x1,
     x2: x1
   };
-
 }
 
 function drawSceneSwitchArrow(outercolor, innercolor) {
@@ -965,16 +967,23 @@ function arrowMouseCheck() {
   }
 }
 
+
+
 function lineupDraw(){
-  let lineText = "You are in line for the bathroom"
-  background(LYELLOW);
+  let lineText = "You are in line for the bathroom \n (" + timer + ")";
   push();
+  background('black');
+  if (frameCount % 60 == 0 && timer > 0) { // if the frameCount is divisible by 60, then a second has passed. it will stop at 0
+    timer --;
+  }
+  if (timer == 0) {
+    drawSceneSwitchArrow(DYELLOW, LYELLOW);
+  }
   textFont(incon);
   textAlign(CENTER, CENTER);
-  // text(lineText, 0, 0, canvasWidth, canvasHeight);
   fill(DBLUE);
-  text(lineText, window.innerWidth, window.innerHeight);
-
+  rectMode(CENTER);
+  text(lineText, window.innerWidth/2, window.innerHeight/2, window.innerWidth/1.5, window.innerHeight/2);
   pop();
 }
 
