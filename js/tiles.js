@@ -1,5 +1,5 @@
 //////// BUGS ////////
-// text scale factor - text should be a good size on mobile too - why isn't it scaling?
+// drawings aren't scaling on mobile
 // timers appearing when they shouldn't
 // tiles all load the same font?
 // arrow flickering in at beginning - it's the hover?

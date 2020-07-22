@@ -442,21 +442,9 @@ function whatWasClicked() {
         };
       }
     }
-    let tile = tileMouseCheck(); // click on a tile?
-    if (typeof(tile) !== 'undefined') { //clicked on a tile.
-      return {
-        clicked: 'tileClicked',
-        item: tile // findme
-      };
-    }
+
   }
-  let bigImg = bigImgMouseCheck(); // click?
-  if (bigImg) {
-    return {
-      clicked: 'bigImgClicked',
-      item: undefined
-    };
-  }
+
   let smallImg = smallImgMouseCheck(); // click?
   if (smallImg) {
     console.log('small');
@@ -465,6 +453,25 @@ function whatWasClicked() {
       item: undefined
     };
   }
+
+  if (scene == 'toilet') { // only check in the toilet scene
+    let tile = tileMouseCheck(); // click on a tile?
+    if (typeof(tile) !== 'undefined') { //clicked on a tile.
+      return {
+        clicked: 'tileClicked',
+        item: tile // findme
+      };
+    }
+}
+
+  let bigImg = bigImgMouseCheck(); // click?
+  if (bigImg) {
+    return {
+      clicked: 'bigImgClicked',
+      item: undefined
+    };
+  }
+
 
   return {
     clicked: 'nothing',
