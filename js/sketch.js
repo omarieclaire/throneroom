@@ -917,8 +917,8 @@ function clearTile() {
 
 function handleToolClick(tool) {
   if (tool.text === 'write') {
-    input.elt.get(0).focus();
-    // input.elt.focus();
+    // input.elt.get(0).focus();
+    input.elt.focus();
     // console.log('focus!');
   } else if (tool.text === 'CLEAR') {
     clearTile();
