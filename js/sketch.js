@@ -973,7 +973,7 @@ function lineupDraw(){
   textAlign(CENTER, CENTER);
   // text(lineText, 0, 0, canvasWidth, canvasHeight);
   fill(DBLUE);
-  text(lineText, 0, 0, 1200, 500);
+  text(lineText, window.innerWidth, window.innerHeight);
 
   pop();
 }
