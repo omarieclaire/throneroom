@@ -1,7 +1,7 @@
 let database;
 let currentColor = 'black';
 let currentFont = 'acki';
-let currentAngle = '-30';
+let currentAngle = '1';
 
 let scene = 'toilet';
 let DBLUE = '#a5c7da';
@@ -52,13 +52,14 @@ let syifana;
 let tiles;
 let triangleParams;
 let eventBuffer = [];
+let lastItemHovered;
 
 let paintColors = [
   DBLUE,
-  LBLUE,
-  LPINK,
+  // LBLUE,
+  // LPINK,
   DPINK,
-  PURPLE,
+  // PURPLE,
   LYELLOW,
   DYELLOW,
   DPEACH
@@ -210,7 +211,6 @@ function makeToolButtons(x, y, w, h) {
   };
 }
 
-
 function snapshotter() {
   window.setTimeout(function() {
     console.log('taking snapshot');
@@ -237,21 +237,43 @@ function setup() {
 
   scaleAllTheThings(canvasWidth, canvasHeight);
 
-  canvas.mouseMoved(hoverOnImg);
 
   textFont(incon, 50);
 
   function mouseClickFunctions() {
     let itemClicked = whatWasClicked(); // all this does is determine what was clicked
     let clicked = itemClicked['clicked']; // grab clicked
+    console.log(`what was clicked ${clicked}`);
     let item = itemClicked['item']; // grab item
     clickActions(clicked, item); // call func
     redraw(); //redraw after every click action
   }
 
+  function mouseHoverFunctions() {
+    let previousItem = lastItemHovered;
+    let itemHovered = whatWasHovered();
+    let hovered = itemHovered['hovered']; // grab hovered
+    let item = itemHovered['item']; // grab item
+
+    if(typeof(lastItemHovered) === 'undefined' || previousItem.hovered === itemHovered.hovered) {
+      hoverActions(hovered, item, lastItemHovered); // call func
+    } else {
+      hoverOffActions(previousItem.hovered, previousItem.item); // call func
+      hoverActions(hovered, item); // call func
+    }
+    // redraw(); //redraw after every click action
+    lastItemHovered = itemHovered;
+  }
+
   toolButtons = makeToolButtons(graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH);
 
   canvas.mousePressed(mouseClickFunctions); // run the mouse functions
+  canvas.mouseMoved(mouseHoverFunctions); // run the mouse functions
+  // canvas.mouseOut(mouseHoverFunctions); // run the mouse functions
+
+  // canvas.mouseMoved(hoverOnImg);
+
+
   canvas.touchStarted(startDrawPath); //
   canvas.parent('canvascontainer'); // parent the canvas to the canvas container
   canvas.mouseReleased(endDrawPath); // when mouse is releaed, stop collecting x and y points
@@ -334,45 +356,52 @@ function windowResized() {
   scaleAllTheThings();
 }
 
-
 function whatWasClicked() {
-  let arrow = inSceneSwitchArrowCheck();
+  let arrow = arrowMouseCheck();
   if (arrow) {
     return {
       clicked: 'arrowClicked',
       item: undefined
     };
   }
-
-  // is the canvas open? if so, check if we've clicked on either:
-  // a. a tool, or
-  // b. the canvas
-  if (graffitiCanvasOpen) {
-    let tool = detectMouseOnTool();
+  if (graffitiCanvasOpen) { // if canvas open
+    let tool = toolMouseCheck(); // grab tool (or undefined)
     if (typeof(tool) !== 'undefined') {
       return {
         clicked: 'toolClicked',
         item: tool
       };
     }
-
-    let canvas = inGraffitiCanvasCheck();
+    let canvas = inGraffitiCanvasMouseCheck();
     if (canvas) {
       return {
         clicked: 'canvasClicked',
-        item: undefined // i have no idea
+        item: undefined
       };
     }
   }
-
-  let tile = detectMouseOnTile(); // click on a tile?
+  let bigImg = bigImgMouseCheck(); // click?
+  if (bigImg) {
+    return {
+      clicked: 'bigImgClicked',
+      item: undefined
+    };
+  }
+  let smallImg = smallImgMouseCheck(); // click?
+  if (smallImg) {
+    console.log('small');
+    return {
+      clicked: 'smallImgClicked',
+      item: undefined
+    };
+  }
+  let tile = tileMouseCheck(); // click on a tile?
   if (typeof(tile) !== 'undefined') { //clicked on a tile.
     return {
       clicked: 'tileClicked',
       item: tile // findme
     };
   }
-
   return {
     clicked: 'nothing',
     item: undefined
@@ -386,6 +415,10 @@ function clickActions(wasClicked, item) {
     handleToolClick(item);
   } else if (wasClicked == 'canvasClicked') {
     startDrawPath()
+  } else if (wasClicked == 'bigImgClicked') {
+    bigImgDeal()
+  } else if (wasClicked == 'smallImgClicked') {
+    smallImgDeal()
   } else if (wasClicked == 'tileClicked') {
     toggleGraffitiCanvas(item);
     startDrawPath();
@@ -396,10 +429,139 @@ function clickActions(wasClicked, item) {
     console.log(`ERROR: clickActions received item it cannot handle. wasClicked=${wasClicked} item=${item}`);
   }
 }
+///////////////////////////////
+//////// HOVERLAND ////////////
+function whatWasHovered() {
+  let arrow = arrowMouseCheck();
+  if (arrow) {
+    return {
+      hovered: 'arrowHovered',
+      item: undefined
+    };
+  }
+  if (graffitiCanvasOpen) { // if canvas open
+    let tool = toolMouseCheck(); // grab tool (or undefined)
+    if (typeof(tool) !== 'undefined') {
+      return {
+        hovered: 'toolHovered',
+        item: tool
+      };
+    }
+  }
+  if (!graffitiCanvasOpen) { // only do this stuff when canvas is closed
+    let bigImg = bigImgMouseCheck(); //
+    if (bigImg) {
+      return {
+        hovered: 'bigImgHovered',
+        item: undefined
+      };
+    }
+    let smallImg = smallImgMouseCheck();
+    if (smallImg) {
+      return {
+        hovered: 'smallImgHovered',
+        item: undefined
+      };
+    }
+    let tile = tileMouseCheck(); // click on a tile?
+    if (typeof(tile) !== 'undefined') { //hovered on a tile.
+      return {
+        hovered: 'tileHovered',
+        item: tile // findme
+      };
+    }
+  }
+  return {
+    hovered: 'nothing',
+    item: undefined
+  };
+}
+
+///////////////////////////////
+//////// HOVERLAND ////////////
+function hoverActions(wasHovered, item) {
+  if (wasHovered == 'arrowHovered') {
+    drawSceneSwitchArrow(DBLUE, LBLUE);
+  } else if (wasHovered == 'toolHovered') {
+    graffitiTools(DBLUE);
+  } else if (wasHovered == 'bigImgHovered') {
+    bigImgDeal();
+  } else if (wasHovered == 'smallImgHovered') {
+    smallImgDeal();
+  } else if (wasHovered == 'tileHovered') {
+    while (wasHovered == 'tileHovered') {
+      // highlightHoveredTile(item, true);
+    }
+  } else if (wasHovered == 'nothing') {
+    // do nothing
+  } else {
+    // we should never end up here
+    console.log(`ERROR: hoverActions received item it cannot handle. wasHovered=${wasHovered} item=${item}`);
+  }
+}
+
+function hoverOffActions(wasHovered, item) {
+  if (wasHovered == 'arrowHovered') {
+    drawSceneSwitchArrow(DYELLOW, LYELLOW);
+  } else if (wasHovered == 'toolHovered') {
+    graffitiTools(LBLUE);
+  } else if (wasHovered == 'bigImgHovered') {
+    bigImgDeal();
+  } else if (wasHovered == 'smallImgHovered') {
+    smallImgDeal();
+  } else if (wasHovered == 'tileHovered') {
+    console.log(JSON.stringify(item));
+    // highlightHoveredTile(item, false);
+  } else if (wasHovered == 'nothing') {
+    // do nothing
+  } else {
+    // we should never end up here
+    console.log(`ERROR: hoverActions received item it cannot handle. wasHovered=${wasHovered} item=${item}`);
+  }
+}
+
+function bigImgMouseCheck() {
+  if (scene == 'toilet') {
+    if (hoverCheck(window.innerWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height)) {
+      return true;
+    }
+  } else if (scene == 'mirror') {
+    if (hoverCheck(window.innerWidth / 2 - mirrorImg1.width / 2, 0, mirrorImg1.width, mirrorImg2.height)) {
+      return true;
+    }
+  } else if (scene == 'sink') {
+    if (hoverCheck(window.innerWidth / 2 - sinkImg1.width / 2, 0, sinkImg1.width, sinkImg2.height)) {
+      return true;
+    }
+  } else {
+    return false;
+  }
+}
+
+function smallImgMouseCheck() {
+  if (scene == 'toilet') {
+    if (hoverCheck(window.innerWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height)) {
+      return true;
+    }
+  } else {
+    return false;
+  }
+}
+
+function bigImgDeal() {
+  console.log('big img deal');
+
+}
+
+function smallImgDeal() {
+  console.log('small img deal');
+
+}
+
 
 function startDrawPath() {
   if (graffitiCanvasOpen) {
-    // if (graffitiCanvasOpen && inGraffitiCanvasCheck()) -> inGraffitiCanvasCheck here breaks drawing on mobile - why?
+    // if (graffitiCanvasOpen && inGraffitiCanvasMouseCheck()) -> inGraffitiCanvasMouseCheck here breaks drawing on mobile - why?
     isDrawing = true; // set isdrawing to true
     currentDrawPath = {
       path: [], // reset current path to an empty
@@ -423,7 +585,7 @@ function endDrawPath() {
 
 function captureDrawing() {
   if (isDrawing) { // if person isdrawing
-    if (inGraffitiCanvasCheck()) { // and person isdrawing in the canvas
+    if (inGraffitiCanvasMouseCheck()) { // and person isdrawing in the canvas
       let point = { // grab the x and y of each point
         x: mouseX,
         y: mouseY
@@ -462,7 +624,7 @@ function chooseFont() {
 function chooseTextAngle() {
   let currentAngle;
   // angles = [];
-  currentAngle = random(-233, 36);
+  currentAngle = random(.5, 1);
   return currentAngle;
 }
 
@@ -492,10 +654,9 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
 function drawTileWriting(tile, scaleFactor, x, y, w, h) {
   push();
   noStroke();
-  textFont(currentFont, 50);
+  textFont(currentFont, 70);
 
   fill(currentColor);
-  textSize(43);
   scale(scaleFactor, scaleFactor);
 
   //experimenting with textToPoints to see if it's faster - it is!
@@ -508,22 +669,19 @@ function drawTileWriting(tile, scaleFactor, x, y, w, h) {
   //}
   //endShape();
   //}
-  //rotate(0.5);
+  // textAlign(CENTER, CENTER);
+  // rectMode(CENTER);
+  // translate(0, 0);
+  // rotate(90);
   text(tile['writing'], x, y, w, h);
   pop();
 }
 
-function highlightOpenTile(x, y, w, h) {
-  noStroke();
-  noFill();
-  rect(x, y, w, h);
-}
-
-function graffitiTools() {
+function graffitiTools(myColor) {
   let toolSpacer = 10;
   for (const tool in toolButtons) {
     let btn = toolButtons[tool];
-    fill(DBLUE);
+    fill(myColor);
     // rect(10, 10, 100, 100);
     rect(btn.x, btn.y, btn.width, btn.height);
     fill('black');
@@ -563,7 +721,7 @@ function displaySmallTileGraffiti() {
   }
 }
 
-function detectMouseOnTile() { // returns undefined when not clicking on a tile
+function tileMouseCheck() { // returns undefined when not clicking on a tile
   for (const tileId in tiles) { // for each tile
     let tile = tiles[tileId]; // grab the ID
     if (mouseX > tile['position']['x'] && mouseX < tile['position']['x'] + tile['width'] && mouseY > tile['position']['y'] && mouseY < tile['position']['y'] + tile['height']) {
@@ -597,27 +755,24 @@ function saveTile(tile) {
   redraw();
 }
 
-function hover(x, y, w, h, img2, img1) {
+function hoverCheck(x, y, w, h) {
   if (mouseX > x && mouseX < x + w && mouseY > y && mouseY < y + h) {
-    image(img2, x, y);
+    return true;
   } else {
-    image(img1, x, y);
+    return false;
   }
 }
 
-function hoverOnImg() {
-  if (scene == 'toilet') {
-    hover(window.innerWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height, toiletImg2, toiletImg1); // toilet hover
-    hover(window.innerWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height, toiletPaperImg2, toiletPaperImg1); // tp hover
-  } else if (scene == 'mirror') {
-    redraw();
-    hover(window.innerWidth / 2 - mirrorImg1.width / 2, 0, mirrorImg1.width, mirrorImg2.height, mirrorImg2, mirrorImg1); // mirror hover
+// function hoverCheck(x, y, w, h, img2, img1) {
+//   if (mouseX > x && mouseX < x + w && mouseY > y && mouseY < y + h) {
+//     image(img2, x, y);
+//   } else {
+//     image(img1, x, y);
+//   }
+// }
 
-  } else if (scene == 'sink') {
-    redraw();
-    hover(window.innerWidth / 2 - sinkImg1.width / 2, 0, sinkImg1.width, sinkImg2.height, sinkImg2, sinkImg1); // sink hover
-  }
-}
+
+
 
 
 function openMobileKeyboard() {
@@ -646,7 +801,7 @@ function handleToolClick(tool) {
 }
 
 
-function detectMouseOnTool() {
+function toolMouseCheck() {
   var buttonClicked;
   for (const tool in toolButtons) {
     let btn = toolButtons[tool];
@@ -663,7 +818,7 @@ function detectMouseOnTool() {
 function toggleGraffitiCanvas(tileClicked) { // open and close canvas
   const previousCurrentTile = currentTile; // set opentile to the last value of currenttile ( this is whatever it was last time this ran)
   if (graffitiCanvasOpen) { //  if canvas being closed
-    if (inGraffitiCanvasCheck() == false) { // prevents accidental closing
+    if (inGraffitiCanvasMouseCheck() == false) { // prevents accidental closing
       previousCurrentTile['taken'] = false; //  remove hold on previousCurrentTile
       saveTile(previousCurrentTile); // save the previousCurrentTile
       graffitiCanvasOpen = !graffitiCanvasOpen; // toggle canvas state
@@ -684,7 +839,7 @@ function toggleGraffitiCanvas(tileClicked) { // open and close canvas
   }
 }
 
-function inGraffitiCanvasCheck() { // check if in the drawcanvas
+function inGraffitiCanvasMouseCheck() { // check if in the drawcanvas
   if (mouseX > graffitiCanvasX && mouseX < graffitiCanvasX + graffitiCanvasW && mouseY > graffitiCanvasY && mouseY < graffitiCanvasY + graffitiCanvasH) {
     return true;
   } else {
@@ -732,11 +887,14 @@ function createTriangleParameters(length) {
 
 }
 
-function drawSceneSwitchArrow() {
-  stroke(DYELLOW);
+function drawSceneSwitchArrow(outercolor, innercolor) {
+  push();
+  stroke(outercolor);
+  fill(innercolor);
   strokeWeight(7);
   let params = triangleParams;
   triangle(params.x1, params.y1, params.x2, params.y2, params.x3, params.y3);
+  pop();
 }
 
 function redrawSceneSwitchArrow() {
@@ -748,8 +906,8 @@ function leaveSceneTimer(waitTime) {
   window.setTimeout(redrawSceneSwitchArrow, waitTime); // change this to be longer
 }
 
-function inSceneSwitchArrowCheck() {
-  // function inSceneSwitchArrowCheck(px, py, x1, y1, x2, y2, x3, y3) {
+function arrowMouseCheck() {
+  // function inarrowMouseCheck(px, py, x1, y1, x2, y2, x3, y3) {
   let px = mouseX;
   let py = mouseY;
   //let {x1, y1, x2, y2, x3, y3} = triangleParams;
@@ -776,9 +934,9 @@ function toiletDraw() {
   // let frameStartTime = millis();
 
   if (graffitiCanvasOpen) { // if canvas is open
-    highlightOpenTile(currentTile.position.x, currentTile.position.y, currentTile.width, currentTile.height);
+    // highlightOpenTile(currentTile.position.x, currentTile.position.y, currentTile.width, currentTile.height);
     drawGraffitiCanvas();
-    graffitiTools();
+    graffitiTools(DBLUE);
     displayLargeTileGraffiti(); // show the open drawing/text
     captureDrawing(); // run the code to catch the drawing
 
@@ -790,7 +948,7 @@ function toiletDraw() {
     image(toiletPaperImg1, window.innerWidth / 1.5, 240);
 
     if (sceneSwitchArrowViz == true) {
-      drawSceneSwitchArrow();
+      drawSceneSwitchArrow(DYELLOW, LYELLOW);
     }
 
   }
@@ -917,7 +1075,6 @@ function handleEvent(event, key) {
   } else {
     console.log(`received event type we could not handle: ${event.type}`);
   }
-  console.log('redraw');
   redraw();
 }
 

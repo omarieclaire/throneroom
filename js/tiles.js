@@ -1,5 +1,7 @@
-// WHEN to draw random colors, random fonts, randon font angles  - without flickering
-// add colors to image object
+// what does handdrawn mean, on a computer? (art, fonts, etc)
+
+// integrate random fonts and random text angles
+// is there something wrong with text? why does it overlap?
 
 // how can I make multiple timers in the setup when they are triggered by different things?
 // make an animation on hover
@@ -9,12 +11,11 @@
 // vertical vs horizontal logic for sceneSwitchArrow
 // hover bug
 // click anywhere BUT the canvas to close the canvas
-
+// deal with line breaks when someone doesn't hit space
 // LATER
 // debug "taken"
 // debug "clear"
 // must be able to moderate database? do I moderate live?
-
 
 // MUST
 // delete escape function
@@ -93,7 +94,7 @@ function tileFactory(canvasWidth, canvasHeight, existingTiles) {
       tiles[i] = {}; // make each empty "tile object"
       tiles[i].tile = i; // set tileID to tile #
       tiles[i].writing = ""; // set writing
-      tiles[i].drawing = []; // set writing
+      tiles[i].drawing = []; // set drawing
       tiles[i].taken = false; // Set 'taken': false to every tile.
       tiles[i].firebaseKey = null; // Set 'taken': false to every tile.
       tiles[i].width = tileWidth; // set width
