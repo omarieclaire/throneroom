@@ -5,7 +5,7 @@ let currentColor = 'black';
 let currentFont = 'acki';
 let currentAngle = '1';
 let scene = 'preline';
-let timerCount = 5;
+let timerCount = 2;
 
 let DBLUE = '#a5c7da';
 let LBLUE = '#f0fafc';
@@ -72,6 +72,7 @@ let arrowSound;
 let openTileSound;
 let closeTileSound;
 let writingSound;
+let lateTime;
 let flushToiletSound;
 let tpSound;
 let mirrorSound;
@@ -113,6 +114,8 @@ function preload() {
   openTileSound = document.createElement('audio');
   closeTileSound = document.createElement('audio');
   writingSound = document.createElement('audio');
+  letterSound = document.createElement('audio');
+
   flushToiletSound = document.createElement('audio');
   tpSound = document.createElement('audio');
   mirrorSound = document.createElement('audio');
@@ -136,6 +139,9 @@ function preload() {
   }
   if (writingSound.canPlayType('audio/mpeg')) {
     writingSound.setAttribute('src', 'audio/writingSound.mp3');
+  }
+  if (letterSound.canPlayType('audio/mpeg')) {
+    letterSound.setAttribute('src', 'audio/letterSound.mp3');
   }
   if (flushToiletSound.canPlayType('audio/mpeg')) {
     flushToiletSound.setAttribute('src', 'audio/flushToiletSound.mp3');
@@ -338,6 +344,8 @@ function setup() {
   initializeFromSnapshot(firebase);
 
   function handleKeyDown(event) {
+    letterSound.play();
+
     const key = event.key; // grab the key
     if (graffitiCanvasOpen) { // if graffiti draw canvas is open
       switch (key) {
@@ -384,11 +392,19 @@ function setup() {
             char: event.key
           };
           eventBuffer.push(dbEvent);
+
           return; // quit when this doesn't handle the key event
       }
     }
   }
+
+  function handleKeyUp(event) {
+    letterSound.pause();
+  }
+
   document.addEventListener('keydown', handleKeyDown); // listen for keys being pressed
+  document.addEventListener('keyup', handleKeyUp); // listen for keys being pressed
+
 
   // noLoop();
   snapshotter();
