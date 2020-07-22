@@ -3,7 +3,7 @@ let currentColor = 'black';
 let currentFont = 'acki';
 let currentAngle = '1';
 
-let scene = 'toilet';
+let scene = 'line';
 let DBLUE = '#a5c7da';
 let LBLUE = '#f0fafc';
 let LPINK = '#fb9c96';
@@ -963,6 +963,19 @@ function arrowMouseCheck() {
   }
 }
 
+function lineupDraw(){
+  let lineText = "You are in line for the bathroom"
+  background(LYELLOW);
+  push();
+  textFont(incon);
+  textAlign(CENTER, CENTER);
+  // text(lineText, 0, 0, canvasWidth, canvasHeight);
+  fill(DBLUE);
+  text(lineText, 0, 0, 1200, 500);
+
+  pop();
+  leaveSceneTimer(3000);
+}
 
 function toiletDraw() {
   // let frameStartTime = millis();
@@ -1001,8 +1014,23 @@ function sinkDraw() {
   image(sinkImg1, window.innerWidth / 2 - sinkImg1.width / 2, 0);
 }
 
+function endDraw(){
+  let lineText = "Goodbye"
+  background(DBLUE);
+  push();
+  textFont(incon, 50);
+  textAlign(CENTER, CENTER);
+  // text(lineText, 0, 0, canvasWidth, canvasHeight);
+  fill(DYELLOW);
+  text(lineText, 0, 0, 1200, 500);
+
+  pop();
+}
+
 function draw() {
-  if (scene == 'toilet') {
+  if (scene == 'line') {
+    lineupDraw();
+  } else if (scene == 'toilet') {
     toiletDraw();
   } else if (scene == 'mirror') {
     mirrorDraw();
