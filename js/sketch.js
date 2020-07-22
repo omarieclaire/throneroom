@@ -211,6 +211,13 @@ function makeToolButtons(x, y, w, h) {
 }
 
 
+function snapshotter() {
+  window.setTimeout(function() {
+    console.log('taking snapshot');
+    takeSnapshot();
+    snapshotter();
+  }, 20000); // change this to be longer
+}
 
 function setup() {
   leaveSceneTimer(5000);
@@ -316,6 +323,7 @@ function setup() {
   document.addEventListener('keydown', handleKeyDown); // listen for keys being pressed
 
   noLoop();
+  snapshotter();
 }
 
 function windowResized() {
@@ -915,7 +923,9 @@ function handleEvent(event, key) {
 
 function initializeFromSnapshot(firebase) {
   let database = firebase.database();
-  let snapshotRef = database.ref('/snapshot');
+  let snapshotRef = database.ref('/snapshot').orderByKey().limitToLast(1);
+
+  var now = performance.now();
 
   snapshotRef.once('value', function(snapshot) {
     let dbSnapshot = snapshot.val();
@@ -940,7 +950,9 @@ function initializeFromSnapshot(firebase) {
         .orderByKey()
         .limitToLast(1)
         .once('child_added', function(snap) {
+
           let snapshot = snap.val();
+
           let snapshotKey = snapshot.key;
           buildMap(snapshot.tiles);
           // new reference
@@ -952,6 +964,7 @@ function initializeFromSnapshot(firebase) {
 
           return ref.on('child_added', function(data) {
             let event = data.val();
+
             let key = data.key;
             handleEvent(event, key);
           }, printErrors);
