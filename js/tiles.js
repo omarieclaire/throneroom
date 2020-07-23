@@ -1,18 +1,13 @@
-//////// To Do ////////
-
-// font size is irregular in last scene and popups
-
 //////// Stuck ////////
+// arrows not appearing on mobile
 // tiles not SAVING in non toilet scenes. WHY?
 // tiles not drawing in last scene
-
 // need to click anywhere BUT the opengraffitidrawcanvas to close the canvas
 // how to integrate 'font' and (if time - random text angles) into database
 // 'clear' should only clear unpushed updates - is this hard?
 // command z removes last draw path
 // if orientation=vertical > the sceneSwitch arrow is moved to the bottom center
 // why is text top left when loading?
-
 
 ////////// Not Code /////////
 // select color palette for drawing

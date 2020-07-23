@@ -346,10 +346,12 @@ function setup() {
   isMobile = isScreenMobile();
   graffitiFont = chooseGraffitiFont();
   messageFont = incon;
+  messageFont = 'courier';
   chooseFontSize();
 
   textSize(messageFontSize);
   textFont(messageFont);
+
 
   canvas = createCanvas(canvasWidth, canvasHeight);
   tiles = tileFactory(canvasWidth, canvasHeight);
@@ -898,6 +900,7 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
 function drawTileWriting(tile, scaleFactor, x, y, w, h) {
   push();
   noStroke();
+  textFont(graffitiFont);
   textSize(graffitiFontSize);
   fill(currentColor);
   scale(scaleFactor, scaleFactor);
@@ -1323,6 +1326,8 @@ function endDraw() {
   textAlign(CENTER, CENTER);
   fill(DBLUE);
   rectMode(CENTER);
+  textFont(messageFont);
+  textSize(messageFontSize);
   text(lineText, canvasWidth / 2, canvasHeight / 2, canvasWidth / 1.5, canvasHeight / 2);
   pop();
 }
