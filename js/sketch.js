@@ -1056,7 +1056,19 @@ function drawGraffitiCanvas() {
   pop();
 }
 
+function writtenMessage(message) {
+  push();
+  // textFont(incon);
+  textAlign(CENTER, CENTER);
+  fill('white');
+  rect(graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH / 2);
+  fill('black');
+  text(message, graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH / 2);
+  pop();
+}
+
 function sceneSwitch() {
+
   if (scene == 'preline') {
     scene = 'line';
 
@@ -1068,23 +1080,25 @@ function sceneSwitch() {
   } else if (scene == 'toilet') {
     startIndex = 121;
     endIndex = 240;
-    scene = 'mirror';
+    scene = 'sink';
     redraw();
     leaveSceneTimer(3000);
+
+  } else if (scene == 'sink') {
+    startIndex = 361;
+    endIndex = 480;
+    scene = 'mirror'
+    redraw();
+    leaveSceneTimer(3000);
+
 
   } else if (scene == 'mirror') {
     startIndex = 241;
     endIndex = 360;
-    scene = 'sink';
+    scene = 'end';
     redraw();
     leaveSceneTimer(3000);
-    
-  } else if (scene == 'sink') {
-    startIndex = 361;
-    endIndex = 480;
-    scene = 'end'
-    redraw();
-  }
+}
 }
 
 function createTriangleParameters(length) {
@@ -1165,7 +1179,7 @@ function preLineupDraw() {
 }
 
 function lineupDraw() {
-  let lineText = "You are in line for the imaginary bathroom \n (" + timerCount + ")";
+  let lineText = "You are in line" + "\n" + timerCount;
   push();
   background('black');
   if (frameCount % 60 == 0 && timerCount > -1) { // if the frameCount is divisible by 60, a second has passed. it will stop at 0
@@ -1183,17 +1197,6 @@ function lineupDraw() {
   fill(DBLUE);
   rectMode(CENTER);
   text(lineText, window.innerWidth / 2, window.innerHeight / 2, window.innerWidth / 1.5, window.innerHeight / 2);
-  pop();
-}
-
-function writtenMessage(message) {
-  push();
-  // textFont(incon);
-  textAlign(CENTER, CENTER);
-  fill('white');
-  rect(graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH / 2);
-  fill('black');
-  text(message, graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH / 2);
   pop();
 }
 
@@ -1217,6 +1220,14 @@ function toiletDraw() {
   // console.log('Current frame rate:', frameRate());
 }
 
+function sinkDraw() {
+  background(LBLUE);
+  image(sinkImg1, window.innerWidth / 2 - sinkImg1.width / 2, 0);
+  if (writtenMessageViz) {
+    writtenMessage("what do you do with your hands?");
+  }
+}
+
 function mirrorDraw() {
   if (graffitiCanvasOpen) { // if canvas is open
     drawGraffitiCanvas();
@@ -1231,14 +1242,6 @@ function mirrorDraw() {
     if (writtenMessageViz) {
       writtenMessage("what do you want to see in the mirror?");
     }
-  }
-}
-
-function sinkDraw() {
-  background(LBLUE);
-  image(sinkImg1, window.innerWidth / 2 - sinkImg1.width / 2, 0);
-  if (writtenMessageViz) {
-    writtenMessage("what do you do with your hands?");
   }
 }
 
@@ -1264,10 +1267,10 @@ function draw() {
     lineupDraw();
   } else if (scene == 'toilet') {
     toiletDraw();
-  } else if (scene == 'mirror') {
-    mirrorDraw();
   } else if (scene == 'sink') {
     sinkDraw();
+  } else if (scene == 'mirror') {
+    mirrorDraw();
   } else if (scene == 'end') {
     endDraw();
   }

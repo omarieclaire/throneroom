@@ -1,11 +1,12 @@
 //////// BUGS ////////
 // tile font loading late
+// scene tiles not appearing in other scenes
 // resize bug: Uncaught DOMException: Failed to execute 'drawImage' on 'CanvasRenderingContext2D': The image argument is a canvas element with a width or height of 0.
 // a - delete code saving to graffitiWall
 
 
 //////// TODO ////////
-// make toilet paper tile - a off-white draw canvas that doesn't call save when closing, instead calls a sound and animation
+// wash hands before mirror
 // debug "width" and "height" - make global variables and use them everywhere?
 // make "device orientation" function that impacts the placement of toolbuttons and the sceneSwitch arrow (center/bottom for mobile)
 // integrate random fonts and random text angles into database
