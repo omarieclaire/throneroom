@@ -4,12 +4,12 @@ let screenOrientation;
 let canvasWidth;
 let canvasHeight;
 
-let standardTimer = 1000;
+let standardTimer = 3000;
 
 let currentColor = 'black';
 let currentAngle = '1';
 let scene = 'preline';
-let timerCount = 2;
+let bathroomLineUpTime = 8;
 let toiletPaperTile;
 
 let DBLUE = '#a5c7da';
@@ -1243,14 +1243,14 @@ function preLineupDraw() {
 }
 
 function lineupDraw() {
-  let lineText = "You are in line" + "\n" + timerCount;
+  let lineText = "You are in line" + "\n" + bathroomLineUpTime;
   push();
   background('black');
-  if (frameCount % 60 == 0 && timerCount > -1) { // if the frameCount is divisible by 60, a second has passed. it will stop at 0
-    timerCount--;
+  if (frameCount % 60 == 0 && bathroomLineUpTime > -1) { // if the frameCount is divisible by 60, a second has passed. it will stop at 0
+    bathroomLineUpTime--;
   }
-  if (timerCount == -1) {
-    timerCount = 0;
+  if (bathroomLineUpTime == -1) {
+    bathroomLineUpTime = 0;
     lineupSound.pause();
     drawSceneSwitchArrow(DBLUE, LBLUE);
     noLoop();
@@ -1319,7 +1319,7 @@ function mirrorDraw() {
 }
 
 function endDraw() {
-  let lineText = "Thank you for visiting the imaginary bathroom. Please come back anytime."
+  let lineText = "Thank you for visiting the imaginary bathroom."
   push();
   background('black');
   // textFont(messageFont, messageFontSize);
