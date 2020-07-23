@@ -53,6 +53,11 @@ let tiles;
 let triangleParams;
 let eventBuffer = [];
 
+let BASE_TILE_WIDTH  = 245;
+let GRAFFITI_TO_BASE_SCALE;
+let BASE_TO_SMALL_TILE_SCALE;
+let BASE_TO_GRAFFITI_SCALE;
+
 let paintColors = [
   DBLUE,
   LBLUE,
@@ -124,14 +129,8 @@ function calculateGraffitiCanvasPositionY(canvasWidth, canvasHeight) {
   return canvasHeight / 20;
 }
 
-function calculateScaleFactor(tileArea) {
-  // equation of a line is: y = slope * x + intercept
-  // for us, y = canvas height and x is scalefactor.
-  // 38288.931216931225
-  let slope = 50000;
-  let intercept = -909.0822433862436;
-
-  return (tileArea - intercept) / slope;
+function calculateScaleFactor(tw, gw) {
+  return tw/gw;
 }
 
 function scaleAllTheThings(userWindowWidth, userWindowHeight) {
@@ -164,7 +163,10 @@ function scaleAllTheThings(userWindowWidth, userWindowHeight) {
   // console.log(`canvasWidth = ${canvasWidth}\ncanvasHeight = ${canvasHeight}`);
   // console.log(`tileArea = ${tiles[0].width * tiles[0].height}`);
   //SCALEFACTOR = 0.0305;
-  SCALEFACTOR = calculateScaleFactor(currentTile.width * currentTile.height);
+  GRAFFITI_TO_BASE_SCALE = BASE_TILE_WIDTH / graffitiCanvasW;
+  BASE_TO_SMALL_TILE_SCALE = currentTile.width / BASE_TILE_WIDTH;
+  BASE_TO_GRAFFITI_SCALE = graffitiCanvasW / BASE_TILE_WIDTH;
+  SCALEFACTOR = calculateScaleFactor(currentTile.width, graffitiCanvasW);
 }
 
 function makeToolButtons(x, y, w, h) {
@@ -413,13 +415,29 @@ function endDrawPath() {
   eventBuffer.push(event);
 }
 
+// Want: translateThenScale(transformCoordFrombBse(x)) == x for all x
+// Want: transformCoordFrombase(translateThenScale(x)) == x for all x
+function translateThenScale(coord, gx, gy, scale) {
+  // grab the x and y of each point
+  // translate it so that it's relative to an origin.
+  // then scale it so 
+  return {
+    x: (coord.x - gx) * scale,
+    y: (coord.y - gy) * scale
+  };
+}
+
+function scaleThenTranslate(baseCoord, gx, gy, scale) {
+  return {
+    x: scale * baseCoord.x + gx,
+    y: scale * baseCoord.y + gy
+  };
+}
+
 function captureDrawing() {
   if (isDrawing) { // if person isdrawing
     if (inGraffitiCanvasCheck()) { // and person isdrawing in the canvas
-      let point = { // grab the x and y of each point
-        x: mouseX,
-        y: mouseY
-      };
+      let point = translateThenScale({x: mouseX, y: mouseY}, graffitiCanvasX, graffitiCanvasY, GRAFFITI_TO_BASE_SCALE);
       currentDrawPath.path.push(point); // push that x and y into the currentDrawPath array
     }
   }
@@ -460,10 +478,8 @@ function chooseTextAngle() {
 
 function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
   push();
-  scale(scaleFactor, scaleFactor);
-  translate(translateX, translateY);
   noFill();
-  strokeWeight(5);
+  strokeWeight(5 * scaleFactor / 2);
   textFont(incon, 50);
   let drawing = tile['drawing'];
   for (let i = 0; i < drawing.length; i++) { // foreach path in the drawing
@@ -472,7 +488,8 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
       stroke(pathObject.color);
       beginShape(); // draw
       for (let j = 0; j < pathObject.path.length; j++) { // for each coordinate in the path
-        vertex(pathObject.path[j].x, pathObject.path[j].y); // mark each vertex and draw a line between
+        let pathCoord = scaleThenTranslate(pathObject.path[j], translateX, translateY, scaleFactor);
+        vertex(pathCoord.x, pathCoord.y); // mark each vertex and draw a line between
       }
       endShape();
     }
@@ -532,7 +549,7 @@ function graffitiTools() {
 function displayLargeTileGraffiti() {
   if (graffitiCanvasOpen) {
     let tile = tiles[currentTile.tile];
-    drawTileDrawing(tile, 1.0, 0, 0); // draw it BIG
+    drawTileDrawing(tile, BASE_TO_GRAFFITI_SCALE, graffitiCanvasX, graffitiCanvasY); // draw it BIG
     drawTileWriting(tile, 1.0, graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH);
   }
 }
@@ -549,7 +566,7 @@ function displaySmallTileGraffiti() {
     let translateHeight = tile.height / SCALEFACTOR;
     drawTile(tile); // draw the actual tile rect
     if (tile['writing'] !== []) { // if not empty
-      drawTileDrawing(tile, SCALEFACTOR, drawtranslateX, drawtranslateY);
+      drawTileDrawing(tile, BASE_TO_SMALL_TILE_SCALE, tile.position.x, tile.position.y);
       drawTileWriting(tile, SCALEFACTOR, writetranslateX, writetranslateY, translateWidth, translateHeight);
     }
   }
