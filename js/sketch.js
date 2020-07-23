@@ -733,7 +733,7 @@ function endDrawPath() {
 function translateThenScale(coord, gx, gy, scale) {
   // grab the x and y of each point
   // translate it so that it's relative to an origin.
-  // then scale it so 
+  // then scale it so
   return {
     x: (coord.x - gx) * scale,
     y: (coord.y - gy) * scale
@@ -794,7 +794,7 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
   push();
   noFill();
   strokeWeight(5 * scaleFactor / 2);
-  textFont(incon, 50);
+  // textFont(incon, 50);
   let drawing = tile['drawing'];
   for (let i = 0; i < drawing.length; i++) { // foreach path in the drawing
     let pathObject = drawing[i]; // grab the next path
@@ -945,10 +945,7 @@ function hoverReplace(x, y, w, h, img2, img1) {
 // }
 
 function clearTile() {
-  currentTile.drawing = {
-    path: [],
-    color: 'black'
-  };
+  currentTile.drawing = [];
   currentTile.writing = '';
   // openMobileKeyboard();
 }
