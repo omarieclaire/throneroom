@@ -1,7 +1,5 @@
 //////// BUGS ////////
-// drawings aren't scaling on mobile :(
 // tile font loading late
-// after hitting clear, can't draw
 // stop hardclick on mobile
 // debug         case 'Enter':
 
@@ -18,6 +16,7 @@
 // improve images
 // improve sounds
 // improve functionality of lettersound
+// choose main font
 
 //////// IF TIME ////////
 // water flowing image on click for sink scene
@@ -32,6 +31,7 @@
 // must be able to moderate database? do I moderate live?
 // make database private
 // hide js? or opposite?
+// hover working
 
 
 // DREAMIN AROUND
@@ -46,9 +46,9 @@
 // link to gossip call
 // so you are crying in the bathroom zine
 
-// what are you ready to flush away? see it in your mind and flush it away in this imaginary toilet
-// what do you want to see when you look in the mirror? can you see it here, in this imaginary mirror?
-// when your hands touch, which hand is touched and which hand is the toucher? wash your hands now, without soap, in this imaginary sink?
+// what are you ready to flush away? see it in your mind and flush it away in our imaginary toilet
+// what do you want to see when you look in the mirror? can you see it here, in our imaginary mirror?
+// what do you want to do with your hands? can you gently, slowly, wash your hands here in our imaginary sink?
 
 
 

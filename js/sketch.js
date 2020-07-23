@@ -1228,7 +1228,7 @@ function sinkDraw() {
 }
 
 function endDraw() {
-  let lineText = "Goodbye"
+  let lineText = "Thank you for visiting the imaginary bathroom. Please come back any time."
   push();
   background('black');
   leavingSound.play();
