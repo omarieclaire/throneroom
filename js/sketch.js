@@ -692,21 +692,21 @@ function clickActions(wasClicked, item) {
 // }
 
 function bigImgMouseCheck() {
-  if (scene == 'toilet') {
-    if (hoverCheck(canvasWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height)) {
-      return true;
-    }
-  } else if (scene == 'mirror') {
-    if (hoverCheck(canvasWidth / 2 - mirrorImg1.width / 2, 0, mirrorImg1.width, mirrorImg2.height)) {
-      return true;
-    }
-  } else if (scene == 'sink') {
-    if (hoverCheck(canvasWidth / 2 - sinkImg1.width / 2, 0, sinkImg1.width, sinkImg2.height)) {
-      return true;
-    }
-  } else {
-    return false;
-  }
+  // if (scene == 'toilet') {
+  //   if (hoverCheck(canvasWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height)) {
+  //     return true;
+  //   }
+  // } else if (scene == 'mirror') {
+  //   if (hoverCheck(canvasWidth / 2 - mirrorImg1.width / 2, 0, mirrorImg1.width, mirrorImg2.height)) {
+  //     return true;
+  //   }
+  // } else if (scene == 'sink') {
+  //   if (hoverCheck(canvasWidth / 2 - sinkImg1.width / 2, 0, sinkImg1.width, sinkImg2.height)) {
+  //     return true;
+  //   }
+  // } else {
+  //   return false;
+  // }
 }
 
 function smallImgMouseCheck() {
