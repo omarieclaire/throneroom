@@ -2,7 +2,6 @@
 //////// TODO ////////
 
 //////// To Do ////////
-// debug "width" and "height" - make global variables and use them everywhere?
 // make "device orientation" function that impacts the placement of toolbuttons and the sceneSwitch arrow (center/bottom for mobile)
 // after 26 characters without a space or linebreak, insert a space
 // ritual/request text appears and then fades at scene open

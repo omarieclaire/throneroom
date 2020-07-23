@@ -292,12 +292,26 @@ function snapshotter() {
   }, 20000); // change this to be longer
 }
 
+function getScreenOrientation(){
+  if (canvasWidth >= canvasHeight) {
+    screenOrientation = 'horizontal';
+    console.log(`Screen orientation is ${screenOrientation}`);
+  } else if (canvasWidth <= canvasHeight){
+    screenOrientation = 'vertical';
+    console.log(`Screen orientation is ${screenOrientation}`);
+  } else {
+    console.log("Screen orientation is impossible");
+  }
+}
+
 function setup() {
   // input = createInput(); // make input for text
   // input.position(0, 0);
   // input.elt.id = "focus-me";
+
   canvasWidth = calculateCanvasWidth(window.innerWidth, window.innerHeight);
   canvasHeight = calculateCanvasHeight(window.innerWidth, window.innerHeight);
+  getScreenOrientation();
   canvas = createCanvas(canvasWidth, canvasHeight);
   tiles = tileFactory(canvasWidth, canvasHeight);
   currentTile = tiles[1];
