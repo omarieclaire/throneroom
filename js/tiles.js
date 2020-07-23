@@ -3,11 +3,11 @@
 // tile font loading late
 // after hitting clear, can't draw
 // stop hardclick on mobile
-// triangle click not working perfectly
+// triangle click not working well (one side is not working at all)
+// clicking on timerscreen hides triangle temp
 
 
 //////// TODO ////////
- // figure out where to put - writingSound.play(); and pause
 // make toilet paper tile - a off-white draw canvas that doesn't call save when closing, instead calls a sound and animation
 // debug "width" and "height" - make global variables and use them everywhere?
 // make "device orientation" function that impacts the placement of toolbuttons and the sceneSwitch arrow (center/bottom for mobile)

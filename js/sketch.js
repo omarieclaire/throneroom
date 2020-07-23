@@ -6,6 +6,7 @@ let currentFont = 'acki';
 let currentAngle = '1';
 let scene = 'preline';
 let timerCount = 2;
+let toiletPaperTile;
 
 let DBLUE = '#a5c7da';
 let LBLUE = '#f0fafc';
@@ -175,7 +176,7 @@ function calculateGraffitiCanvasWidth(canvasWidth, canvasHeight) {
 
 function calculateGraffitiCanvasHeight(canvasWidth, canvasHeight) {
   let graffitiWidth = calculateGraffitiCanvasWidth(canvasWidth, canvasHeight);
-  return 4 / 7 * graffitiWidth;
+  return (4 / 7) * graffitiWidth;
 }
 
 function calculateGraffitiCanvasPositionX(canvasWidth, canvasHeight, graffitiCanvasW) {
@@ -186,14 +187,14 @@ function calculateGraffitiCanvasPositionY(canvasWidth, canvasHeight) {
   return canvasHeight / 20;
 }
 
-function calculateScaleFactor(tileArea) {
+function calculateScaleFactor(tileArea, tw, th, cw, ch) {
   // equation of a line is: y = slope * x + intercept
   // for us, y = canvas height and x is scalefactor.
   // 38288.931216931225
   let slope = 50000;
   let intercept = -909.0822433862436;
 
-  return (tileArea - intercept) / slope;
+  return tw / cw; //(tileArea - intercept) / slope;
 }
 
 function scaleAllTheThings(userWindowWidth, userWindowHeight) {
@@ -226,7 +227,7 @@ function scaleAllTheThings(userWindowWidth, userWindowHeight) {
   // console.log(`canvasWidth = ${canvasWidth}\ncanvasHeight = ${canvasHeight}`);
   // console.log(`tileArea = ${tiles[0].width * tiles[0].height}`);
   //SCALEFACTOR = 0.0305;
-  SCALEFACTOR = calculateScaleFactor(currentTile.width * currentTile.height);
+  SCALEFACTOR = calculateScaleFactor(currentTile.width * currentTile.height, currentTile.width, currentTile.height, graffitiCanvasW, canvasHeight);
 }
 
 function makeToolButtons(x, y, w, h) {
@@ -470,7 +471,7 @@ function whatWasClicked() {
     if (typeof(tile) !== 'undefined') { //clicked on a tile.
       return {
         clicked: 'tileClicked',
-        item: tile // findme
+        item: tile
       };
     }
 }
@@ -503,9 +504,9 @@ function clickActions(wasClicked, item) {
     startDrawPath()
     writingSound.play();
   } else if (wasClicked == 'bigImgClicked') {
-    largeImgDeal()
+    largeImgClicked()
   } else if (wasClicked == 'smallImgClicked') {
-    smallImgDeal()
+    smallImgClicked()
   } else if (wasClicked == 'tileClicked') {
     toggleGraffitiCanvas(item);
     startDrawPath();
@@ -572,9 +573,9 @@ function clickActions(wasClicked, item) {
 //   } else if (wasHovered == 'toolHovered') {
 //     graffitiTools(DBLUE);
 //   } else if (wasHovered == 'bigImgHovered') {
-//     largeImgDeal();
+//     largeImgClicked();
 //   } else if (wasHovered == 'smallImgHovered') {
-//     smallImgDeal();
+//     smallImgClicked();
 //   } else if (wasHovered == 'tileHovered') {
 //     while (wasHovered == 'tileHovered') {
 //       // highlightHoveredTile(item, true);
@@ -593,9 +594,9 @@ function clickActions(wasClicked, item) {
 //   } else if (wasHovered == 'toolHovered') {
 //     graffitiTools(LBLUE);
 //   } else if (wasHovered == 'bigImgHovered') {
-//     largeImgDeal();
+//     largeImgClicked();
 //   } else if (wasHovered == 'smallImgHovered') {
-//     smallImgDeal();
+//     smallImgClicked();
 //   } else if (wasHovered == 'tileHovered') {
 //     console.log(JSON.stringify(item));
 //     // highlightHoveredTile(item, false);
@@ -671,7 +672,7 @@ function hoverOnImg() {
   }
 }
 
-function largeImgDeal() {
+function largeImgClicked() {
   if (scene == 'toilet') {
     flushToiletSound.play();
     // flush toilet animation and sound
@@ -684,9 +685,10 @@ function largeImgDeal() {
   }
 }
 
-function smallImgDeal() {
+function smallImgClicked() {
   if (scene == 'toilet') {
     tpSound.play();
+    // toggleGraffitiCanvas(toiletPaperTile);
     // toilet paper canvas
   } else if (scene == 'mirror') {
     // makeup window
@@ -962,14 +964,14 @@ function toggleGraffitiCanvas(tileClicked) { // open and close canvas
   const previousCurrentTile = currentTile; // set opentile to the last value of currenttile ( this is whatever it was last time this ran)
   if (graffitiCanvasOpen) { //  if canvas being closed
     if (inGraffitiCanvasMouseCheck() == false) { // prevents accidental closing
-      openTileSound.play();
+      closeTileSound.play();
       previousCurrentTile['taken'] = false; //  remove hold on previousCurrentTile
       saveTile(previousCurrentTile); // save the previousCurrentTile
       graffitiCanvasOpen = !graffitiCanvasOpen; // toggle canvas state
       noLoop(); // stop looping draw - for speed
     }
   } else { // if canvas is being opened
-    closeTileSound.play();
+    openTileSound.play();
     currentColor = chooseColor();
     currentFont = chooseFont();
     currentAngle = chooseTextAngle();
@@ -1069,7 +1071,7 @@ function arrowMouseCheck() {
   let x2 = triangleParams.x2;
   let y2 = triangleParams.y2;
   let x3 = triangleParams.x3;
-  let y3 = triangleParams.y2;
+  let y3 = triangleParams.y3;
 
   var areaOrig = floor(abs((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1)));
   var area1 = floor(abs((x1 - px) * (y2 - py) - (x2 - px) * (y1 - py)));
