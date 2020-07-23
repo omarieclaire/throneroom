@@ -4,6 +4,8 @@ let screenOrientation;
 let canvasWidth;
 let canvasHeight;
 
+let standardTimer = 1000;
+
 let currentColor = 'black';
 let currentFont = 'acki';
 let currentAngle = '1';
@@ -292,11 +294,11 @@ function snapshotter() {
   }, 20000); // change this to be longer
 }
 
-function getScreenOrientation(){
+function getScreenOrientation() {
   if (canvasWidth >= canvasHeight) {
     screenOrientation = 'horizontal';
     console.log(`Screen orientation is ${screenOrientation}`);
-  } else if (canvasWidth <= canvasHeight){
+  } else if (canvasWidth <= canvasHeight) {
     screenOrientation = 'vertical';
     console.log(`Screen orientation is ${screenOrientation}`);
   } else {
@@ -481,7 +483,7 @@ function whatWasClicked() {
     }
   }
 
-  if (scene == 'toilet' || scene == 'sink' || scene == 'mirror' || scene == 'end' ) {
+  if (scene == 'toilet' || scene == 'sink' || scene == 'mirror' || scene == 'end') {
     if (graffitiCanvasOpen) { // if canvas open
       let tool = toolMouseCheck(); // grab tool (or undefined)
       if (typeof(tool) !== 'undefined') {
@@ -510,7 +512,7 @@ function whatWasClicked() {
     };
   }
 
-  if (scene == 'toilet' || scene == 'sink' || scene == 'mirror' || scene == 'end' ) {
+  if (scene == 'toilet' || scene == 'sink' || scene == 'mirror' || scene == 'end') {
     let tile = tileMouseCheck(); // click on a tile?
     if (typeof(tile) !== 'undefined') { //clicked on a tile.
       return {
@@ -695,16 +697,14 @@ function hoverOnImg() {
         hoverReplace(canvasWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height, toiletImg2, toiletImg1); // toilet hover
         hoverReplace(canvasWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height, toiletPaperImg2, toiletPaperImg1); // tp hover
       } else if (scene == 'mirror') {
-        redraw();
+        // redraw();
         hoverReplace(canvasWidth / 2 - mirrorImg1.width / 2, 0, mirrorImg1.width, mirrorImg2.height, mirrorImg2, mirrorImg1); // mirror hover
 
       } else if (scene == 'sink') {
-        redraw();
+        // redraw();
         hoverReplace(canvasWidth / 2 - sinkImg1.width / 2, 0, sinkImg1.width, sinkImg2.height, sinkImg2, sinkImg1); // sink hover
       }
     }
-
-    // if (arrowMouseCheck() && sceneSwitchArrowViz == true) {
     if (sceneSwitchArrowViz && arrowMouseCheck()) {
       drawSceneSwitchArrow(DYELLOW, LYELLOW);
     } else if (sceneSwitchArrowViz) {
@@ -722,7 +722,7 @@ function largeImgClicked() {
     window.setTimeout(function() {
       writtenMessageViz = false;
       redraw();
-    }, 3000);
+    }, standardTimer);
     // flush toilet animation and sound
   } else if (scene == 'mirror') {
     mirrorSound.play();
@@ -730,7 +730,7 @@ function largeImgClicked() {
     window.setTimeout(function() {
       writtenMessageViz = false;
       redraw();
-    }, 3000);
+    }, standardTimer);
     // mirror sound and animation
   } else if (scene == 'sink') {
     waterSound.play();
@@ -738,7 +738,7 @@ function largeImgClicked() {
     window.setTimeout(function() {
       writtenMessageViz = false;
       redraw();
-    }, 3000);
+    }, standardTimer);
     // sink sound and animation
   }
 }
@@ -758,7 +758,6 @@ function smallImgClicked() {
 function startDrawPath() {
   writingSound.play();
   if (graffitiCanvasOpen) {
-    // if (graffitiCanvasOpen && inGraffitiCanvasMouseCheck()) -> inGraffitiCanvasMouseCheck here breaks drawing on mobile - why?
     isDrawing = true; // set isdrawing to true
     currentDrawPath = {
       path: [], // reset current path to an empty
@@ -783,10 +782,7 @@ function endDrawPath() {
 // Want: translateThenScale(transformCoordFrombBse(x)) == x for all x
 // Want: transformCoordFrombase(translateThenScale(x)) == x for all x
 function translateThenScale(coord, gx, gy, scale) {
-  // grab the x and y of each point
-  // translate it so that it's relative to an origin.
-  // then scale it so
-  return {
+  return {   // grab the x and y of each point, translate it so that it's relative to an origin, then scale it
     x: (coord.x - gx) * scale,
     y: (coord.y - gy) * scale
   };
@@ -802,8 +798,7 @@ function scaleThenTranslate(baseCoord, gx, gy, scale) {
 function captureDrawing() {
   if (isDrawing) { // if person isdrawing
     if (inGraffitiCanvasMouseCheck()) { // and person isdrawing in the canvas
-      // grab the x and y of each point, translate then scale them to the base
-      let point = translateThenScale({
+      let point = translateThenScale({ // grab the x and y of each point, translate then scale them to the base
         x: mouseX,
         y: mouseY
       }, graffitiCanvasX, graffitiCanvasY, GRAFFITI_TO_BASE_SCALE);
@@ -827,7 +822,6 @@ function drawTile(tile) {
 }
 
 function chooseColor() {
-  // let currentColor;
   return random(paintColors);
 }
 
@@ -1096,9 +1090,9 @@ function stopSounds() {
   ];
   for (var i = 0; i < allSounds.length; i++) {
     let thisSound = allSounds[i];
-      allSounds[i].pause();
-      console.log(`${thisSound} paused`);
-    }
+    allSounds[i].pause();
+    console.log(`${thisSound} paused`);
+  }
 }
 
 function sceneSwitch() {
@@ -1107,7 +1101,7 @@ function sceneSwitch() {
 
   } else if (scene == 'line') {
     scene = 'toilet';
-    leaveSceneTimer(3000);
+    leaveSceneTimer(standardTimer);
     noLoop(); // stop toilet from looping
 
   } else if (scene == 'toilet') {
@@ -1116,7 +1110,7 @@ function sceneSwitch() {
     // redraw();
     startIndex = 120;
     endIndex = 240;
-    leaveSceneTimer(3000);
+    leaveSceneTimer(standardTimer);
     noLoop();
 
   } else if (scene == 'sink') {
@@ -1125,7 +1119,7 @@ function sceneSwitch() {
     startIndex = 240;
     endIndex = 360;
     // redraw();
-    leaveSceneTimer(3000);
+    leaveSceneTimer(standardTimer);
     noLoop();
 
   } else if (scene == 'mirror') {
@@ -1294,15 +1288,12 @@ function endDraw() {
   let lineText = "Thank you for visiting the imaginary bathroom. Please come back anytime."
   push();
   background('black');
-  leavingSound.play();
   textFont(incon);
   textAlign(CENTER, CENTER);
   fill(DBLUE);
   rectMode(CENTER);
   text(lineText, canvasWidth / 2, canvasHeight / 2, canvasWidth / 1.5, canvasHeight / 2);
   pop();
-
-
 }
 
 function draw() {

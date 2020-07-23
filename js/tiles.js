@@ -1,23 +1,17 @@
-
-//////// TODO ////////
-
 //////// To Do ////////
-// make "device orientation" function that impacts the placement of toolbuttons and the sceneSwitch arrow (center/bottom for mobile)
-// after 26 characters without a space or linebreak, insert a space
-// ritual/request text appears and then fades at scene open
-// stop hardclick on mobile
-// anything to say before you go? (text in last scene)
-// goodbye looping
 
+// stop hardclick on mobile
+// font size is irregular in last scene and popups
 
 //////// Stuck ////////
-
 // tiles not SAVING in non toilet scenes. WHY?
-// click anywhere BUT the opengraffitidrawcanvas to close the canvas - ugh is a mess of logic.
-// how to integrate 'font' and (if time)'random text angles' into database?
-// resize bug: is it because height is changing and not width?: Uncaught DOMException: Failed to execute 'drawImage' on 'CanvasRenderingContext2D': The image argument is a canvas element with a width or height of 0.
+// tiles not drawing in last scene
+
+// need to click anywhere BUT the opengraffitidrawcanvas to close the canvas
+// how to integrate 'font' and (if time - random text angles) into database
 // 'clear' should only clear unpushed updates - is this hard?
 // command z removes last draw path
+// if orientation=vertical > the sceneSwitch arrow is moved to the bottom center
 
 
 ////////// Not Code /////////
@@ -39,6 +33,9 @@
 // choose sound or reading in lineup
 // choose light or dark in lineup
 // refactor code so canvas is only the drawcanvas
+// resize bug: is it because height is changing and not width?: Uncaught DOMException: Failed to execute 'drawImage' on 'CanvasRenderingContext2D': The image argument is a canvas element with a width or height of 0.
+// after 26 characters without a space or linebreak, insert a space
+
 
 //////// BEFORE PUBLISHING ////////
 // make the 'text' canvas tool invisible (also clear if clear still clears EVERYTHING)
@@ -50,6 +47,8 @@
 // add alt text to the lineup: (why are you here anyway?)
 // what does handdrawn mean, on a computer? (art, fonts, etc)
 // chat window
+// ritual/request text appears and then fades at scene open
+// anything to say before you go? (text in last scene)
 // click on toilet paper for special tile with flush button - flush sound when done and animation
 // should I draw *all present* mouse cursors? so you can *feel* connected to the others?
 // click on words in text to go to other words in text?

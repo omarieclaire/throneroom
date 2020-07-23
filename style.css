@@ -3,6 +3,8 @@ body {
   padding: 0;
   background-color: #ffd183;
   touch-action: pinch-zoom;
+  -webkit-touch-callout: none;
+
   /* height: 100%; */
   /* overflow: hidden; */
 }
