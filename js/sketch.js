@@ -56,7 +56,7 @@ let reallyFree;
 let syifana;
 let tiles;
 let startIndex = 0;
-let endIndex = 121;
+let endIndex = 120;
 let triangleParams;
 let isMobile = window.innerWidth <= 800;
 let eventBuffer = [];
@@ -492,7 +492,7 @@ function whatWasClicked() {
     };
   }
 
-  if (scene == 'toilet' || scene == 'sink' || scene == 'mirror' || scene == 'end' ) { 
+  if (scene == 'toilet' || scene == 'sink' || scene == 'mirror' || scene == 'end' ) {
     let tile = tileMouseCheck(); // click on a tile?
     if (typeof(tile) !== 'undefined') { //clicked on a tile.
       return {
@@ -1078,13 +1078,9 @@ function stopSounds() {
   ];
   for (var i = 0; i < allSounds.length; i++) {
     let thisSound = allSounds[i];
-    if (allSounds[i].playing === 'true') {
       allSounds[i].pause();
       console.log(`${thisSound} paused`);
-    } else {
-      console.log(`${thisSound} not playing anyway`);
     }
-  }
 }
 
 function sceneSwitch() {
