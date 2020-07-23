@@ -1,7 +1,8 @@
 //////// BUGS ////////
 // tile font loading late
-// stop hardclick on mobile
-// debug         case 'Enter':
+// resize bug: Uncaught DOMException: Failed to execute 'drawImage' on 'CanvasRenderingContext2D': The image argument is a canvas element with a width or height of 0.
+// a - delete code saving to graffitiWall
+
 
 //////// TODO ////////
 // make toilet paper tile - a off-white draw canvas that doesn't call save when closing, instead calls a sound and animation
@@ -17,6 +18,8 @@
 // improve sounds
 // improve functionality of lettersound
 // choose main font
+// sounds stop when leaving scenes
+// favicon
 
 //////// IF TIME ////////
 // water flowing image on click for sink scene
@@ -24,6 +27,7 @@
 // choose light or dark in lineup
 // anything to say before you go? (text in last scene)
 // make small images for mirror and sink scene
+// stop hardclick on mobile
 
 //////// LATER ////////
 // refactor code so canvas is only the drawcanvas
@@ -68,7 +72,9 @@ function tileFactory(canvasWidth, canvasHeight, existingTiles) {
   let numColumns;
   let numRows;
   let tileSpacer = 5;
-  let numberOfTiles = 8 * 15; //120;
+  // let numberOfTiles = 8 * 15; //120;
+  let numberOfTiles = 480;
+
 
   if(canvasWidth <= canvasHeight) {
     // taller
@@ -100,7 +106,16 @@ function tileFactory(canvasWidth, canvasHeight, existingTiles) {
   let ySpacer = tileHeight + tileSpacer;
   let xSpacer = tileWidth + tileSpacer;
 
+
+
+
   for (var i = 0; i < numberOfTiles; i++) {
+
+    // if i is divisible by 120 (remainder is zero) reset rowCounter
+    if(i % 120 == 0) {
+      rowCounter = 0;
+    }
+
     rowCounter++; // increment rowCounter
 
     let tile = tiles[i];

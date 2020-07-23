@@ -55,6 +55,8 @@ let jsKang;
 let reallyFree;
 let syifana;
 let tiles;
+let startIndex = 0;
+let endIndex = 121;
 let triangleParams;
 let isMobile = window.innerWidth <= 800;
 let eventBuffer = [];
@@ -293,7 +295,7 @@ function setup() {
   let canvasHeight = calculateCanvasHeight(window.innerWidth, window.innerHeight);
   canvas = createCanvas(canvasWidth, canvasHeight);
   tiles = tileFactory(canvasWidth, canvasHeight);
-  currentTile = tiles[0];
+  currentTile = tiles[1];
   triangleParams = createTriangleParameters(40);
   scaleAllTheThings(canvasWidth, canvasHeight);
   textFont(incon, 50);
@@ -901,8 +903,11 @@ function displayLargeTileGraffiti() {
 }
 
 function displaySmallTileGraffiti() {
-  for (const tileId in tiles) {
-    let tile = tiles[tileId];
+
+
+// for (const tileId in tiles) { // line removed
+for (let i = startIndex; i < endIndex; i++) {
+  let tile = tiles[i];
     // why does this translate work?
     let drawtranslateX = tile.position.x / SCALEFACTOR - graffitiCanvasX;
     let drawtranslateY = tile.position.y / SCALEFACTOR - graffitiCanvasY;
@@ -919,10 +924,12 @@ function displaySmallTileGraffiti() {
 }
 
 function tileMouseCheck() { // returns undefined when not clicking on a tile
-  for (const tileId in tiles) { // for each tile
-    let tile = tiles[tileId]; // grab the ID
-    if (mouseX > tile['position']['x'] && mouseX < tile['position']['x'] + tile['width'] && mouseY > tile['position']['y'] && mouseY < tile['position']['y'] + tile['height']) {
-      return tiles[tileId]; // check if mouse is over it -> if yes, return that tile (can i just return tile?)
+  // for (const tileId in tiles) { // for each tile
+ // let tile = tiles[tileId]; // grab the ID
+    for (let i = startIndex; i < endIndex; i++) { // for each key
+      let tile = tiles[i]; // grab the key
+      if (mouseX > tile['position']['x'] && mouseX < tile['position']['x'] + tile['width'] && mouseY > tile['position']['y'] && mouseY < tile['position']['y'] + tile['height']) {
+        return tiles[i]; // check if mouse is over it -> if yes, return that tile (can i just return tile?)
     }
   }
 }
@@ -1176,7 +1183,7 @@ function lineupDraw() {
 
 function writtenMessage(message) {
   push();
-  textFont(incon);
+  // textFont(incon);
   textAlign(CENTER, CENTER);
   fill('white');
   rect(graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH / 2);
@@ -1228,7 +1235,7 @@ function sinkDraw() {
 }
 
 function endDraw() {
-  let lineText = "Thank you for visiting the imaginary bathroom. Please come back any time."
+  let lineText = "Thank you for visiting the imaginary bathroom. Please come back anytime."
   push();
   background('black');
   leavingSound.play();
@@ -1260,10 +1267,10 @@ function draw() {
 
 // integrate buildmap into tilemap
 function buildMap(graffitiWall) {
-  let keys = graffitiWall ? Object.keys(graffitiWall) : []; // grab keys - if keys isn't empty
-  for (let i = 0; i < keys.length; i++) { // for each key
-    let key = keys[i]; // grab the key
+  for (let i = startIndex; i < endIndex; i++) { // for each key
+    let key = i; // grab the key
     let tileId = graffitiWall[key]['tile']; // grab the tileID
+
     if (tileId !== currentTile.tile && typeof(tiles[tileId]) !== 'undefined') { // do the updates
       tiles[tileId]['firebaseKey'] = key;
       tiles[tileId]['drawing'] = graffitiWall[key]['drawing'] || [];
@@ -1275,11 +1282,6 @@ function buildMap(graffitiWall) {
     }
   }
   redraw(); // redraw everytime there is an update in the database
-}
-
-//CALLBACK
-function gotData(data) { // if anything changes in the database, update my tilemap
-  buildMap(data.val());
 }
 
 // this function collapses consecutive "add_character"
