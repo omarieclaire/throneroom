@@ -286,6 +286,7 @@ function snapshotter() {
 function setup() {
   // input = createInput(); // make input for text
   // input.position(0, 0);
+  // input.elt.id = "focus-me";
   let canvasWidth = calculateCanvasWidth(window.innerWidth, window.innerHeight);
   let canvasHeight = calculateCanvasHeight(window.innerWidth, window.innerHeight);
   canvas = createCanvas(canvasWidth, canvasHeight);
@@ -350,7 +351,10 @@ function setup() {
   initializeFromSnapshot(firebase);
 
   function handleKeyDown(event) {
-    const key = event.key; // grab the key
+    const key = event.key; // grab the key\
+    if(currentTile.writing.length > 143 && key !== 'Backspace') {
+      return;
+    }
     if (graffitiCanvasOpen) { // if graffiti draw canvas is open
       letterSound.play();
       switch (key) {
@@ -959,7 +963,8 @@ function clearTile() {
 function handleToolClick(tool) {
   if (tool.text === 'write') {
     // input.elt.get(0).focus();
-    input.elt.focus();
+    // input.elt.focus();
+    // document.getElementById('focus-me').focus();
     // console.log('focus!');
   } else if (tool.text === 'CLEAR') {
     clearTile();
