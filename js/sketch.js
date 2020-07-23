@@ -296,10 +296,13 @@ function setup() {
   function mouseClickFunctions() {
     let itemClicked = whatWasClicked(); // all this does is determine what was clicked
     let clicked = itemClicked['clicked']; // grab clicked
-    console.log(`what was clicked ${clicked}`);
+    // console.log(`what was clicked ${clicked}`);
     let item = itemClicked['item']; // grab item
     clickActions(clicked, item); // call func
-    redraw(); //redraw after every click action
+    if (clicked !== 'nothing') {
+      redraw(); //redraw after every click action
+
+    }
   }
 
   // function mouseHoverFunctions() {
@@ -483,8 +486,6 @@ function whatWasClicked() {
       item: undefined
     };
   }
-
-
   return {
     clicked: 'nothing',
     item: undefined
@@ -511,7 +512,7 @@ function clickActions(wasClicked, item) {
     toggleGraffitiCanvas(item);
     startDrawPath();
   } else if (wasClicked == 'nothing') {
-    // do nothing
+
   } else {
     // we should never end up here
     console.log(`ERROR: clickActions received item it cannot handle. wasClicked=${wasClicked} item=${item}`);
@@ -1104,7 +1105,6 @@ function lineupDraw() {
   let lineText = "You are in line for the bathroom \n (" + timerCount + ")";
   push();
   background('black');
-
   if (frameCount % 60 == 0 && timerCount > -1) { // if the frameCount is divisible by 60, a second has passed. it will stop at 0
     timerCount--;
   }
@@ -1279,6 +1279,7 @@ function handleEvent(event, key) {
         session: SESSION_ID
       });
     }
+    return;
   } else {
     console.log(`received event type we could not handle: ${event.type}`);
   }
