@@ -382,6 +382,13 @@ function setup() {
         case 'ArrowRight':
           break;
         case 'Enter':
+          currentTile.writing += '\n'; // add to the text
+          let enterEvent = {
+            type: 'add_character',
+            tile: currentTile.tile,
+            char: '\n'
+          };
+          eventBuffer.push(enterEvent);
           // currentTile.writing += '\n'; // add to the text
           break;
         case 'Shift':
@@ -713,7 +720,6 @@ function startDrawPath() {
     };
     currentTile['drawing'].push(currentDrawPath); // push the current path to the drawing object
     return false;
-
   }
 }
 
