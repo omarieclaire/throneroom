@@ -82,13 +82,15 @@ let arrowSound;
 let openTileSound;
 let closeTileSound;
 let writingSound;
-let lateTime;
 let flushToiletSound;
 let tpSound;
 let mirrorSound;
 let waterSound;
 let leavingSound;
 let writingSoundIsPlaying = false;
+
+let allSounds;
+
 
 function createUUID() {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, function(c) {
@@ -886,11 +888,7 @@ function graffitiTools(myColor) {
     fill('black');
     textAlign(CENTER, CENTER);
     textSize(12);
-    // let earlyTime = (new Date()).getTime();
     text(btn.text, btn.x, btn.y, btn.width, btn.height);
-    // let lateTime = (new Date()).getTime();
-    // let diffTime = earlyTime - lateTime;
-    // console.log(diffTime);
   }
 }
 
@@ -1066,8 +1064,30 @@ function writtenMessage(message) {
   pop();
 }
 
-function sceneSwitch() {
+function stopSounds() {
+  allSounds = [ // needs to happen here
+    lineupSound,
+    openTileSound,
+    closeTileSound,
+    writingSound,
+    flushToiletSound,
+    tpSound,
+    mirrorSound,
+    waterSound,
+    leavingSound
+  ];
+  for (var i = 0; i < allSounds.length; i++) {
+    let thisSound = allSounds[i];
+    if (allSounds[i].playing === 'true') {
+      allSounds[i].pause();
+      console.log(`${thisSound} paused`);
+    } else {
+      console.log(`${thisSound} not playing anyway`);
+    }
+  }
+}
 
+function sceneSwitch() {
   if (scene == 'preline') {
     scene = 'line';
 
@@ -1077,25 +1097,29 @@ function sceneSwitch() {
     noLoop(); // stop toilet from looping
 
   } else if (scene == 'toilet') {
+    stopSounds();
+    scene = 'sink';
+    // redraw();
     startIndex = 121;
     endIndex = 240;
-    scene = 'sink';
-    redraw();
     leaveSceneTimer(3000);
+    noLoop();
 
   } else if (scene == 'sink') {
-    startIndex = 361;
-    endIndex = 480;
+    stopSounds();
     scene = 'mirror'
-    redraw();
-    leaveSceneTimer(3000);
-
-
-  } else if (scene == 'mirror') {
     startIndex = 241;
     endIndex = 360;
-    scene = 'end';
-    redraw();
+    // redraw();
+    leaveSceneTimer(3000);
+    noLoop();
+
+  } else if (scene == 'mirror') {
+    stopSounds();
+    scene = 'end'
+    startIndex = 361;
+    endIndex = 480;
+    noLoop(); // stop toilet from looping
   }
 }
 
@@ -1233,9 +1257,9 @@ function mirrorDraw() {
     displayLargeTileGraffiti(); // show the open drawing/text
     captureDrawing(); // run the code to catch the drawing
   } else {
-    background(LBLUE);
+    //background(LBLUE);
     displaySmallTileGraffiti(); // show all the small drawings/text
-    image(mirrorImg1, window.innerWidth / 2 - mirrorImg1.width / 2, 0);
+    //image(mirrorImg1, window.innerWidth / 2 - mirrorImg1.width / 2, 0);
     // image(toiletPaperImg1, window.innerWidth / 1.5, 240);
     if (writtenMessageViz) {
       writtenMessage("what do you want to see in the mirror?");

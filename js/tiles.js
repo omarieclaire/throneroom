@@ -1,46 +1,53 @@
-//////// BUGS ////////
-// tile font loading late
-// scene tiles not appearing in other scenes
-// resize bug: Uncaught DOMException: Failed to execute 'drawImage' on 'CanvasRenderingContext2D': The image argument is a canvas element with a width or height of 0.
-// a - delete code saving to graffitiWall
-// arrow hover not working in later scenes
-
 
 //////// TODO ////////
+
+//////// To Do ////////
+
+// arrow hover not working in later scenes
+// sounds stop when leaving scenes
+// click anywhere BUT the opengraffitidrawcanvas to close the canvas
 // debugging to do with scene logic - stuff that was only relevant to toilet is now relevant to: toilet, sink, mirror, bye
 // debug "width" and "height" - make global variables and use them everywhere?
 // make "device orientation" function that impacts the placement of toolbuttons and the sceneSwitch arrow (center/bottom for mobile)
-// integrate random fonts and random text angles into database
 // after 26 characters without a space or linebreak, insert a space
-// click anywhere BUT the opengraffitidrawcanvas to close the canvas
+// ritual/request text appears and then fades at scene open
+// stop hardclick on mobile
+// anything to say before you go? (text in last scene)
+
+
+//////// Stuck ////////
+
+// tiles not appearing in non-bathroom scenes - why?
+// how to integrate 'font' and (if time)'random text angles' into database?
+// resize bug: is it because height is changing and not width?: Uncaught DOMException: Failed to execute 'drawImage' on 'CanvasRenderingContext2D': The image argument is a canvas element with a width or height of 0.
+// 'clear' should only clear unpushed updates - is this hard?
+// command z removes last draw path
+
+
+////////// Not Code /////////
 // select color palette for drawing
-// timer should only start after you click
-// ritual/request text at scene open
 // improve images
 // improve sounds
-// improve functionality of lettersound
-// choose main font
-// sounds stop when leaving scenes
-// favicon
-
-//////// IF TIME ////////
+// choose main font - make fonts?
 // water flowing image on click for sink scene
-// CHOOSE sound or reading in lineup
-// choose light or dark in lineup
-// anything to say before you go? (text in last scene)
 // make small images for mirror and sink scene
-// stop hardclick on mobile
-// keyboard focus for mobile?
 
-
-//////// LATER ////////
-// refactor code so canvas is only the drawcanvas
+//////// If time ////////
+// hover working
 // debug "taken"
-// must be able to moderate database? do I moderate live?
+// improve functionality of lettersound
+// keyboard focus for mobile?
+// a - delete code saving to graffitiWall
+
+////// If I Can Stop Time ////////
+// choose sound or reading in lineup
+// choose light or dark in lineup
+// refactor code so canvas is only the drawcanvas
+
+//////// BEFORE PUBLISHING ////////
+// make the 'text' canvas tool invisible (also clear if clear still clears EVERYTHING)
 // make database private
 // hide js? or opposite?
-// hover working
-
 
 // DREAMIN AROUND
 // add alt text to the lineup: (why are you here anyway?)
@@ -118,6 +125,8 @@ function tileFactory(canvasWidth, canvasHeight, existingTiles) {
     // if i is divisible by 120 (remainder is zero) reset rowCounter
     if(i % 120 == 0) {
       rowCounter = 0;
+      xVal = 0;
+      yVal = 0;
     }
 
     rowCounter++; // increment rowCounter
