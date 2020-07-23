@@ -11,7 +11,6 @@
 // make "device orientation" function that impacts the placement of toolbuttons and the sceneSwitch arrow (center/bottom for mobile)
 // integrate random fonts and random text angles into database
 // keyboard focus for mobile?
-// restrict text input to 143 characters
 // after 26 characters without a space or linebreak, insert a space
 // click anywhere BUT the opengraffitidrawcanvas to close the canvas
 // select color palette for drawing
@@ -22,7 +21,6 @@
 
 //////// IF TIME ////////
 // water flowing image on click for sink scene
-// make scale better
 // CHOOSE sound or reading in lineup
 // choose light or dark in lineup
 // anything to say before you go? (text in last scene)
@@ -31,7 +29,6 @@
 //////// LATER ////////
 // refactor code so canvas is only the drawcanvas
 // debug "taken"
-// debug "clear"
 // must be able to moderate database? do I moderate live?
 // make database private
 // hide js? or opposite?
@@ -48,6 +45,11 @@
 // handwashing
 // link to gossip call
 // so you are crying in the bathroom zine
+
+// what are you ready to flush away? see it in your mind and flush it away in this imaginary toilet
+// what do you want to see when you look in the mirror? can you see it here, in this imaginary mirror?
+// when your hands touch, which hand is touched and which hand is the toucher? wash your hands now, without soap, in this imaginary sink?
+
 
 
 // THINKING
