@@ -14,6 +14,7 @@
 // click anywhere BUT the opengraffitidrawcanvas to close the canvas
 // select color palette for drawing
 // timer should only start after you click
+// ritual/request text at scene open
 // improve images
 // improve sounds
 // improve functionality of lettersound
@@ -72,7 +73,7 @@ function tileFactory(canvasWidth, canvasHeight, existingTiles) {
   let numColumns;
   let numRows;
   let tileSpacer = 5;
-  // let numberOfTiles = 8 * 15; //120;
+  // let numberOfTiles = 8 * 15; // 120, 240, 360, 480
   let numberOfTiles = 480;
 
 

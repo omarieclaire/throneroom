@@ -903,9 +903,6 @@ function displayLargeTileGraffiti() {
 }
 
 function displaySmallTileGraffiti() {
-
-
-// for (const tileId in tiles) { // line removed
 for (let i = startIndex; i < endIndex; i++) {
   let tile = tiles[i];
     // why does this translate work?
@@ -924,8 +921,6 @@ for (let i = startIndex; i < endIndex; i++) {
 }
 
 function tileMouseCheck() { // returns undefined when not clicking on a tile
-  // for (const tileId in tiles) { // for each tile
- // let tile = tiles[tileId]; // grab the ID
     for (let i = startIndex; i < endIndex; i++) { // for each key
       let tile = tiles[i]; // grab the key
       if (mouseX > tile['position']['x'] && mouseX < tile['position']['x'] + tile['width'] && mouseY > tile['position']['y'] && mouseY < tile['position']['y'] + tile['height']) {
@@ -1064,19 +1059,29 @@ function drawGraffitiCanvas() {
 function sceneSwitch() {
   if (scene == 'preline') {
     scene = 'line';
+
   } else if (scene == 'line') {
     scene = 'toilet';
     leaveSceneTimer(3000);
     noLoop(); // stop toilet from looping
+
   } else if (scene == 'toilet') {
+    startIndex = 121;
+    endIndex = 240;
     scene = 'mirror';
     redraw();
     leaveSceneTimer(3000);
+
   } else if (scene == 'mirror') {
+    startIndex = 241;
+    endIndex = 360;
     scene = 'sink';
     redraw();
     leaveSceneTimer(3000);
+    
   } else if (scene == 'sink') {
+    startIndex = 361;
+    endIndex = 480;
     scene = 'end'
     redraw();
   }
@@ -1195,7 +1200,6 @@ function writtenMessage(message) {
 function toiletDraw() {
   // let frameStartTime = millis();
   if (graffitiCanvasOpen) { // if canvas is open
-    // highlightOpenTile(currentTile.position.x, currentTile.position.y, currentTile.width, currentTile.height);
     drawGraffitiCanvas();
     graffitiTools(DBLUE);
     displayLargeTileGraffiti(); // show the open drawing/text
@@ -1205,24 +1209,28 @@ function toiletDraw() {
     displaySmallTileGraffiti(); // show all the small drawings/text
     image(toiletImg1, window.innerWidth / 2 - toiletImg1.width / 2, 0);
     image(toiletPaperImg1, window.innerWidth / 1.5, 240);
-
     if (writtenMessageViz) {
       writtenMessage("what are you ready to flush away?");
     }
-    // if (sceneSwitchArrowViz == true) {
-    //   drawSceneSwitchArrow(DYELLOW, LYELLOW);
-    // }
   }
-
   // console.log('Amount of time to compute the frame:', millis() - frameStartTime);
   // console.log('Current frame rate:', frameRate());
 }
 
 function mirrorDraw() {
-  background(LBLUE);
-  image(mirrorImg1, window.innerWidth / 2 - mirrorImg1.width / 2, 0);
-  if (writtenMessageViz) {
-    writtenMessage("what do you want to see in the mirror?");
+  if (graffitiCanvasOpen) { // if canvas is open
+    drawGraffitiCanvas();
+    graffitiTools(DBLUE);
+    displayLargeTileGraffiti(); // show the open drawing/text
+    captureDrawing(); // run the code to catch the drawing
+  } else {
+    background(LBLUE);
+    displaySmallTileGraffiti(); // show all the small drawings/text
+    image(mirrorImg1, window.innerWidth / 2 - mirrorImg1.width / 2, 0);
+    // image(toiletPaperImg1, window.innerWidth / 1.5, 240);
+    if (writtenMessageViz) {
+      writtenMessage("what do you want to see in the mirror?");
+    }
   }
 }
 
