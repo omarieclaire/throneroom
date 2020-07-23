@@ -7,7 +7,6 @@ let canvasHeight;
 let standardTimer = 1000;
 
 let currentColor = 'black';
-let currentFont = 'acki';
 let currentAngle = '1';
 let scene = 'preline';
 let timerCount = 2;
@@ -63,7 +62,18 @@ let tiles;
 let startIndex = 0;
 let endIndex = 120;
 let triangleParams;
-let isMobile = window.innerWidth <= 800;
+
+let graffitiFont;
+let graffitiFontSize;
+let mobileGraffitiFontSize = 20;
+let desktopGraffitiFontSize = 80;
+let messageFont;
+let messageFontSize;
+let mobileFontSize = 20;
+let desktopFontSize = 40;
+let isMobile;
+
+
 let eventBuffer = [];
 
 let BASE_TILE_WIDTH = 245;
@@ -207,6 +217,14 @@ function calculateScaleFactor(tw, gw) {
   return tw / gw;
 }
 
+function isScreenMobile(){
+   if (window.innerWidth <= 800) {
+     return true;
+   } else {
+     return false;
+   }
+}
+
 function scaleAllTheThings(userWindowWidth, userWindowHeight) {
   canvasWidth = calculateCanvasWidth(userWindowWidth, userWindowHeight);
   canvasHeight = calculateCanvasHeight(userWindowWidth, userWindowHeight);
@@ -306,6 +324,16 @@ function getScreenOrientation() {
   }
 }
 
+function chooseFontSize(){
+  if (isMobile) {
+    graffitiFontSize = mobileGraffitiFontSize
+    messageFontSize = mobileFontSize;
+  } else {
+    graffitiFontSize = desktopGraffitiFontSize
+    messageFontSize = desktopFontSize;
+  }
+}
+
 function setup() {
   // input = createInput(); // make input for text
   // input.position(0, 0);
@@ -313,13 +341,21 @@ function setup() {
 
   canvasWidth = calculateCanvasWidth(window.innerWidth, window.innerHeight);
   canvasHeight = calculateCanvasHeight(window.innerWidth, window.innerHeight);
+
   getScreenOrientation();
+  isMobile = isScreenMobile();
+  graffitiFont = chooseGraffitiFont();
+  messageFont = incon;
+  chooseFontSize();
+
+  textSize(messageFontSize);
+  textFont(messageFont);
+
   canvas = createCanvas(canvasWidth, canvasHeight);
   tiles = tileFactory(canvasWidth, canvasHeight);
   currentTile = tiles[1];
   triangleParams = createTriangleParameters(40);
   scaleAllTheThings(canvasWidth, canvasHeight);
-  textFont(incon, 50);
 
   function mouseClickFunctions() {
     let itemClicked = whatWasClicked(); // all this does is determine what was clicked
@@ -825,11 +861,11 @@ function chooseColor() {
   return random(paintColors);
 }
 
-function chooseFont() {
-  let currentfont;
+function chooseGraffitiFont() {
+  let graffitiFont;
   fonts = [acki, amali, candy, clemina, jsKang, reallyFree, syifana];
-  currentfont = random(fonts);
-  return currentfont;
+  graffitiFont = random(fonts);
+  return graffitiFont;
 }
 
 function chooseTextAngle() {
@@ -843,7 +879,6 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
   push();
   noFill();
   strokeWeight(5 * scaleFactor / 2);
-  // textFont(incon, 50);
   let drawing = tile['drawing'];
   for (let i = 0; i < drawing.length; i++) { // foreach path in the drawing
     let pathObject = drawing[i]; // grab the next path
@@ -863,11 +898,7 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
 function drawTileWriting(tile, scaleFactor, x, y, w, h) {
   push();
   noStroke();
-  if (isMobile) { // scale for mobile
-    textFont(currentFont, 20); // good size for mobile
-  } else {
-    textFont(currentFont, 80); // good size for desktop
-  }
+  textSize(graffitiFontSize);
   fill(currentColor);
   scale(scaleFactor, scaleFactor);
 
@@ -1036,7 +1067,7 @@ function toggleGraffitiCanvas(tileClicked) { // open and close canvas
   } else { // if canvas is being opened
     openTileSound.play();
     currentColor = chooseColor();
-    currentFont = chooseFont();
+    graffitiFont = chooseGraffitiFont();
     currentAngle = chooseTextAngle();
     loop(); // start looping draw
     currentTile = tileClicked // update 'current tile' to the tile that was clicked
@@ -1067,11 +1098,12 @@ function drawGraffitiCanvas() {
 
 function writtenMessage(message) {
   push();
-  // textFont(incon);
-  textAlign(CENTER, CENTER);
   fill('white');
   rect(graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH / 2);
   fill('black');
+  textSize(messageFontSize);
+  textFont(messageFont);
+  textAlign(CENTER, CENTER);
   text(message, graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH / 2);
   pop();
 }
@@ -1091,7 +1123,6 @@ function stopSounds() {
   for (var i = 0; i < allSounds.length; i++) {
     let thisSound = allSounds[i];
     allSounds[i].pause();
-    console.log(`${thisSound} paused`);
   }
 }
 
@@ -1200,7 +1231,7 @@ function preLineupDraw() {
   let lineText = "Enter the imaginary bathroom?";
   push();
   background('black');
-  textFont(incon);
+  // textFont(messageFont, messageFontSize);
   textAlign(CENTER, CENTER);
   fill(DBLUE);
   rectMode(CENTER);
@@ -1222,7 +1253,7 @@ function lineupDraw() {
     noLoop();
   }
 
-  textFont(incon);
+  // textFont(messageFont, messageFontSize);
   textAlign(CENTER, CENTER);
   fill(DBLUE);
   rectMode(CENTER);
@@ -1288,7 +1319,7 @@ function endDraw() {
   let lineText = "Thank you for visiting the imaginary bathroom. Please come back anytime."
   push();
   background('black');
-  textFont(incon);
+  // textFont(messageFont, messageFontSize);
   textAlign(CENTER, CENTER);
   fill(DBLUE);
   rectMode(CENTER);

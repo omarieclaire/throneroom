@@ -1,6 +1,5 @@
 //////// To Do ////////
 
-// stop hardclick on mobile
 // font size is irregular in last scene and popups
 
 //////// Stuck ////////
@@ -12,6 +11,7 @@
 // 'clear' should only clear unpushed updates - is this hard?
 // command z removes last draw path
 // if orientation=vertical > the sceneSwitch arrow is moved to the bottom center
+// why is text top left when loading?
 
 
 ////////// Not Code /////////
