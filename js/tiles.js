@@ -3,8 +3,10 @@
 
 //////// To Do ////////
 
-// arrow hover not working in later scenes
 // sounds stop when leaving scenes
+// fix click logic - make tiles in later scenes clickable
+// fix off by 1 bug
+// arrow hover not working in later scenes
 // click anywhere BUT the opengraffitidrawcanvas to close the canvas
 // debugging to do with scene logic - stuff that was only relevant to toilet is now relevant to: toilet, sink, mirror, bye
 // debug "width" and "height" - make global variables and use them everywhere?
@@ -17,7 +19,7 @@
 
 //////// Stuck ////////
 
-// tiles not appearing in non-bathroom scenes - why?
+// tiles not SAVING in non toilet scenes. WHY?
 // how to integrate 'font' and (if time)'random text angles' into database?
 // resize bug: is it because height is changing and not width?: Uncaught DOMException: Failed to execute 'drawImage' on 'CanvasRenderingContext2D': The image argument is a canvas element with a width or height of 0.
 // 'clear' should only clear unpushed updates - is this hard?
@@ -121,7 +123,6 @@ function tileFactory(canvasWidth, canvasHeight, existingTiles) {
 
 
   for (var i = 0; i < numberOfTiles; i++) {
-
     // if i is divisible by 120 (remainder is zero) reset rowCounter
     if(i % 120 == 0) {
       rowCounter = 0;

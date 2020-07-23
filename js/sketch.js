@@ -440,7 +440,7 @@ function windowResized() {
   resizeCanvas(canvasWidth, canvasHeight);
   scaleAllTheThings();
 }
-
+/////// WHAT WAS CLICKED /////////////
 function whatWasClicked() {
 
   let arrow = arrowMouseCheck();
@@ -463,7 +463,7 @@ function whatWasClicked() {
     }
   }
 
-  if (scene == 'toilet') { // only check this stuff in the toilet scene
+  if (scene == 'toilet' || scene == 'sink' || scene == 'mirror' || scene == 'end' ) {
     if (graffitiCanvasOpen) { // if canvas open
       let tool = toolMouseCheck(); // grab tool (or undefined)
       if (typeof(tool) !== 'undefined') {
@@ -492,7 +492,7 @@ function whatWasClicked() {
     };
   }
 
-  if (scene == 'toilet') { // only check in the toilet scene
+  if (scene == 'toilet' || scene == 'sink' || scene == 'mirror' || scene == 'end' ) { 
     let tile = tileMouseCheck(); // click on a tile?
     if (typeof(tile) !== 'undefined') { //clicked on a tile.
       return {
@@ -1243,10 +1243,19 @@ function toiletDraw() {
 }
 
 function sinkDraw() {
-  background(LBLUE);
-  image(sinkImg1, window.innerWidth / 2 - sinkImg1.width / 2, 0);
-  if (writtenMessageViz) {
-    writtenMessage("what do you do with your hands?");
+  if (graffitiCanvasOpen) { // if canvas is open
+    drawGraffitiCanvas();
+    graffitiTools(DBLUE);
+    displayLargeTileGraffiti(); // show the open drawing/text
+    captureDrawing(); // run the code to catch the drawing
+  } else {
+    background(LBLUE);
+    displaySmallTileGraffiti(); // show all the small drawings/text
+    image(sinkImg1, window.innerWidth / 2 - sinkImg1.width / 2, 0);
+    // image(toiletPaperImg1, window.innerWidth / 1.5, 240);
+    if (writtenMessageViz) {
+      writtenMessage("what do you do with your hands?");
+    }
   }
 }
 
@@ -1257,9 +1266,9 @@ function mirrorDraw() {
     displayLargeTileGraffiti(); // show the open drawing/text
     captureDrawing(); // run the code to catch the drawing
   } else {
-    //background(LBLUE);
+    background(LBLUE);
     displaySmallTileGraffiti(); // show all the small drawings/text
-    //image(mirrorImg1, window.innerWidth / 2 - mirrorImg1.width / 2, 0);
+    image(mirrorImg1, window.innerWidth / 2 - mirrorImg1.width / 2, 0);
     // image(toiletPaperImg1, window.innerWidth / 1.5, 240);
     if (writtenMessageViz) {
       writtenMessage("what do you want to see in the mirror?");
