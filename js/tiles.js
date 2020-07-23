@@ -3,9 +3,7 @@
 // tile font loading late
 // after hitting clear, can't draw
 // stop hardclick on mobile
-// triangle click not working well (one side is not working at all)
-// clicking on timerscreen hides triangle temp
-
+// debug         case 'Enter':
 
 //////// TODO ////////
 // make toilet paper tile - a off-white draw canvas that doesn't call save when closing, instead calls a sound and animation

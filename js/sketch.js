@@ -282,8 +282,8 @@ function snapshotter() {
 }
 
 function setup() {
-  input = createInput(); // make input for text
-  input.position(0, 0);
+  // input = createInput(); // make input for text
+  // input.position(0, 0);
   let canvasWidth = calculateCanvasWidth(window.innerWidth, window.innerHeight);
   let canvasHeight = calculateCanvasHeight(window.innerWidth, window.innerHeight);
   canvas = createCanvas(canvasWidth, canvasHeight);
@@ -380,6 +380,7 @@ function setup() {
         case 'ArrowRight':
           break;
         case 'Enter':
+          // currentTile.writing += '\n'; // add to the text
           break;
         case 'Shift':
           break;
@@ -497,6 +498,7 @@ function clickActions(wasClicked, item) {
     lineupSound.play();
     sceneSwitch();
   } else if (wasClicked == 'arrowClicked') {
+    arrowSound.play();
     sceneSwitchArrowViz = false;
     sceneSwitch();
   } else if (wasClicked == 'toolClicked') {
