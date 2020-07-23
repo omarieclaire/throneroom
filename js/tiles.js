@@ -2,23 +2,19 @@
 //////// TODO ////////
 
 //////// To Do ////////
-
-// sounds stop when leaving scenes
-// arrow hover not working in later scenes
-// click anywhere BUT the opengraffitidrawcanvas to close the canvas
-// debugging to do with scene logic - stuff that was only relevant to toilet is now relevant to: toilet, sink, mirror, bye
 // debug "width" and "height" - make global variables and use them everywhere?
 // make "device orientation" function that impacts the placement of toolbuttons and the sceneSwitch arrow (center/bottom for mobile)
 // after 26 characters without a space or linebreak, insert a space
 // ritual/request text appears and then fades at scene open
 // stop hardclick on mobile
 // anything to say before you go? (text in last scene)
+// goodbye looping
 
 
 //////// Stuck ////////
 
 // tiles not SAVING in non toilet scenes. WHY?
-// fix off by 1 bug - where to look?
+// click anywhere BUT the opengraffitidrawcanvas to close the canvas - ugh is a mess of logic.
 // how to integrate 'font' and (if time)'random text angles' into database?
 // resize bug: is it because height is changing and not width?: Uncaught DOMException: Failed to execute 'drawImage' on 'CanvasRenderingContext2D': The image argument is a canvas element with a width or height of 0.
 // 'clear' should only clear unpushed updates - is this hard?
@@ -49,6 +45,7 @@
 // make the 'text' canvas tool invisible (also clear if clear still clears EVERYTHING)
 // make database private
 // hide js? or opposite?
+// what do we do if firebase is full? 100 people? real line?
 
 // DREAMIN AROUND
 // add alt text to the lineup: (why are you here anyway?)

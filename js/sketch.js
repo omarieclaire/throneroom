@@ -1,6 +1,9 @@
 let database;
 let screenOrientation;
 
+let canvasWidth;
+let canvasHeight;
+
 let currentColor = 'black';
 let currentFont = 'acki';
 let currentAngle = '1';
@@ -203,8 +206,8 @@ function calculateScaleFactor(tw, gw) {
 }
 
 function scaleAllTheThings(userWindowWidth, userWindowHeight) {
-  let canvasWidth = calculateCanvasWidth(userWindowWidth, userWindowHeight);
-  let canvasHeight = calculateCanvasHeight(userWindowWidth, userWindowHeight);
+  canvasWidth = calculateCanvasWidth(userWindowWidth, userWindowHeight);
+  canvasHeight = calculateCanvasHeight(userWindowWidth, userWindowHeight);
 
   graffitiCanvasW = calculateGraffitiCanvasWidth(canvasWidth, canvasHeight);
   graffitiCanvasH = calculateGraffitiCanvasHeight(canvasWidth, canvasHeight);
@@ -293,8 +296,8 @@ function setup() {
   // input = createInput(); // make input for text
   // input.position(0, 0);
   // input.elt.id = "focus-me";
-  let canvasWidth = calculateCanvasWidth(window.innerWidth, window.innerHeight);
-  let canvasHeight = calculateCanvasHeight(window.innerWidth, window.innerHeight);
+  canvasWidth = calculateCanvasWidth(window.innerWidth, window.innerHeight);
+  canvasHeight = calculateCanvasHeight(window.innerWidth, window.innerHeight);
   canvas = createCanvas(canvasWidth, canvasHeight);
   tiles = tileFactory(canvasWidth, canvasHeight);
   currentTile = tiles[1];
@@ -428,17 +431,18 @@ function setup() {
   document.addEventListener('keydown', handleKeyDown); // listen for keys being pressed
   document.addEventListener('keyup', handleKeyUp); // listen for keys being pressed
 
-
   // noLoop();
   snapshotter();
 }
 
 function windowResized() {
-  let canvasWidth = calculateCanvasWidth(window.innerWidth, window.innerHeight);
-  let canvasHeight = calculateCanvasHeight(window.innerWidth, window.innerHeight);
-  console.log(`resize: w = ${canvasWidth}, h = ${canvasHeight}`);
-  resizeCanvas(canvasWidth, canvasHeight);
-  scaleAllTheThings();
+  // canvasWidth = calculateCanvasWidth(window.innerWidth, window.innerHeight);
+  // canvasHeight = calculateCanvasHeight(window.innerWidth, window.innerHeight);
+  // scaleAllTheThings();
+  // console.log(`resize: w = ${canvasWidth}, h = ${canvasHeight}`);
+  // resizeCanvas(canvasWidth, canvasHeight);
+  // scaleAllTheThings(canvasWidth, canvasHeight);
+  // redraw();
 }
 /////// WHAT WAS CLICKED /////////////
 function whatWasClicked() {
@@ -635,15 +639,15 @@ function clickActions(wasClicked, item) {
 
 function bigImgMouseCheck() {
   if (scene == 'toilet') {
-    if (hoverCheck(window.innerWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height)) {
+    if (hoverCheck(canvasWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height)) {
       return true;
     }
   } else if (scene == 'mirror') {
-    if (hoverCheck(window.innerWidth / 2 - mirrorImg1.width / 2, 0, mirrorImg1.width, mirrorImg2.height)) {
+    if (hoverCheck(canvasWidth / 2 - mirrorImg1.width / 2, 0, mirrorImg1.width, mirrorImg2.height)) {
       return true;
     }
   } else if (scene == 'sink') {
-    if (hoverCheck(window.innerWidth / 2 - sinkImg1.width / 2, 0, sinkImg1.width, sinkImg2.height)) {
+    if (hoverCheck(canvasWidth / 2 - sinkImg1.width / 2, 0, sinkImg1.width, sinkImg2.height)) {
       return true;
     }
   } else {
@@ -653,7 +657,7 @@ function bigImgMouseCheck() {
 
 function smallImgMouseCheck() {
   if (scene == 'toilet') {
-    if (hoverCheck(window.innerWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height)) {
+    if (hoverCheck(canvasWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height)) {
       return true;
     }
   } else {
@@ -662,7 +666,7 @@ function smallImgMouseCheck() {
 }
 
 function joinLine() {
-  if (mouseX > 0 && mouseX < window.innerWidth && mouseY > 0 && mouseY < window.innerHeight) {
+  if (mouseX > 0 && mouseX < canvasWidth && mouseY > 0 && mouseY < canvasHeight) {
     return true;
   } else {
     return false;
@@ -674,15 +678,15 @@ function hoverOnImg() {
   if (!graffitiCanvasOpen) {
     if (!writtenMessageViz) {
       if (scene == 'toilet') {
-        hoverReplace(window.innerWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height, toiletImg2, toiletImg1); // toilet hover
-        hoverReplace(window.innerWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height, toiletPaperImg2, toiletPaperImg1); // tp hover
+        hoverReplace(canvasWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height, toiletImg2, toiletImg1); // toilet hover
+        hoverReplace(canvasWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height, toiletPaperImg2, toiletPaperImg1); // tp hover
       } else if (scene == 'mirror') {
         redraw();
-        hoverReplace(window.innerWidth / 2 - mirrorImg1.width / 2, 0, mirrorImg1.width, mirrorImg2.height, mirrorImg2, mirrorImg1); // mirror hover
+        hoverReplace(canvasWidth / 2 - mirrorImg1.width / 2, 0, mirrorImg1.width, mirrorImg2.height, mirrorImg2, mirrorImg1); // mirror hover
 
       } else if (scene == 'sink') {
         redraw();
-        hoverReplace(window.innerWidth / 2 - sinkImg1.width / 2, 0, sinkImg1.width, sinkImg2.height, sinkImg2, sinkImg1); // sink hover
+        hoverReplace(canvasWidth / 2 - sinkImg1.width / 2, 0, sinkImg1.width, sinkImg2.height, sinkImg2, sinkImg1); // sink hover
       }
     }
 
@@ -1115,14 +1119,14 @@ function sceneSwitch() {
     scene = 'end'
     startIndex = 361;
     endIndex = 480;
-    noLoop(); // stop toilet from looping
+    noLoop();
   }
 }
 
 function createTriangleParameters(length) {
-  let y1 = window.innerHeight / 1.2;
+  let y1 = canvasHeight / 1.2;
   let y2 = y1 + length * 2;
-  let x3 = window.innerWidth - length;
+  let x3 = canvasWidth - length;
   let y3 = y1 + length;
   let x1 = x3 - length * 1.5;
 
@@ -1192,7 +1196,7 @@ function preLineupDraw() {
   textAlign(CENTER, CENTER);
   fill(DBLUE);
   rectMode(CENTER);
-  text(lineText, window.innerWidth / 2, window.innerHeight / 2, window.innerWidth / 1.5, window.innerHeight / 2);
+  text(lineText, canvasWidth / 2, canvasHeight / 2, canvasWidth / 1.5, canvasHeight / 2);
   pop();
 }
 
@@ -1214,7 +1218,7 @@ function lineupDraw() {
   textAlign(CENTER, CENTER);
   fill(DBLUE);
   rectMode(CENTER);
-  text(lineText, window.innerWidth / 2, window.innerHeight / 2, window.innerWidth / 1.5, window.innerHeight / 2);
+  text(lineText, canvasWidth / 2, canvasHeight / 2, canvasWidth / 1.5, canvasHeight / 2);
   pop();
 }
 
@@ -1228,8 +1232,8 @@ function toiletDraw() {
   } else {
     background(LBLUE);
     displaySmallTileGraffiti(); // show all the small drawings/text
-    image(toiletImg1, window.innerWidth / 2 - toiletImg1.width / 2, 0);
-    image(toiletPaperImg1, window.innerWidth / 1.5, 240);
+    image(toiletImg1, canvasWidth / 2 - toiletImg1.width / 2, 0);
+    image(toiletPaperImg1, canvasWidth / 1.5, 240);
     if (writtenMessageViz) {
       writtenMessage("what are you ready to flush away?");
     }
@@ -1247,8 +1251,8 @@ function sinkDraw() {
   } else {
     background(LBLUE);
     displaySmallTileGraffiti(); // show all the small drawings/text
-    image(sinkImg1, window.innerWidth / 2 - sinkImg1.width / 2, 0);
-    // image(toiletPaperImg1, window.innerWidth / 1.5, 240);
+    image(sinkImg1, canvasWidth / 2 - sinkImg1.width / 2, 0);
+    // image(toiletPaperImg1, canvasWidth / 1.5, 240);
     if (writtenMessageViz) {
       writtenMessage("what do you do with your hands?");
     }
@@ -1264,8 +1268,8 @@ function mirrorDraw() {
   } else {
     background(LBLUE);
     displaySmallTileGraffiti(); // show all the small drawings/text
-    image(mirrorImg1, window.innerWidth / 2 - mirrorImg1.width / 2, 0);
-    // image(toiletPaperImg1, window.innerWidth / 1.5, 240);
+    image(mirrorImg1, canvasWidth / 2 - mirrorImg1.width / 2, 0);
+    // image(toiletPaperImg1, canvasWidth / 1.5, 240);
     if (writtenMessageViz) {
       writtenMessage("what do you want to see in the mirror?");
     }
@@ -1281,7 +1285,7 @@ function endDraw() {
   textAlign(CENTER, CENTER);
   fill(DBLUE);
   rectMode(CENTER);
-  text(lineText, window.innerWidth / 2, window.innerHeight / 2, window.innerWidth / 1.5, window.innerHeight / 2);
+  text(lineText, canvasWidth / 2, canvasHeight / 2, canvasWidth / 1.5, canvasHeight / 2);
   pop();
 
 
