@@ -3,14 +3,14 @@
 // scene tiles not appearing in other scenes
 // resize bug: Uncaught DOMException: Failed to execute 'drawImage' on 'CanvasRenderingContext2D': The image argument is a canvas element with a width or height of 0.
 // a - delete code saving to graffitiWall
+// arrow hover not working in later scenes
 
 
 //////// TODO ////////
-// wash hands before mirror
+// debugging to do with scene logic - stuff that was only relevant to toilet is now relevant to: toilet, sink, mirror, bye
 // debug "width" and "height" - make global variables and use them everywhere?
 // make "device orientation" function that impacts the placement of toolbuttons and the sceneSwitch arrow (center/bottom for mobile)
 // integrate random fonts and random text angles into database
-// keyboard focus for mobile?
 // after 26 characters without a space or linebreak, insert a space
 // click anywhere BUT the opengraffitidrawcanvas to close the canvas
 // select color palette for drawing
@@ -30,6 +30,8 @@
 // anything to say before you go? (text in last scene)
 // make small images for mirror and sink scene
 // stop hardclick on mobile
+// keyboard focus for mobile?
+
 
 //////// LATER ////////
 // refactor code so canvas is only the drawcanvas

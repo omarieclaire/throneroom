@@ -903,8 +903,8 @@ function displayLargeTileGraffiti() {
 }
 
 function displaySmallTileGraffiti() {
-for (let i = startIndex; i < endIndex; i++) {
-  let tile = tiles[i];
+  for (let i = startIndex; i < endIndex; i++) {
+    let tile = tiles[i];
     // why does this translate work?
     let drawtranslateX = tile.position.x / SCALEFACTOR - graffitiCanvasX;
     let drawtranslateY = tile.position.y / SCALEFACTOR - graffitiCanvasY;
@@ -921,10 +921,10 @@ for (let i = startIndex; i < endIndex; i++) {
 }
 
 function tileMouseCheck() { // returns undefined when not clicking on a tile
-    for (let i = startIndex; i < endIndex; i++) { // for each key
-      let tile = tiles[i]; // grab the key
-      if (mouseX > tile['position']['x'] && mouseX < tile['position']['x'] + tile['width'] && mouseY > tile['position']['y'] && mouseY < tile['position']['y'] + tile['height']) {
-        return tiles[i]; // check if mouse is over it -> if yes, return that tile (can i just return tile?)
+  for (let i = startIndex; i < endIndex; i++) { // for each key
+    let tile = tiles[i]; // grab the key
+    if (mouseX > tile['position']['x'] && mouseX < tile['position']['x'] + tile['width'] && mouseY > tile['position']['y'] && mouseY < tile['position']['y'] + tile['height']) {
+      return tiles[i]; // check if mouse is over it -> if yes, return that tile (can i just return tile?)
     }
   }
 }
@@ -972,27 +972,26 @@ function hoverReplace(x, y, w, h, img2, img1) {
 }
 
 
-
-
-
-// function openMobileKeyboard() {
-//   //input();
-// }
-
 function clearTile() {
+  // this should instead clear UNPUSHED changes so people can't delete other people's work
   currentTile.drawing = [];
   currentTile.writing = '';
-  // openMobileKeyboard();
+}
+
+function clearTileChanges() {
+  currentTile.drawing = [];
+  currentTile.writing = '';
 }
 
 function handleToolClick(tool) {
   if (tool.text === 'write') {
+    // ideally this opens Mobile Keyboard - seems impossible
     // input.elt.get(0).focus();
     // input.elt.focus();
     // document.getElementById('focus-me').focus();
     // console.log('focus!');
   } else if (tool.text === 'CLEAR') {
-    clearTile();
+    clearTileChanges();
   } else {
     // do nothing
     console.log(`ERROR: handleToolClick received a text it could not handle: tool=${JSON.stringify(tool)}`);
@@ -1097,8 +1096,7 @@ function sceneSwitch() {
     endIndex = 360;
     scene = 'end';
     redraw();
-    leaveSceneTimer(3000);
-}
+  }
 }
 
 function createTriangleParameters(length) {
