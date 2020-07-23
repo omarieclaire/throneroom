@@ -1,28 +1,47 @@
-// WHEN to draw random colors, random fonts, randon font angles  - without flickering
-// add colors to image object
+//////// BUGS ////////
+// drawings aren't scaling on mobile :(
+// tile font loading late
+// after hitting clear, can't draw
+// stop hardclick on mobile
+// triangle click not working well (one side is not working at all)
+// clicking on timerscreen hides triangle temp
 
-// how can I make multiple timers in the setup when they are triggered by different things?
-// make an animation on hover
+
+//////// TODO ////////
+// make toilet paper tile - a off-white draw canvas that doesn't call save when closing, instead calls a sound and animation
+// debug "width" and "height" - make global variables and use them everywhere?
+// make "device orientation" function that impacts the placement of toolbuttons and the sceneSwitch arrow (center/bottom for mobile)
+// integrate random fonts and random text angles into database
 // keyboard focus for mobile?
-// sound effects - open tile, close tile, isdrawing
-// if canvas is bigger than X constrain it to a manageable size
-// vertical vs horizontal logic for sceneSwitchArrow
-// hover bug
-// click anywhere BUT the canvas to close the canvas
+// restrict text input to 143 characters
+// after 26 characters without a space or linebreak, insert a space
+// click anywhere BUT the opengraffitidrawcanvas to close the canvas
+// select color palette for drawing
+// timer should only start after you click
+// improve images
+// improve sounds
+// improve functionality of lettersound
 
-// LATER
+//////// IF TIME ////////
+// water flowing image on click for sink scene
+// make scale better
+// CHOOSE sound or reading in lineup
+// choose light or dark in lineup
+// anything to say before you go? (text in last scene)
+// make small images for mirror and sink scene
+
+//////// LATER ////////
+// refactor code so canvas is only the drawcanvas
 // debug "taken"
 // debug "clear"
 // must be able to moderate database? do I moderate live?
-
-
-// MUST
-// delete escape function
 // make database private
 // hide js? or opposite?
 
 
 // DREAMIN AROUND
+// add alt text to the lineup: (why are you here anyway?)
+// what does handdrawn mean, on a computer? (art, fonts, etc)
 // chat window
 // click on toilet paper for special tile with flush button - flush sound when done and animation
 // should I draw *all present* mouse cursors? so you can *feel* connected to the others?
@@ -31,12 +50,9 @@
 // handwashing
 // link to gossip call
 // so you are crying in the bathroom zine
-// lineup for the bathroom
-// a final / close screen
 
 
 // THINKING
-// how to handle clicks??? IF mouse on tile & canvas open -> save drawing, IF mouse on tile and canvas closed -> open canvas, ELSE if canvas open & mouse on canvas -> draw, ELSE if mouse on clickable object -> sound and animate
 // Come to the imaginary bathroom for graffiti, letting go, reaching out, and moving on.
 // toilet thoughts
 // go to your bathroom to establish a psychic link to this imaginary public bathroom
@@ -93,7 +109,7 @@ function tileFactory(canvasWidth, canvasHeight, existingTiles) {
       tiles[i] = {}; // make each empty "tile object"
       tiles[i].tile = i; // set tileID to tile #
       tiles[i].writing = ""; // set writing
-      tiles[i].drawing = []; // set writing
+      tiles[i].drawing = []; // set drawing
       tiles[i].taken = false; // Set 'taken': false to every tile.
       tiles[i].firebaseKey = null; // Set 'taken': false to every tile.
       tiles[i].width = tileWidth; // set width
