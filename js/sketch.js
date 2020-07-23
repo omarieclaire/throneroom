@@ -1096,7 +1096,7 @@ function sceneSwitch() {
     stopSounds();
     scene = 'sink';
     // redraw();
-    startIndex = 121;
+    startIndex = 120;
     endIndex = 240;
     leaveSceneTimer(3000);
     noLoop();
@@ -1104,7 +1104,7 @@ function sceneSwitch() {
   } else if (scene == 'sink') {
     stopSounds();
     scene = 'mirror'
-    startIndex = 241;
+    startIndex = 240;
     endIndex = 360;
     // redraw();
     leaveSceneTimer(3000);
