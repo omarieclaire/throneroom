@@ -651,29 +651,30 @@ function hoverOnImg() {
   let yhover = 20
   if (!graffitiCanvasOpen) {
     if (!writtenMessageViz) {
-      if (scene == 'toilet' || scene == 'mirror' || scene == 'sink') {
+      if (scene == 'toilet' || scene == 'mirror' || scene == 'sink' || scene == 'end') {
         let oldHovered = tileHovered;
         tileHovered = tilesHelper.getTileForCoord(mouseX, mouseY, startIndex);
         if(typeof(tileHovered) !== 'undefined') {
           displaySmallTileGraffitiForASingleTile(tileHovered, true);
-          image(toiletImg1, canvasWidth / 2 - toiletImg1.width / 2, 0);
         }
         let oldId = (tileHovered || {}).tile || -1;
         if(typeof(oldHovered) !== 'undefined' && oldHovered.tile != oldId) {
           displaySmallTileGraffitiForASingleTile(oldHovered);
-          image(toiletImg1, canvasWidth / 2 - toiletImg1.width / 2, 0);
         }
       }
 
       if (scene == 'toilet') {
-        // hoverReplace(canvasWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height, toiletImg2, toiletImg1); // toilet hover
-        hoverReplace(canvasWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height, toiletPaperImg2, toiletPaperImg1); // tp hover
+        drawIfMouseOver(canvasWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg1.height, 100, 100, toiletImg1); // toilet hover
+        drawIfMouseOver(canvasWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height, 100, 100,  toiletPaperImg1); // tp hover
       } else if (scene == 'mirror') {
-        hoverReplace(canvasWidth / 2 - mirrorImg1.width / 2, 0, mirrorImg1.width, mirrorImg2.height, mirrorImg2, mirrorImg1); // mirror hover
-
+        drawIfMouseOver(canvasWidth / 2 - mirrorImg1.width / 2, 0, mirrorImg1.width, mirrorImg1.height, 100, 100,  mirrorImg1); // mirror hover
       } else if (scene == 'sink') {
-        hoverReplace(canvasWidth / 2 - sinkImg1.width / 2, 0, sinkImg1.width, sinkImg2.height, sinkImg2, sinkImg1); // sink hover
+        drawIfMouseOver(canvasWidth / 2 - sinkImg1.width / 2, 0, sinkImg1.width, sinkImg1.height, 100, 100,  sinkImg1); // sink hover
+        drawIfMouseOver(canvasWidth / 1.5, 240, towelImg1.width, towelImg1.height, 100, 100,  towelImg1); // sink hover
+      } else if (scene == 'end') {
+        endDrawText();
       }
+
     }
     if (sceneSwitchArrowViz && arrowMouseCheck()) {
       sceneSwitchArrowVizHover = true;
@@ -939,6 +940,12 @@ function hoverCheck(x, y, w, h) {
     return true;
   } else {
     return false;
+  }
+}
+
+function drawIfMouseOver(x,y,w,h,bufferX, bufferY, img) {
+  if (mouseX > (x - bufferX) && mouseX < x + w + bufferX && mouseY > (y - bufferY) && mouseY < y + h + bufferY) {
+    image(img, x, y);
   }
 }
 
@@ -1310,6 +1317,18 @@ function mirrorDraw() {
 
 }
 
+function endDrawText() {
+  push();
+  let lineText = "Thank you for visiting the imaginary bathroom"
+  textAlign(CENTER, CENTER);
+  fill('black');
+  rectMode(CENTER);
+  textFont(messageFont);
+  textSize(messageFontSize);
+  text(lineText, canvasWidth / 2, canvasHeight / 2, canvasWidth / 1.5, canvasHeight / 2);
+  pop();
+}
+
 function endDraw() {
   if (graffitiCanvasOpen) { // if canvas is open
     drawGraffitiCanvas();
@@ -1319,19 +1338,8 @@ function endDraw() {
   } else {
     background(LBLUE);
     displaySmallTileGraffiti(); // show all the small drawings/text
-    push();
-    let lineText = "Thank you for visiting the imaginary bathroom"
-    textAlign(CENTER, CENTER);
-    fill('black');
-    rectMode(CENTER);
-    textFont(messageFont);
-    textSize(messageFontSize);
-    text(lineText, canvasWidth / 2, canvasHeight / 2, canvasWidth / 1.5, canvasHeight / 2);
-    pop();
-
+    endDrawText();
   }
-
-
 }
 
 function draw() {
