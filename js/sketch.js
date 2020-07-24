@@ -1223,6 +1223,16 @@ function redrawSceneSwitchArrow() {
   redraw();
 }
 
+function displaySceneSwitchArrow(){
+  if(sceneSwitchArrowViz) {
+    if(sceneSwitchArrowVizHover) {
+      drawSceneSwitchArrow(DYELLOW, LYELLOW);
+    } else {
+      drawSceneSwitchArrow(DBLUE, LBLUE);
+    }
+  }
+}
+
 function leaveSceneTimer(waitTime) { // used to set the timeouts
   window.setTimeout(redrawSceneSwitchArrow, waitTime); // change this to be longer
 }
@@ -1304,13 +1314,7 @@ function toiletDraw() {
       writtenMessage("what are you ready to flush away?");
     }
   }
-  if(sceneSwitchArrowViz) {
-    if(sceneSwitchArrowVizHover) {
-      drawSceneSwitchArrow(DYELLOW, LYELLOW);
-    } else {
-      drawSceneSwitchArrow(DBLUE, LBLUE);
-    }
-  }
+  displaySceneSwitchArrow();
   // console.log('Amount of time to compute the frame:', millis() - frameStartTime);
   // console.log('Current frame rate:', frameRate());
 }
@@ -1330,6 +1334,9 @@ function sinkDraw() {
       writtenMessage("what do you do with your hands?");
     }
   }
+  displaySceneSwitchArrow();
+
+
 }
 
 function mirrorDraw() {
@@ -1347,6 +1354,8 @@ function mirrorDraw() {
       writtenMessage("what do you want to see in the mirror?");
     }
   }
+  displaySceneSwitchArrow();
+
 }
 
 function endDraw() {
