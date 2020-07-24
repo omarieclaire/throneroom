@@ -257,8 +257,8 @@ function scaleAllTheThings(userWindowWidth, userWindowHeight) {
   mirrorImg2.resize(0, canvasHeight);
   sinkImg1.resize(0, canvasHeight);
   sinkImg2.resize(0, canvasHeight);
-  towelImg1.resize(0, canvasHeight / 4.4);
-  towelImg2.resize(0, canvasHeight / 4.4);
+  towelImg1.resize(0, canvasHeight / 2.5);
+  towelImg2.resize(0, canvasHeight / 2.5);
 
 
   //SCALEFACTOR = 0.085 //0.145;
