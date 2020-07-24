@@ -29,7 +29,6 @@
     // - p1 soften to a comfortable volume, length, and fade out
     // - p2 make some new if time
 // improve text
-    // - 'good enough'
     // - great
 // select colors
     // - great
