@@ -1124,7 +1124,7 @@ function sceneSwitch() {
   } else if (scene == 'toilet') {
     stopSounds();
     scene = 'sink';
-    // redraw();
+    redraw();
     startIndex = 120;
     endIndex = 240;
     displayWelcomeMessage();
@@ -1136,7 +1136,7 @@ function sceneSwitch() {
     scene = 'mirror'
     startIndex = 240;
     endIndex = 360;
-    // redraw();
+    redraw();
     displayWelcomeMessage();
     leaveSceneTimer(standardTimer);
     noLoop();
@@ -1146,6 +1146,7 @@ function sceneSwitch() {
     scene = 'end'
     startIndex = 360;
     endIndex = 480;
+    redraw();
     displayWelcomeMessage();
     noLoop();
   }
