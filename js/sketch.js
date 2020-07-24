@@ -245,7 +245,7 @@ function scaleAllTheThings(userWindowWidth, userWindowHeight) {
   graffitiCanvasX = calculateGraffitiCanvasPositionX(canvasWidth, canvasHeight, graffitiCanvasW);
   graffitiCanvasY = calculateGraffitiCanvasPositionY(canvasWidth, canvasHeight);
 
-  toiletImg1.resize(0, graffitiCanvasH);
+  toiletImg1.resize(0, canvasHeight);
   toiletImg2.resize(0, canvasHeight);
   toiletPaperImg1.resize(0, canvasHeight / 4.4);
   toiletPaperImg2.resize(0, canvasHeight / 4.4);
@@ -374,6 +374,8 @@ function setup() {
   currentTile = tiles[1];
   triangleParams = createTriangleParameters(40, screenOrientation);
   scaleAllTheThings(canvasWidth, canvasHeight);
+  document.querySelectorAll('canvas').forEach(canvas=>canvas.imageSmoothingEnabled=true);
+
 
   function mouseClickFunctions() {
     let itemClicked = whatWasClicked(); // all this does is determine what was clicked
@@ -486,7 +488,7 @@ function setup() {
   snapshotter();
 }
 
-function windowResized() {
+// function windowResized() {
   // canvasWidth = calculateCanvasWidth(window.innerWidth, window.innerHeight);
   // canvasHeight = calculateCanvasHeight(window.innerWidth, window.innerHeight);
   // scaleAllTheThings();
@@ -494,7 +496,7 @@ function windowResized() {
   // resizeCanvas(canvasWidth, canvasHeight);
   // scaleAllTheThings(canvasWidth, canvasHeight);
   // redraw();
-}
+// }
 
 /////// WHAT WAS CLICKED /////////////
 function whatWasClicked() {
