@@ -594,96 +594,6 @@ function clickActions(wasClicked, item) {
     console.log(`ERROR: clickActions received item it cannot handle. wasClicked=${wasClicked} item=${item}`);
   }
 }
-///////////////////////////////
-//////// HOVERLAND ////////////
-// function whatWasHovered() {
-//   let arrow = arrowMouseCheck();
-//   if (arrow) {
-//     return {
-//       hovered: 'arrowHovered',
-//       item: undefined
-//     };
-//   }
-//   if (graffitiCanvasOpen) { // if canvas open
-//     let tool = toolMouseCheck(); // grab tool (or undefined)
-//     if (typeof(tool) !== 'undefined') {
-//       return {
-//         hovered: 'toolHovered',
-//         item: tool
-//       };
-//     }
-//   }
-//   if (!graffitiCanvasOpen) { // only do this stuff when canvas is closed
-//     let bigImg = bigImgMouseCheck(); //
-//     if (bigImg) {
-//       return {
-//         hovered: 'bigImgHovered',
-//         item: undefined
-//       };
-//     }
-//     let smallImg = smallImgMouseCheck();
-//     if (smallImg) {
-//       return {
-//         hovered: 'smallImgHovered',
-//         item: undefined
-//       };
-//     }
-//     let tile = tileMouseCheck(); // click on a tile?
-//     if (typeof(tile) !== 'undefined') { //hovered on a tile.
-//       return {
-//         hovered: 'tileHovered',
-//         item: tile // findme
-//       };
-//     }
-//   }
-//   return {
-//     hovered: 'nothing',
-//     item: undefined
-//   };
-// }
-
-///////////////////////////////
-//////// HOVERLAND ////////////
-// function hoverActions(wasHovered, item) {
-//   if (wasHovered == 'arrowHovered') {
-//     drawSceneSwitchArrow(DBLUE, LBLUE);
-//   } else if (wasHovered == 'toolHovered') {
-//     graffitiTools(DBLUE);
-//   } else if (wasHovered == 'bigImgHovered') {
-//     largeImgClicked();
-//   } else if (wasHovered == 'smallImgHovered') {
-//     smallImgClicked();
-//   } else if (wasHovered == 'tileHovered') {
-//     while (wasHovered == 'tileHovered') {
-//       // highlightHoveredTile(item, true);
-//     }
-//   } else if (wasHovered == 'nothing') {
-//     // do nothing
-//   } else {
-//     // we should never end up here
-//     console.log(`ERROR: hoverActions received item it cannot handle. wasHovered=${wasHovered} item=${item}`);
-//   }
-// }
-//
-// function hoverOffActions(wasHovered, item) {
-//   if (wasHovered == 'arrowHovered') {
-//     drawSceneSwitchArrow(DYELLOW, LYELLOW);
-//   } else if (wasHovered == 'toolHovered') {
-//     graffitiTools(LBLUE);
-//   } else if (wasHovered == 'bigImgHovered') {
-//     largeImgClicked();
-//   } else if (wasHovered == 'smallImgHovered') {
-//     smallImgClicked();
-//   } else if (wasHovered == 'tileHovered') {
-//     console.log(JSON.stringify(item));
-//     // highlightHoveredTile(item, false);
-//   } else if (wasHovered == 'nothing') {
-//     // do nothing
-//   } else {
-//     // we should never end up here
-//     console.log(`ERROR: hoverActions received item it cannot handle. wasHovered=${wasHovered} item=${item}`);
-//   }
-// }
 
 function bigImgMouseCheck() {
   if (scene == 'toilet') {
@@ -721,20 +631,18 @@ function joinLine() {
   }
 }
 
-
 function hoverOnImg() {
+  let yhover = 20
   if (!graffitiCanvasOpen) {
     if (!writtenMessageViz) {
       if (scene == 'toilet') {
-        // hoverReplace(canvasWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height, toiletImg2, toiletImg1); // toilet hover
-        // hoverReplace(canvasWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height, toiletPaperImg2, toiletPaperImg1); // tp hover
+        hoverReplace(canvasWidth / 2 - toiletImg1.width / 2, canvasHeight - yhover, toiletImg1.width, toiletImg2.height, toiletImg2, toiletImg1); // toilet hover
+        hoverReplace(canvasWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height, toiletPaperImg2, toiletPaperImg1); // tp hover
       } else if (scene == 'mirror') {
-        // redraw();
-        // hoverReplace(canvasWidth / 2 - mirrorImg1.width / 2, 0, mirrorImg1.width, mirrorImg2.height, mirrorImg2, mirrorImg1); // mirror hover
+        hoverReplace(canvasWidth / 2 - mirrorImg1.width / 2, canvasHeight - yhover, mirrorImg1.width, mirrorImg2.height, mirrorImg2, mirrorImg1); // mirror hover
 
       } else if (scene == 'sink') {
-        // redraw();
-        // hoverReplace(canvasWidth / 2 - sinkImg1.width / 2, 0, sinkImg1.width, sinkImg2.height, sinkImg2, sinkImg1); // sink hover
+        hoverReplace(canvasWidth / 2 - sinkImg1.width / 2, canvasHeight - yhover, sinkImg1.width, sinkImg2.height, sinkImg2, sinkImg1); // sink hover
       }
     }
     if (sceneSwitchArrowViz && arrowMouseCheck()) {
