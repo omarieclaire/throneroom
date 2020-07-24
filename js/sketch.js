@@ -1480,6 +1480,7 @@ function handleEvent(event, key) {
         let takenTime = tile.takenTime || 0;
         if(tile.taken && now - takenTime > TAKEN_TIME_LIMIT) {
           tile.taken = false;
+          delete tile.takenTime;
         }
       }
       let ref = database.ref('snapshot');
