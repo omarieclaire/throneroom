@@ -71,83 +71,130 @@
 // if anyone wants me to read the tiles to them, I will!
 // thanks aaron, august, sukanya, julia
 
-function tileFactory(canvasWidth, canvasHeight, existingTiles) {
+class Tiles {
+  constructor(canvasWidth, canvasHeight, existingTiles) {
 
-  let numColumns;
-  let numRows;
-  let tileSpacer = 5;
-  // let numberOfTiles = 8 * 15; // 120, 240, 360, 480
-  let numberOfTiles = 480;
+    this.tileSpacer = 5;
+    // let numberOfTiles = 8 * 15; // 120, 240, 360, 480
+    let numberOfTiles = 480;
 
+    if(canvasWidth <= canvasHeight) {
+      // taller
+      this.numColumns = 8;
+      this.numRows = 15;
 
-  if(canvasWidth <= canvasHeight) {
-    // taller
-    numColumns = 8;
-    numRows = 15;
-
-  } else {
-    // wider
-    numColumns = 15;
-    numRows = 8;
-  }
-
-  let tileWidth = (canvasWidth - tileSpacer * numColumns) / numColumns;
-  let tileHeight = 4 / 7 * tileWidth;
-
-  // if we pass in existingTiles use that, otherwise use {}
-  let tiles = existingTiles || {};
-
-  let numberOfColumns = numRows;
-
-
-  //let canvasWidthMinusSpaces = canvasWidth/1.5 - (numberOfColumns - 1) * tileSpacer;  // to get the height of the tile take the total canvas height and remove the spacers (for 10 tiles, there will be 9 spaces)
-  //let tileWidth = canvasWidthMinusSpaces / numberOfColumns;   // now take the remaining canvas space after removing the spacers & divide that by the number of tiles in a row; that will be the tile height.
-  //let tileHeight = 4/7 * tileWidth;   // to get the tileWidth - use the original tile ratio (70/40 or 7/4)
-
-  let rowCounter = 0;
-  let xVal = 0;
-  let yVal = 0;
-  let ySpacer = tileHeight + tileSpacer;
-  let xSpacer = tileWidth + tileSpacer;
-
-
-
-
-  for (var i = 0; i < numberOfTiles; i++) {
-    // if i is divisible by 120 (remainder is zero) reset rowCounter
-    if(i % 120 == 0) {
-      rowCounter = 0;
-      xVal = 0;
-      yVal = 0;
-    }
-
-    rowCounter++; // increment rowCounter
-
-    let tile = tiles[i];
-    if(typeof(tile) === 'undefined') {
-      // tile does not exist, so lets create a blank tile
-      tiles[i] = {}; // make each empty "tile object"
-      tiles[i].tile = i; // set tileID to tile #
-      tiles[i].writing = ""; // set writing
-      tiles[i].drawing = []; // set drawing
-      tiles[i].taken = false; // Set 'taken': false to every tile.
-      tiles[i].width = tileWidth; // set width
-      tiles[i].height = tileHeight; // set height
-      tiles[i].position = {}; // Set x
-      tiles[i].position.x = xVal; // Set x
-      tiles[i].position.y = yVal; // Set y
     } else {
-      // only update the x and y
-      tile.position.x = xVal;
-      tile.position.y = yVal;
+      // wider
+      this.numColumns = 15;
+      this.numRows = 8;
     }
 
-     yVal += ySpacer; // increment y val
-     if (rowCounter === numberOfColumns) { // if we have drawn all the rows
-       rowCounter = 0; // reset rowcounter
-       yVal = 0; // set y to 0
-       xVal += xSpacer; // increment x val
-     }
+    this.tileWidth = (canvasWidth - this.tileSpacer * this.numColumns) / this.numColumns;
+    this.tileHeight = 4 / 7 * this.tileWidth;
+
+    // if we pass in existingTiles use that, otherwise use {}
+    this.tiles = existingTiles || [];
+
+    //let canvasWidthMinusSpaces = canvasWidth/1.5 - (numberOfColumns - 1) * tileSpacer;  // to get the height of the tile take the total canvas height and remove the spacers (for 10 tiles, there will be 9 spaces)
+    //let tileWidth = canvasWidthMinusSpaces / numberOfColumns;   // now take the remaining canvas space after removing the spacers & divide that by the number of tiles in a row; that will be the tile height.
+    //let tileHeight = 4/7 * tileWidth;   // to get the tileWidth - use the original tile ratio (70/40 or 7/4)
+
+    let rowCounter = 0;
+    let xVal = 0;
+    let yVal = 0;
+    this.ySpacer = this.tileHeight + this.tileSpacer;
+    this.xSpacer = this.tileWidth + this.tileSpacer;
+
+    for (var i = 0; i < numberOfTiles; i++) {
+      // if i is divisible by 120 (remainder is zero) reset rowCounter
+      if(i % 120 == 0) {
+        rowCounter = 0;
+        xVal = 0;
+        yVal = 0;
+      }
+
+      rowCounter++; // increment rowCounter
+
+      if(typeof(tile) === 'undefined') {
+        // tile does not exist, so lets create a blank tile
+        this.tiles.push({
+          tile: i,
+          writing: "",
+          drawing: [],
+          taken: false,
+          width: this.tileWidth,
+          height: this.tileHeight,
+          position: {
+            x: xVal,
+            y: yVal
+          }
+        });
+      } else {
+        let tile = this.tiles[i];
+        // only update the x and y
+        tile.position.x = xVal;
+        tile.position.y = yVal;
+      }
+
+      yVal += this.ySpacer; // increment y val
+      if (rowCounter === this.numRows) { // if we have drawn all the rows
+        rowCounter = 0; // reset rowcounter
+        yVal = 0; // set y to 0
+        xVal += this.xSpacer; // increment x val
+      }
+    }
   }
-  return tiles;
+
+  getRowForCoord(y) {
+    for(var i=1; i < this.numRows; i++) {
+      let tile = this.tiles[i];
+      if (y < tile.position.y) {
+        // click is between tiles
+        if(y > tile.position.y - this.tileSpacer) {
+          return;
+        } else {
+          return i - 1;
+        }
+      }
+    }
+    let tile = this.tiles[this.numRows - 1];
+    if(y > tile.position.y + tile.height) {
+      return;
+    } else {
+      return this.numRows - 1;
+    }
+  }
+
+  getColumnForCoord(x) {
+    for(var i=1; i < this.numColumns; i++) {
+      let tile = this.tiles[i * this.numRows];
+      if(x < tile.position.x) {
+        if(x > tile.position.x - this.tileSpacer) {
+          return;
+        } else {
+          return (i - 1) * this.numRows;
+        }
+      }
+    }
+    let tile = this.tiles[(this.numColumns - 1) * this.numRows];
+    if(x > tile.position.x + tile.width) {
+      return;
+    } else {
+      return (this.numColumns - 1) * this.numRows;
+    }
+  }
+
+  getTileForCoord(x, y, offset) {
+    let indexOffset = offset || 0;
+    const column = this.getColumnForCoord(x);
+    if(typeof(column) === 'undefined') {
+      return;
+    }
+    const row = this.getRowForCoord(y);
+    if(typeof(row) === 'undefined') {
+      return;
+    }
+
+    return this.tiles[column + row + indexOffset];
+  }
 }
