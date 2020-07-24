@@ -9,7 +9,7 @@ let standardTimer = 3000; //3000;
 let currentColor = 'black';
 let currentAngle = '1';
 let scene = 'preline';
-let bathroomLineUpTime = 1;
+let bathroomLineUpTime = 10;
 let toiletPaperTile;
 
 let DBLUE = '#64afd9';
@@ -1327,7 +1327,7 @@ function mirrorDraw() {
     image(mirrorImg1, canvasWidth / 2 - mirrorImg1.width / 2, 0);
     // image(toiletPaperImg1, canvasWidth / 1.5, 240);
     if (writtenMessageViz) {
-      writtenMessage("what do you want to be?");
+      writtenMessage("what do you want to see?");
     }
   }
   displaySceneSwitchArrow();
@@ -1336,7 +1336,7 @@ function mirrorDraw() {
 
 function endDrawText() {
   push();
-  let lineText = "Thank you for using the imaginary bathroom"
+  let lineText = "Thank you for visiting the imaginary bathroom"
   textAlign(CENTER, CENTER);
   fill('black');
   rectMode(CENTER);
