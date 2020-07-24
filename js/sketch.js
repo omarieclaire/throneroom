@@ -922,6 +922,7 @@ function drawTileWriting(tile, scaleFactor, x, y, w, h) {
   // rectMode(CENTER);
   // translate(0, 0);
   // rotate(90);
+  textAlign(CENTER, CENTER);
   text(tile['writing'], x, y, w, h);
   pop();
 }

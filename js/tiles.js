@@ -1,11 +1,8 @@
 //////// Stuck ////////
 // fix remaining arrows on other levels
-// work on hover
+// marie should work on hover
 // tiles not drawing in last scene
-// 'clear' should only clear unpushed updates - is this hard?
-// command z removes last draw path
 // why is text top left when loading?
-// only draw updates for a single tile
 // remove canvas tools
 // arrow does not appear in sink level on mobile.
 
@@ -22,7 +19,7 @@
 // debug "taken"
 // improve functionality of lettersound
 // keyboard focus for mobile?
-// a - delete code saving to graffitiWall
+
 
 ////// If I Can Stop Time ////////
 // choose sound or reading in lineup
@@ -31,6 +28,10 @@
 // resize bug: is it because height is changing and not width?: Uncaught DOMException: Failed to execute 'drawImage' on 'CanvasRenderingContext2D': The image argument is a canvas element with a width or height of 0.
 // after 26 characters without a space or linebreak, insert a space
 // how to integrate 'font' and (if time - random text angles) into database
+// a - delete code saving to graffitiWall
+// 'clear' should only clear unpushed updates - is this hard?
+// command z removes last draw path
+
 
 
 //////// BEFORE PUBLISHING ////////
