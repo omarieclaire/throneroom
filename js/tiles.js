@@ -8,6 +8,7 @@
 // if orientation=vertical > the sceneSwitch arrow is moved to the bottom center
 // why is text top left when loading?
 // only draw updates for a single tile
+// remove canvas tools
 
 ////////// Not Code /////////
 // select color palette for drawing

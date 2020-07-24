@@ -888,7 +888,13 @@ function drawTileDrawing(tile, scaleFactor, translateX, translateY) {
 function drawTileWriting(tile, scaleFactor, x, y, w, h) {
   push();
   noStroke();
-  textFont(graffitiFont);
+  // how does this work? the power of modulus!
+  // fonts  = [courier, helvetica, times]
+  // fonts.length = 3;
+  // tile.tile <-- ids for tiles, range from 0, 380
+  // 117 % 3 = either 0, 1, or 2.
+  let font = fonts[tile.tile % fonts.length];
+  textFont(font);
   textSize(graffitiFontSize);
   fill(currentColor);
   scale(scaleFactor, scaleFactor);
