@@ -93,6 +93,14 @@ let paintColors = [
   DPEACH
 ];
 
+let TEXT_ANGLES = [
+  0,
+  10,
+  350,
+  20,
+  340
+];
+
 let lineupSound;
 let arrowSound;
 let openTileSound;
@@ -357,7 +365,7 @@ function setup() {
   canvas = createCanvas(canvasWidth, canvasHeight);
   tiles = tileFactory(canvasWidth, canvasHeight);
   currentTile = tiles[1];
-  triangleParams = createTriangleParameters(40);
+  triangleParams = createTriangleParameters(40, screenOrientation);
   scaleAllTheThings(canvasWidth, canvasHeight);
 
   function mouseClickFunctions() {
@@ -1154,12 +1162,22 @@ function sceneSwitch() {
   }
 }
 
-function createTriangleParameters(length) {
-  let y1 = canvasHeight / 1.2;
-  let y2 = y1 + length * 2;
-  let x3 = canvasWidth - length;
-  let y3 = y1 + length;
-  let x1 = x3 - length * 1.5;
+function createTriangleParameters(length, orientation) {
+  let y1, y2, y3, x1, x2, x3;
+
+  if(orientation === 'horizontal') {
+    y1 = canvasHeight / 1.2;
+    y2 = y1 + length * 2;
+    x3 = canvasWidth/1.2 - length;
+    y3 = y1 + length;
+    x1 = x3 - length * 1.5;
+  } else {
+    y1 = canvasHeight / 1.2;
+    y2 = y1 + length * 2;
+    x3 = canvasWidth - length;
+    y3 = y1 + length;
+    x1 = x3 - length * 1.5;
+  }
 
   return {
     length: length,
