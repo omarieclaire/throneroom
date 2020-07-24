@@ -1,5 +1,4 @@
 //////// Stuck ////////
-// need a close button for the tile
 // can’t see the arrow
 // work on hover
 // drawing is very very slow
@@ -12,6 +11,7 @@
 // command z removes last draw path
 // if orientation=vertical > the sceneSwitch arrow is moved to the bottom center
 // why is text top left when loading?
+// only draw updates for a single tile
 
 ////////// Not Code /////////
 // select color palette for drawing

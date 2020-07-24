@@ -22,6 +22,7 @@ let DYELLOW = '#ffa304';
 let LPEACH = '#fedfcd';
 let DPEACH = '#ffbe99';
 let sceneSwitchArrowViz = false;
+let sceneSwitchArrowVizHover = false;
 let writtenMessageViz = false;
 
 let turnaround;
@@ -729,8 +730,10 @@ function hoverOnImg() {
       }
     }
     if (sceneSwitchArrowViz && arrowMouseCheck()) {
+      sceneSwitchArrowVizHover = true;
       drawSceneSwitchArrow(DYELLOW, LYELLOW);
     } else if (sceneSwitchArrowViz) {
+      sceneSwitchArrowVizHover = false;
       drawSceneSwitchArrow(DBLUE, LBLUE);
     } else {
       // do nothing
@@ -1263,6 +1266,13 @@ function toiletDraw() {
     image(toiletPaperImg1, canvasWidth / 1.5, 240);
     if (writtenMessageViz) {
       writtenMessage("what are you ready to flush away?");
+    }
+  }
+  if(sceneSwitchArrowViz) {
+    if(sceneSwitchArrowVizHover) {
+      drawSceneSwitchArrow(DYELLOW, LYELLOW);
+    } else {
+      drawSceneSwitchArrow(DBLUE, LBLUE);
     }
   }
   // console.log('Amount of time to compute the frame:', millis() - frameStartTime);
