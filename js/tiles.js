@@ -1,9 +1,4 @@
 //////// Stuck ////////
-// fix remaining arrows on other levels
-// marie should work on hover
-// tiles not drawing in last scene
-// remove canvas tools
-// arrow does not appear in sink level on mobile.
 
 ////////// Not Code /////////
 // select color palette for drawing

@@ -41,6 +41,7 @@ let largeImgHeight;
 let smallImgHeight;
 let SCALEFACTOR;
 let currentTile;
+let toiletImg1white;
 let toiletImg1;
 let toiletImg2;
 let toiletPaperImg1;
@@ -126,6 +127,8 @@ function dataSent(data, err) {}
 
 function preload() {
   toiletImg1 = loadImage('img/toiletImg1.png');
+  toiletImgtest = loadImage('img/toiletImg1white.png');
+
   toiletImg2 = loadImage('img/toiletImg2.png');
   toiletPaperImg1 = loadImage('img/tpImg1.png');
   toiletPaperImg2 = loadImage('img/tpImg2.png');
@@ -1192,6 +1195,7 @@ function preLineupDraw() {
   fill(DBLUE);
   rectMode(CENTER);
   text(lineText, canvasWidth / 2, canvasHeight / 2, canvasWidth / 1.5, canvasHeight / 2);
+
   pop();
 }
 
@@ -1228,6 +1232,8 @@ function toiletDraw() {
     background(LBLUE);
     displaySmallTileGraffiti(); // show all the small drawings/text
     image(toiletImg1, canvasWidth / 2 - toiletImg1.width / 2, 0);
+    image(toiletImg1white, 0, 0);
+console.log('yeeeessa');
     image(toiletPaperImg1, canvasWidth / 1.5, 240);
     if (writtenMessageViz) {
       writtenMessage("what are you ready to flush away?");
