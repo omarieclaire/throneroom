@@ -1,8 +1,5 @@
 
 //////// If time ////////
-// hover working
-// debug "taken"
-// improve functionality of lettersound
 // keyboard focus for mobile?
 
 ////// If I Can Stop Time ////////
@@ -15,6 +12,8 @@
 // a - delete code saving to graffitiWall
 // 'clear' should only clear unpushed updates - is this hard?
 // command z removes last draw path
+// improve functionality of lettersound
+
 
 //////// BEFORE PUBLISHING ////////
 // make the 'text' canvas tool invisible (also clear if clear still clears EVERYTHING)
@@ -25,7 +24,6 @@
 
 ////////// Not Code /////////
 // improve images
-    // - p1 retrace images
     // - p2 make water flowing out of sink, gifs, oh my!
 // improve sounds
     // - p1 soften to a comfortable volume, length, and fade out
@@ -33,8 +31,7 @@
 // improve text
     // - 'good enough'
     // - great
-// select color palette for drawing
-    // - 'good enough'
+// select colors
     // - great
 // playtest
     // - 5 minutes of drawing and testing

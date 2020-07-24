@@ -12,15 +12,16 @@ let scene = 'preline';
 let bathroomLineUpTime = 1;
 let toiletPaperTile;
 
-let DBLUE = '#a5c7da';
-let LBLUE = '#f0fafc';
+let DBLUE = '#64afd9';
+let LBLUE = '#defaff';
+let MBLUE = '#a9e8f5';
 let LPINK = '#fb9c96';
 let DPINK = '#f1635a';
 let PURPLE = '#b25dff';
 let LYELLOW = '#ffd183';
 let DYELLOW = '#ffa304';
-let LPEACH = '#fedfcd';
-let DPEACH = '#ffbe99';
+let LPEACH = '#ffcfb3';
+let DPEACH = '#ffb48a';
 
 let PBLUE = '#02b0ef';
 let PPINK = '#fc11a2';
@@ -1300,7 +1301,7 @@ function sinkDraw() {
     image(sinkImg1, canvasWidth / 2 - sinkImg1.width / 2, 0);
     image(towelImg1, canvasWidth / 1.5, 240);
     if (writtenMessageViz) {
-      writtenMessage("what do you do with your hands?");
+      writtenMessage("what do your hands want to do?");
     }
   }
   displaySceneSwitchArrow();
@@ -1320,7 +1321,7 @@ function mirrorDraw() {
     image(mirrorImg1, canvasWidth / 2 - mirrorImg1.width / 2, 0);
     // image(toiletPaperImg1, canvasWidth / 1.5, 240);
     if (writtenMessageViz) {
-      writtenMessage("what do you want to see in the mirror?");
+      writtenMessage("what do you want to be?");
     }
   }
   displaySceneSwitchArrow();
