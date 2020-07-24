@@ -940,29 +940,32 @@ function graffitiTools(myColor) {
   }
 }
 
-function displayLargeTileGraffiti() {
+function displayLargeTileGraffiti(tile) {
   if (graffitiCanvasOpen) {
-    let tile = tiles[currentTile.tile];
     drawTileDrawing(tile, BASE_TO_GRAFFITI_SCALE, graffitiCanvasX, graffitiCanvasY); // draw it BIG
     drawTileWriting(tile, 1.0, graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH);
+  }
+}
+
+function displaySmallTileGraffitiForASingleTile(tile) {
+  // why does this translate work?
+  let drawtranslateX = tile.position.x / SCALEFACTOR - graffitiCanvasX;
+  let drawtranslateY = tile.position.y / SCALEFACTOR - graffitiCanvasY;
+  let writetranslateX = tile.position.x / SCALEFACTOR;
+  let writetranslateY = tile.position.y / SCALEFACTOR;
+  let translateWidth = tile.width / SCALEFACTOR;
+  let translateHeight = tile.height / SCALEFACTOR;
+  drawTile(tile); // draw the actual tile rect
+  if (tile['writing'] !== []) { // if not empty
+    drawTileDrawing(tile, BASE_TO_SMALL_TILE_SCALE, tile.position.x, tile.position.y);
+    drawTileWriting(tile, SCALEFACTOR, writetranslateX, writetranslateY, translateWidth, translateHeight);
   }
 }
 
 function displaySmallTileGraffiti() {
   for (let i = startIndex; i < endIndex; i++) {
     let tile = tiles[i];
-    // why does this translate work?
-    let drawtranslateX = tile.position.x / SCALEFACTOR - graffitiCanvasX;
-    let drawtranslateY = tile.position.y / SCALEFACTOR - graffitiCanvasY;
-    let writetranslateX = tile.position.x / SCALEFACTOR;
-    let writetranslateY = tile.position.y / SCALEFACTOR;
-    let translateWidth = tile.width / SCALEFACTOR;
-    let translateHeight = tile.height / SCALEFACTOR;
-    drawTile(tile); // draw the actual tile rect
-    if (tile['writing'] !== []) { // if not empty
-      drawTileDrawing(tile, BASE_TO_SMALL_TILE_SCALE, tile.position.x, tile.position.y);
-      drawTileWriting(tile, SCALEFACTOR, writetranslateX, writetranslateY, translateWidth, translateHeight);
-    }
+    displaySmallTileGraffitiForASingleTile(tile);
   }
 }
 
@@ -1168,7 +1171,7 @@ function createTriangleParameters(length, orientation) {
   if(orientation === 'horizontal') {
     y1 = canvasHeight / 1.2;
     y2 = y1 + length * 2;
-    x3 = canvasWidth/1.2 - length;
+    x3 = canvasWidth - length;
     y3 = y1 + length;
     x1 = x3 - length * 1.5;
   } else {
@@ -1276,7 +1279,7 @@ function toiletDraw() {
   if (graffitiCanvasOpen) { // if canvas is open
     drawGraffitiCanvas();
     graffitiTools(DBLUE);
-    displayLargeTileGraffiti(); // show the open drawing/text
+    displayLargeTileGraffiti(currentTile); // show the open drawing/text
     captureDrawing(); // run the code to catch the drawing
   } else {
     background(LBLUE);
@@ -1302,7 +1305,7 @@ function sinkDraw() {
   if (graffitiCanvasOpen) { // if canvas is open
     drawGraffitiCanvas();
     graffitiTools(DBLUE);
-    displayLargeTileGraffiti(); // show the open drawing/text
+    displayLargeTileGraffiti(currentTile); // show the open drawing/text
     captureDrawing(); // run the code to catch the drawing
   } else {
     background(LBLUE);
@@ -1319,7 +1322,7 @@ function mirrorDraw() {
   if (graffitiCanvasOpen) { // if canvas is open
     drawGraffitiCanvas();
     graffitiTools(DBLUE);
-    displayLargeTileGraffiti(); // show the open drawing/text
+    displayLargeTileGraffiti(currentTile); // show the open drawing/text
     captureDrawing(); // run the code to catch the drawing
   } else {
     background(LBLUE);
@@ -1418,23 +1421,32 @@ function handleEvent(event, key) {
   if (event.type === 'add_path') {
     // assume .tile has id, and .stroke
     let tileId = event.tile;
-    tiles[tileId].drawing.push(event.path);
+    let tile = tiles[tileId];
+    tile.drawing.push(event.path);
+    displaySmallTileGraffitiForASingleTile(tile);
+    displayLargeTileGraffiti(tile);
 
   } else if (event.type === 'update_writing') {
 
     let tileId = event.tile;
-    tiles[tileId].writing = event.writing;
+    let tile = tiles[tileId];
+    tile.writing = event.writing;
+    displaySmallTileGraffitiForASingleTile(tile);
+    displayLargeTileGraffiti(tile);
 
   } else if (event.type === 'clear_tile') {
 
     // assume .tile has id
     let tileId = event.tile;
-    tiles[tileId].drawing = {
+    let tile = tiles[tileId];
+    tile.drawing = {
       path: [],
       color: 'black'
     };
-    tiles[tileId].writing = "";
-    tiles[tileId].taken = false;
+    tile.writing = "";
+    tile.taken = false;
+    displaySmallTileGraffitiForASingleTile(tile);
+    displayLargeTileGraffiti(tile);
 
   } else if (event.type === 'snapshot') {
     // only take snapshots from your current session
@@ -1451,7 +1463,6 @@ function handleEvent(event, key) {
   } else {
     console.log(`received event type we could not handle: ${event.type}`);
   }
-  redraw();
 }
 
 function initializeFromSnapshot(firebase) {

@@ -4,7 +4,6 @@
 // tiles not drawing in last scene
 // 'clear' should only clear unpushed updates - is this hard?
 // command z removes last draw path
-// if orientation=vertical > the sceneSwitch arrow is moved to the bottom center
 // why is text top left when loading?
 // only draw updates for a single tile
 // remove canvas tools
