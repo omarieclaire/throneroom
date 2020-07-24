@@ -127,6 +127,8 @@ let writingSoundIsPlaying = false;
 
 let allSounds;
 let tileHovered;
+// tiles can only be taken for 2 minutes
+let TAKEN_TIME_LIMIT = 2 * 60 * 1000;
 
 
 function createUUID() {
@@ -1019,6 +1021,7 @@ function toggleGraffitiCanvas(tileClicked) { // open and close canvas
     if (inGraffitiCanvasMouseCheck() == false) { // prevents accidental closing
       closeTileSound.play();
       previousCurrentTile['taken'] = false; //  remove hold on previousCurrentTile
+      delete previousCurrentTime.takenTime;
       eventBuffer.push({
         type: 'untake',
         tile: previousCurrentTile.tile
@@ -1036,11 +1039,13 @@ function toggleGraffitiCanvas(tileClicked) { // open and close canvas
     currentTile = tileClicked // update 'current tile' to the tile that was clicked
     if (currentTile.taken === false) { // if the tile is not currently taken
       currentTile['taken'] = true; // 'take' (reserve) the tile
+      const takenTime = Date.now();
+      currentTile.takenTime = takenTime;
       eventBuffer.push({
         type: 'take',
         tile: currentTile.tile,
         session: SESSION_ID,
-        ts: Date.now()
+        ts: takenTime
       });
       saveTile(currentTile);
     }
@@ -1448,6 +1453,7 @@ function handleEvent(event, key) {
     };
     tile.writing = "";
     tile.taken = false;
+    delete tile.takenTime;
     displaySmallTileGraffitiForASingleTile(tile);
     displayLargeTileGraffiti(tile);
   } else if (event.type === 'take') {
@@ -1455,17 +1461,27 @@ function handleEvent(event, key) {
     let tileId = event.tile;
     let tile = tiles[tileId];
     tile.taken = true;
+    tile.takenTime = ts;
 
   } else if (event.type === 'untake') {
 
     let tileId = event.tile;
     let tile = tiles[tileId];
     tile.taken = false;
+    delete tile.takenTime;
 
   } else if (event.type === 'snapshot') {
     // only take snapshots from your current session
     // otherwise skip the snapshot events
     if (event.session === SESSION_ID) {
+      for(const id in tiles) {
+        let tile = tiles[id];
+        let now = Date.now();
+        let takenTime = tile.takenTime || 0;
+        if(tile.taken && now - takenTime > TAKEN_TIME_LIMIT) {
+          tile.taken = false;
+        }
+      }
       let ref = database.ref('snapshot');
       ref.push({
         tiles: tiles,
@@ -1538,6 +1554,7 @@ function printErrors(err) { // show me the errors please!
 
 window.addEventListener('beforeunload', function(event) {
   currentTile['taken'] = false;
+  delete currentTile.takenTime;
   eventBuffer.push({
     type: 'untake',
     tile: currentTile.tile
