@@ -58,6 +58,7 @@ let clemina;
 let jsKang;
 let reallyFree;
 let syifana;
+let tilesHelper;
 let tiles;
 let startIndex = 0;
 let endIndex = 120;
@@ -113,6 +114,7 @@ let leavingSound;
 let writingSoundIsPlaying = false;
 
 let allSounds;
+let tileHovered;
 
 
 function createUUID() {
@@ -366,7 +368,9 @@ function setup() {
 
 
   canvas = createCanvas(canvasWidth, canvasHeight);
-  tiles = tileFactory(canvasWidth, canvasHeight);
+  document.querySelectorAll('canvas').forEach(canvas=>canvas.imageSmoothingEnabled=true);
+  tilesHelper = new Tiles(canvasWidth, canvasHeight);
+  tiles = tilesHelper.tiles;
   currentTile = tiles[1];
   triangleParams = createTriangleParameters(40, screenOrientation);
   scaleAllTheThings(canvasWidth, canvasHeight);
@@ -637,9 +641,24 @@ function joinLine() {
 }
 
 function hoverOnImg() {
+
   let yhover = 20
   if (!graffitiCanvasOpen) {
     if (!writtenMessageViz) {
+      if (scene == 'toilet' || scene == 'mirror' || scene == 'sink') {
+        let oldHovered = tileHovered;
+        tileHovered = tilesHelper.getTileForCoord(mouseX, mouseY, startIndex);
+        if(typeof(tileHovered) !== 'undefined') {
+          displaySmallTileGraffitiForASingleTile(tileHovered, true);
+          image(toiletImg1, canvasWidth / 2 - toiletImg1.width / 2, 0);
+        }
+        let oldId = (tileHovered || {}).tile || -1;
+        if(typeof(oldHovered) !== 'undefined' && oldHovered.tile != oldId) {
+          displaySmallTileGraffitiForASingleTile(oldHovered);
+          image(toiletImg1, canvasWidth / 2 - toiletImg1.width / 2, 0);
+        }
+      }
+
       if (scene == 'toilet') {
         // hoverReplace(canvasWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height, toiletImg2, toiletImg1); // toilet hover
         hoverReplace(canvasWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height, toiletPaperImg2, toiletPaperImg1); // tp hover
@@ -754,11 +773,15 @@ function captureDrawing() {
   }
 }
 
-function drawTile(tile) {
+function drawTile(tile, hovered) {
+  let hoverState = hovered || false;
   push();
   strokeWeight(0);
   if (tile.taken) {
     fill(DPINK);
+  } else if(hovered) {
+    // HOVER COLOR
+    fill(LYELLOW);
   } else if (tile.writing != '' || tile.drawing.length > 0) {
     fill(DPEACH);
   } else {
@@ -861,7 +884,8 @@ function displayLargeTileGraffiti(tile) {
   }
 }
 
-function displaySmallTileGraffitiForASingleTile(tile) {
+function displaySmallTileGraffitiForASingleTile(tile, hovered) {
+  let hoverState = hovered || false;
   // why does this translate work?
   let drawtranslateX = tile.position.x / SCALEFACTOR - graffitiCanvasX;
   let drawtranslateY = tile.position.y / SCALEFACTOR - graffitiCanvasY;
@@ -869,7 +893,7 @@ function displaySmallTileGraffitiForASingleTile(tile) {
   let writetranslateY = tile.position.y / SCALEFACTOR;
   let translateWidth = tile.width / SCALEFACTOR;
   let translateHeight = tile.height / SCALEFACTOR;
-  drawTile(tile); // draw the actual tile rect
+  drawTile(tile, hoverState); // draw the actual tile rect
   if (tile['writing'] !== []) { // if not empty
     drawTileDrawing(tile, BASE_TO_SMALL_TILE_SCALE, tile.position.x, tile.position.y);
     drawTileWriting(tile, SCALEFACTOR, writetranslateX, writetranslateY, translateWidth, translateHeight);
@@ -884,12 +908,7 @@ function displaySmallTileGraffiti() {
 }
 
 function tileMouseCheck() { // returns undefined when not clicking on a tile
-  for (let i = startIndex; i < endIndex; i++) { // for each key
-    let tile = tiles[i]; // grab the key
-    if (mouseX > tile['position']['x'] && mouseX < tile['position']['x'] + tile['width'] && mouseY > tile['position']['y'] && mouseY < tile['position']['y'] + tile['height']) {
-      return tiles[i]; // check if mouse is over it -> if yes, return that tile (can i just return tile?)
-    }
-  }
+  return tilesHelper.getTileForCoord(mouseX, mouseY, startIndex);
 }
 
 function saveTile(tile) {
@@ -1232,6 +1251,9 @@ function toiletDraw() {
   } else {
     background(LBLUE);
     displaySmallTileGraffiti(); // show all the small drawings/text
+    if(typeof(tileHovered) !== 'undefined') {
+      displaySmallTileGraffitiForASingleTile(tileHovered,true);
+    }
     image(toiletImg1, canvasWidth / 2 - toiletImg1.width / 2, 0);
     // image(toiletPaperImg1, canvasWidth / 1.5, 240);
     if (writtenMessageViz) {
