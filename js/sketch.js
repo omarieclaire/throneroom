@@ -86,6 +86,7 @@ let messageFontSize;
 let mobileFontSize = 20;
 let desktopFontSize = 40;
 let isMobile;
+let SNAPSHOT_TIME = 20000;
 
 
 let eventBuffer = [];
@@ -337,7 +338,7 @@ function snapshotter() {
     console.log('taking snapshot');
     takeSnapshot();
     snapshotter();
-  }, 20000); // change this to be longer
+  }, SNAPSHOT_TIME + Math.random() * SNAPSHOT_TIME);
 }
 
 function getScreenOrientation() {
@@ -740,6 +741,7 @@ function smallImgClicked() {
 }
 
 function startDrawPath() {
+  console.log(`start draw path`);
   writingSound.play();
   if (graffitiCanvasOpen) {
     isDrawing = true; // set isdrawing to true
