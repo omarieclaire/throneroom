@@ -1023,7 +1023,7 @@ function toggleGraffitiCanvas(tileClicked) { // open and close canvas
     if (inGraffitiCanvasMouseCheck() == false) { // prevents accidental closing
       closeTileSound.play();
       previousCurrentTile['taken'] = false; //  remove hold on previousCurrentTile
-      delete previousCurrentTime.takenTime;
+      delete previousCurrentTile.takenTime;
       eventBuffer.push({
         type: 'untake',
         tile: previousCurrentTile.tile
