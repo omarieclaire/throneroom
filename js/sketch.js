@@ -4,7 +4,7 @@ let screenOrientation;
 let canvasWidth;
 let canvasHeight;
 
-let standardTimer = 500; //3000;
+let standardTimer = 3000; //3000;
 
 let currentColor = 'black';
 let currentAngle = '1';
