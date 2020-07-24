@@ -1330,7 +1330,7 @@ function mirrorDraw() {
 
 function endDrawText() {
   push();
-  let lineText = "Thank you for visiting the imaginary bathroom"
+  let lineText = "Thank you for using the imaginary bathroom"
   textAlign(CENTER, CENTER);
   fill('black');
   rectMode(CENTER);
