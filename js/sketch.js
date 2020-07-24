@@ -33,7 +33,6 @@ let currentDrawPath = {
 let tileId = 1;
 let isDrawing = false;
 let graffitiCanvasOpen = false;
-let canvasToolsVisible = false;
 let graffitiCanvasW;
 let graffitiCanvasH;
 let graffitiCanvasX;
@@ -271,17 +270,17 @@ function scaleAllTheThings(userWindowWidth, userWindowHeight) {
 }
 
 function makeToolButtons(x, y, w, h) {
-  let toolWidth = 30;
-  let toolSpacer = 5;
-  return {
-    write: {
-      'x': x + w + toolSpacer,
-      'y': y,
-      'width': toolWidth,
-      'height': toolWidth,
-      'text': 'write',
-      'select': false
-    },
+  // let toolWidth = 30;
+  // let toolSpacer = 5;
+  // return {
+    // write: {
+    //   'x': x + w + toolSpacer,
+    //   'y': y,
+    //   'width': toolWidth,
+    //   'height': toolWidth,
+    //   'text': 'write',
+    //   'select': false
+    // },
     // draw: {
     //   'x': graffitiCanvasX + graffitiCanvasW + toolSpacer,
     //   'y': graffitiCanvasY + toolWidth + toolSpacer,
@@ -298,19 +297,19 @@ function makeToolButtons(x, y, w, h) {
     //   'text': 'save',
     //   'select': false
     // },
-    clear: {
-      'x': x + w + toolSpacer,
-      'y': y + toolWidth + toolSpacer,
+    // clear: {
+    //   'x': x + w + toolSpacer,
+    //   'y': y + toolWidth + toolSpacer,
 
       // 'y': h + toolSpacer,
       // 'x': window.innerWidth - toolWidth * 1.5,
       // 'y': toolWidth,
-      'width': toolWidth,
-      'height': toolWidth,
-      'text': 'CLEAR',
-      'select': false
-    }
-  };
+    //   'width': toolWidth,
+    //   'height': toolWidth,
+    //   'text': 'CLEAR',
+    //   'select': false
+    // }
+  // };
 }
 
 function snapshotter() {
@@ -324,12 +323,12 @@ function snapshotter() {
 function getScreenOrientation() {
   if (canvasWidth >= canvasHeight) {
     screenOrientation = 'horizontal';
-    console.log(`Screen orientation is ${screenOrientation}`);
+    // console.log(`Screen orientation is ${screenOrientation}`);
   } else if (canvasWidth <= canvasHeight) {
     screenOrientation = 'vertical';
-    console.log(`Screen orientation is ${screenOrientation}`);
+    // console.log(`Screen orientation is ${screenOrientation}`);
   } else {
-    console.log("Screen orientation is impossible");
+    // console.log("Screen orientation is impossible");
   }
 }
 
@@ -836,17 +835,17 @@ function drawTileWriting(tile, scaleFactor, x, y, w, h) {
 }
 
 function graffitiTools(myColor) {
-  let toolSpacer = 10;
-  for (const tool in toolButtons) {
-    let btn = toolButtons[tool];
-    fill(myColor);
-    // rect(10, 10, 100, 100);
-    rect(btn.x, btn.y, btn.width, btn.height);
-    fill('black');
-    textAlign(CENTER, CENTER);
-    textSize(12);
-    text(btn.text, btn.x, btn.y, btn.width, btn.height);
-  }
+  // let toolSpacer = 10;
+  // for (const tool in toolButtons) {
+  //   let btn = toolButtons[tool];
+  //   fill(myColor);
+  //   // rect(10, 10, 100, 100);
+  //   rect(btn.x, btn.y, btn.width, btn.height);
+  //   fill('black');
+  //   textAlign(CENTER, CENTER);
+  //   textSize(12);
+  //   text(btn.text, btn.x, btn.y, btn.width, btn.height);
+  // }
 }
 
 function displayLargeTileGraffiti(tile) {
@@ -1210,7 +1209,7 @@ function toiletDraw() {
   // let frameStartTime = millis();
   if (graffitiCanvasOpen) { // if canvas is open
     drawGraffitiCanvas();
-    graffitiTools(DBLUE);
+    // graffitiTools(DBLUE);
     displayLargeTileGraffiti(currentTile); // show the open drawing/text
     captureDrawing(); // run the code to catch the drawing
   } else {
@@ -1230,7 +1229,7 @@ function toiletDraw() {
 function sinkDraw() {
   if (graffitiCanvasOpen) { // if canvas is open
     drawGraffitiCanvas();
-    graffitiTools(DBLUE);
+    // graffitiTools(DBLUE);
     displayLargeTileGraffiti(currentTile); // show the open drawing/text
     captureDrawing(); // run the code to catch the drawing
   } else {
@@ -1250,7 +1249,7 @@ function sinkDraw() {
 function mirrorDraw() {
   if (graffitiCanvasOpen) { // if canvas is open
     drawGraffitiCanvas();
-    graffitiTools(DBLUE);
+    // graffitiTools(DBLUE);
     displayLargeTileGraffiti(currentTile); // show the open drawing/text
     captureDrawing(); // run the code to catch the drawing
   } else {
