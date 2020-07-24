@@ -1079,7 +1079,7 @@ function sceneSwitch() {
   } else if (scene == 'mirror') {
     stopSounds();
     scene = 'end'
-    startIndex = 361;
+    startIndex = 360;
     endIndex = 480;
     displayWelcomeMessage();
     noLoop();
@@ -1266,17 +1266,27 @@ function mirrorDraw() {
 }
 
 function endDraw() {
-  let lineText = "Thank you for visiting the imaginary bathroom"
-  push();
-  background('black');
-  // textFont(messageFont, messageFontSize);
-  textAlign(CENTER, CENTER);
-  fill(DBLUE);
-  rectMode(CENTER);
-  textFont(messageFont);
-  textSize(messageFontSize);
-  text(lineText, canvasWidth / 2, canvasHeight / 2, canvasWidth / 1.5, canvasHeight / 2);
-  pop();
+  if (graffitiCanvasOpen) { // if canvas is open
+    drawGraffitiCanvas();
+    // graffitiTools(DBLUE);
+    displayLargeTileGraffiti(currentTile); // show the open drawing/text
+    captureDrawing(); // run the code to catch the drawing
+  } else {
+    background(LBLUE);
+    displaySmallTileGraffiti(); // show all the small drawings/text
+    push();
+    let lineText = "Thank you for visiting the imaginary bathroom"
+    textAlign(CENTER, CENTER);
+    fill('black');
+    rectMode(CENTER);
+    textFont(messageFont);
+    textSize(messageFontSize);
+    text(lineText, canvasWidth / 2, canvasHeight / 2, canvasWidth / 1.5, canvasHeight / 2);
+    pop();
+
+  }
+
+
 }
 
 function draw() {
