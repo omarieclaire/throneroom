@@ -973,6 +973,10 @@ function toggleGraffitiCanvas(tileClicked) { // open and close canvas
     if (inGraffitiCanvasMouseCheck() == false) { // prevents accidental closing
       closeTileSound.play();
       previousCurrentTile['taken'] = false; //  remove hold on previousCurrentTile
+      eventBuffer.push({
+        type: 'untake',
+        tile: previousCurrentTile.tile
+      });
       saveTile(previousCurrentTile); // save the previousCurrentTile
       graffitiCanvasOpen = !graffitiCanvasOpen; // toggle canvas state
       noLoop(); // stop looping draw - for speed
@@ -986,6 +990,12 @@ function toggleGraffitiCanvas(tileClicked) { // open and close canvas
     currentTile = tileClicked // update 'current tile' to the tile that was clicked
     if (currentTile.taken === false) { // if the tile is not currently taken
       currentTile['taken'] = true; // 'take' (reserve) the tile
+      eventBuffer.push({
+        type: 'take',
+        tile: currentTile.tile,
+        session: SESSION_ID,
+        ts: Date.now()
+      });
       saveTile(currentTile);
     }
     graffitiCanvasOpen = !graffitiCanvasOpen; // toggle canvas
@@ -1389,6 +1399,17 @@ function handleEvent(event, key) {
     tile.taken = false;
     displaySmallTileGraffitiForASingleTile(tile);
     displayLargeTileGraffiti(tile);
+  } else if (event.type === 'take') {
+
+    let tileId = event.tile;
+    let tile = tiles[tileId];
+    tile.taken = true;
+
+  } else if (event.type === 'untake') {
+
+    let tileId = event.tile;
+    let tile = tiles[tileId];
+    tile.taken = false;
 
   } else if (event.type === 'snapshot') {
     // only take snapshots from your current session
@@ -1466,5 +1487,9 @@ function printErrors(err) { // show me the errors please!
 
 window.addEventListener('beforeunload', function(event) {
   currentTile['taken'] = false;
+  eventBuffer.push({
+    type: 'untake',
+    tile: currentTile.tile
+  });
   saveTile(currentTile);
 });
