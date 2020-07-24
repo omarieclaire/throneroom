@@ -1130,12 +1130,22 @@ function stopSounds() {
   }
 }
 
+function displayWelcomeMessage() {
+  writtenMessageViz = true;
+  function runWhenTimeoutIsUp() {
+    writtenMessageViz = false;
+    redraw();
+  }
+  window.setTimeout(runWhenTimeoutIsUp, standardTimer);
+}
+
 function sceneSwitch() {
   if (scene == 'preline') {
     scene = 'line';
 
   } else if (scene == 'line') {
     scene = 'toilet';
+    displayWelcomeMessage();
     leaveSceneTimer(standardTimer);
     noLoop(); // stop toilet from looping
 
@@ -1145,6 +1155,7 @@ function sceneSwitch() {
     // redraw();
     startIndex = 120;
     endIndex = 240;
+    displayWelcomeMessage();
     leaveSceneTimer(standardTimer);
     noLoop();
 
@@ -1154,6 +1165,7 @@ function sceneSwitch() {
     startIndex = 240;
     endIndex = 360;
     // redraw();
+    displayWelcomeMessage();
     leaveSceneTimer(standardTimer);
     noLoop();
 
@@ -1162,6 +1174,7 @@ function sceneSwitch() {
     scene = 'end'
     startIndex = 361;
     endIndex = 480;
+    displayWelcomeMessage();
     noLoop();
   }
 }

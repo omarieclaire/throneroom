@@ -2,7 +2,6 @@
 // fix remaining arrows on other levels
 // marie should work on hover
 // tiles not drawing in last scene
-// why is text top left when loading?
 // remove canvas tools
 // arrow does not appear in sink level on mobile.
 
