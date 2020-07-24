@@ -21,6 +21,16 @@ let LYELLOW = '#ffd183';
 let DYELLOW = '#ffa304';
 let LPEACH = '#fedfcd';
 let DPEACH = '#ffbe99';
+
+let PBLUE = '#02b0ef';
+let PPINK = '#fc11a2';
+let PPEACH = '#fe574c';
+let PPURPLE = '#7f00cb';
+let PYELLOW = '#ec8902';
+let PORANGE = '#ff5806';
+let PGREEN = '#07ef02';
+let PTURQ = '#04c9b9';
+
 let sceneSwitchArrowViz = false;
 let sceneSwitchArrowVizHover = false;
 let writtenMessageViz = false;
@@ -85,14 +95,14 @@ let BASE_TO_SMALL_TILE_SCALE;
 let BASE_TO_GRAFFITI_SCALE;
 
 let paintColors = [
-  DBLUE,
-  // LBLUE,
-  // LPINK,
-  DPINK,
-  // PURPLE,
-  // LYELLOW,
-  DYELLOW,
-  DPEACH
+   PBLUE,
+   PPINK,
+   PPEACH,
+   PPURPLE,
+   PYELLOW,
+   PORANGE,
+   PGREEN,
+   PTURQ
 ];
 
 let TEXT_ANGLES = [
