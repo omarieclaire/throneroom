@@ -1485,5 +1485,9 @@ function printErrors(err) { // show me the errors please!
 
 window.addEventListener('beforeunload', function(event) {
   currentTile['taken'] = false;
+  eventBuffer.push({
+    type: 'untake',
+    tile: currentTile.tile
+  });
   saveTile(currentTile);
 });
