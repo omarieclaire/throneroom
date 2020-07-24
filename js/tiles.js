@@ -1,11 +1,7 @@
 //////// Stuck ////////
-// can’t see the arrow
+// fix remaining arrows on other levels
 // work on hover
-// drawing is very very slow
-// arrows not appearing on mobile
-// tiles not SAVING in non toilet scenes. WHY?
 // tiles not drawing in last scene
-// need to click anywhere BUT the opengraffitidrawcanvas to close the canvas
 // how to integrate 'font' and (if time - random text angles) into database
 // 'clear' should only clear unpushed updates - is this hard?
 // command z removes last draw path
@@ -133,7 +129,6 @@ function tileFactory(canvasWidth, canvasHeight, existingTiles) {
       tiles[i].writing = ""; // set writing
       tiles[i].drawing = []; // set drawing
       tiles[i].taken = false; // Set 'taken': false to every tile.
-      tiles[i].firebaseKey = null; // Set 'taken': false to every tile.
       tiles[i].width = tileWidth; // set width
       tiles[i].height = tileHeight; // set height
       tiles[i].position = {}; // Set x

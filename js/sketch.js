@@ -962,15 +962,6 @@ function tileMouseCheck() { // returns undefined when not clicking on a tile
 }
 
 function saveTile(tile) {
-  let id = tile['tile']; // grab the tile id
-  if (tile['firebaseKey'] === null) { // CREATE a new entry in the database
-    let ref = database.ref('graffitiWall'); // make a new reference to the graffitiWall database
-    let result = ref.push(tile, dataSent); // push the data to the ref created above
-    tiles[id]['firebaseKey'] = result.key;
-  } else { // already exists in the database, so UPDATE the entry in the database
-    let ref = database.ref('graffitiWall/' + tile['firebaseKey']);
-    ref.update(tile);
-  }
   if (eventBuffer.length > 0) {
     let newBuffer = collapseEventBuffer(eventBuffer);
     let ref = database.ref('log');
@@ -1008,6 +999,10 @@ function clearTile() {
   // this should instead clear UNPUSHED changes so people can't delete other people's work
   currentTile.drawing = [];
   currentTile.writing = '';
+  eventBuffer.push({
+    type: 'clear_tile',
+    tile: currentTile.tile
+  });
 }
 
 function clearTileChanges() {
@@ -1345,18 +1340,15 @@ function draw() {
 
 // integrate buildmap into tilemap
 function buildMap(graffitiWall) {
-  for (let i = startIndex; i < endIndex; i++) { // for each key
-    let key = i; // grab the key
-    let tileId = graffitiWall[key]['tile']; // grab the tileID
-
-    if (tileId !== currentTile.tile && typeof(tiles[tileId]) !== 'undefined') { // do the updates
-      tiles[tileId]['firebaseKey'] = key;
-      tiles[tileId]['drawing'] = graffitiWall[key]['drawing'] || [];
-      tiles[tileId]['writing'] = graffitiWall[key]['writing'] || '';
-      //let graffiti = graffitiWall[key];
-      //let grafWriting = graffiti['writing'] || '';
-      //tiles[tileId]['writingPoints'] = firaFont.textToPoints(grafWriting, graffiti.position.x, graffiti.position.y) || [];
-      tiles[tileId]['taken'] = graffitiWall[key]['taken'] || false;
+  for(const tileId in tiles) {
+    let tile = tiles[tileId];
+    let graffitiWallTile = graffitiWall[tileId];
+    if(typeof(graffitiWallTile) === 'undefined') {
+      console.log(`ERROR - tileId=${tileId} in tiles map but not in snapshot`);
+    } else {
+      tile.drawing = graffitiWall[tileId].drawing || [];
+      tile.writing = graffitiWall[tileId].writing || '';
+      tile.taken = graffitiWall[tileId].taken || false;
     }
   }
   redraw(); // redraw everytime there is an update in the database
