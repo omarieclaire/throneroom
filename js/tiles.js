@@ -26,7 +26,6 @@
 // improve images
     // - p2 make water flowing out of sink, gifs, oh my!
 // improve sounds
-    // - p1 soften to a comfortable volume, length, and fade out
     // - p2 make some new if time
 // improve text
     // - great

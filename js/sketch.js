@@ -1464,7 +1464,7 @@ function handleEvent(event, key) {
     let tileId = event.tile;
     let tile = tiles[tileId];
     tile.taken = true;
-    tile.takenTime = ts;
+    tile.takenTime = event.ts;
 
   } else if (event.type === 'untake') {
 
