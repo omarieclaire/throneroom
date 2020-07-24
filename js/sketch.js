@@ -49,6 +49,8 @@ let mirrorImg1;
 let mirrorImg2;
 let sinkImg1;
 let sinkImg2;
+let towelImg1;
+let towelImg2;
 
 let monospace;
 let acki;
@@ -135,6 +137,8 @@ function preload() {
   mirrorImg2 = loadImage('img/mirrorImg2.png');
   sinkImg1 = loadImage('img/sinkImg1.png');
   sinkImg2 = loadImage('img/sinkImg2.png');
+  towelImg1 = loadImage('img/towelImg1.png');
+  towelImg2 = loadImage('img/towelImg2.png');
   // monospace = loadFont('monospace');
 
   incon = loadFont('fonts/Incon.ttf');
@@ -253,6 +257,8 @@ function scaleAllTheThings(userWindowWidth, userWindowHeight) {
   mirrorImg2.resize(0, canvasHeight);
   sinkImg1.resize(0, canvasHeight);
   sinkImg2.resize(0, canvasHeight);
+  towelImg1.resize(0, canvasHeight / 4.4);
+  towelImg2.resize(0, canvasHeight / 4.4);
 
 
   //SCALEFACTOR = 0.085 //0.145;
@@ -1275,7 +1281,7 @@ function sinkDraw() {
     background(LBLUE);
     displaySmallTileGraffiti(); // show all the small drawings/text
     image(sinkImg1, canvasWidth / 2 - sinkImg1.width / 2, 0);
-    // image(toiletPaperImg1, canvasWidth / 1.5, 240);
+    image(towelImg1, canvasWidth / 1.5, 240);
     if (writtenMessageViz) {
       writtenMessage("what do you do with your hands?");
     }
