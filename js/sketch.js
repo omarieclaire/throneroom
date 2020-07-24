@@ -420,7 +420,6 @@ function setup() {
   canvas.mouseReleased(endDrawPath); // when mouse is releaed, stop collecting x and y points
   canvas.touchEnded(endDrawPath); // attach listener for
 
-  console.log(`firebase key = ${firebaseKey}`);
 
   // FIREBASE AUTH TODO: change
   var config = {
