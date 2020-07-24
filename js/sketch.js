@@ -1251,7 +1251,7 @@ function preLineupDraw() {
 }
 
 function lineupDraw() {
-  let lineText = "Seriously, we're closed. You can enter but new graffiti won't be saved.";
+  let lineText = "Seriously, we're closed. You can enter but new graffiti won't be saved." + "\n" + bathroomLineUpTime;
   // let lineText = "You are in line" + "\n" + bathroomLineUpTime;
   push();
   background('black');
