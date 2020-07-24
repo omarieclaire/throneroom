@@ -743,7 +743,6 @@ function smallImgClicked() {
 }
 
 function startDrawPath() {
-  console.log(`start draw path`);
   writingSound.play();
   if (graffitiCanvasOpen) {
     isDrawing = true; // set isdrawing to true
@@ -1286,7 +1285,7 @@ function toiletDraw() {
       displaySmallTileGraffitiForASingleTile(tileHovered,true);
     }
     image(toiletImg1, canvasWidth / 2 - toiletImg1.width / 2, 0);
-    // image(toiletPaperImg1, canvasWidth / 1.5, 240);
+    image(toiletPaperImg1, canvasWidth / 1.5, 240);
     if (writtenMessageViz) {
       writtenMessage("what are you ready to flush away?");
     }
