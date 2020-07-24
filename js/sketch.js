@@ -636,13 +636,13 @@ function hoverOnImg() {
   if (!graffitiCanvasOpen) {
     if (!writtenMessageViz) {
       if (scene == 'toilet') {
-        hoverReplace(canvasWidth / 2 - toiletImg1.width / 2, canvasHeight - yhover, toiletImg1.width, toiletImg2.height, toiletImg2, toiletImg1); // toilet hover
+        hoverReplace(canvasWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height, toiletImg2, toiletImg1); // toilet hover
         hoverReplace(canvasWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height, toiletPaperImg2, toiletPaperImg1); // tp hover
       } else if (scene == 'mirror') {
-        hoverReplace(canvasWidth / 2 - mirrorImg1.width / 2, canvasHeight - yhover, mirrorImg1.width, mirrorImg2.height, mirrorImg2, mirrorImg1); // mirror hover
+        hoverReplace(canvasWidth / 2 - mirrorImg1.width / 2, 0, mirrorImg1.width, mirrorImg2.height, mirrorImg2, mirrorImg1); // mirror hover
 
       } else if (scene == 'sink') {
-        hoverReplace(canvasWidth / 2 - sinkImg1.width / 2, canvasHeight - yhover, sinkImg1.width, sinkImg2.height, sinkImg2, sinkImg1); // sink hover
+        hoverReplace(canvasWidth / 2 - sinkImg1.width / 2, 0, sinkImg1.width, sinkImg2.height, sinkImg2, sinkImg1); // sink hover
       }
     }
     if (sceneSwitchArrowViz && arrowMouseCheck()) {
@@ -913,7 +913,7 @@ function hoverCheck(x, y, w, h) {
 }
 
 function hoverReplace(x, y, w, h, img2, img1) {
-  if (mouseX > x && mouseX < x + w && mouseY > y && mouseY < y + h) {
+  if (mouseX > x && mouseX < x + w && mouseY > h/1.2 && mouseY < y + h) {
     image(img2, x, y);
   } else {
     image(img1, x, y);
@@ -1267,7 +1267,7 @@ function mirrorDraw() {
 }
 
 function endDraw() {
-  let lineText = "Thank you for visiting the imaginary bathroom."
+  let lineText = "Thank you for visiting the imaginary bathroom"
   push();
   background('black');
   // textFont(messageFont, messageFontSize);
