@@ -347,6 +347,8 @@ function setup() {
   // input.position(0, 0);
   // input.elt.id = "focus-me";
 
+  setAttributes('antialias', true);
+
   canvasWidth = calculateCanvasWidth(window.innerWidth, window.innerHeight);
   canvasHeight = calculateCanvasHeight(window.innerWidth, window.innerHeight);
 

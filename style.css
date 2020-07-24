@@ -4,9 +4,17 @@ body {
   background-color: #ffd183;
   touch-action: pinch-zoom;
   -webkit-touch-callout: none;
+  image-rendering: crisp-edges;
+
 
   /* height: 100%; */
   /* overflow: hidden; */
+}
+
+img {
+  image-rendering: auto;
+  image-rendering: crisp-edges;
+  /* image-rendering: pixelated; */
 }
 
 
