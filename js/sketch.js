@@ -366,7 +366,7 @@ function setup() {
 
 
   canvas = createCanvas(canvasWidth, canvasHeight);
-  document.querySelectorAll('canvas').forEach(canvas=>canvas.imageSmoothingEnabled=false);
+  document.querySelectorAll('canvas').forEach(canvas=>canvas.imageSmoothingEnabled=true);
 
   tiles = tileFactory(canvasWidth, canvasHeight);
   currentTile = tiles[1];
@@ -642,7 +642,7 @@ function hoverOnImg() {
     if (!writtenMessageViz) {
       if (scene == 'toilet') {
         // hoverReplace(canvasWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height, toiletImg2, toiletImg1); // toilet hover
-        // hoverReplace(canvasWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height, toiletPaperImg2, toiletPaperImg1); // tp hover
+        hoverReplace(canvasWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height, toiletPaperImg2, toiletPaperImg1); // tp hover
       } else if (scene == 'mirror') {
         hoverReplace(canvasWidth / 2 - mirrorImg1.width / 2, 0, mirrorImg1.width, mirrorImg2.height, mirrorImg2, mirrorImg1); // mirror hover
 
