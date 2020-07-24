@@ -1238,7 +1238,8 @@ function startTimer() {
 }
 
 function preLineupDraw() {
-  let lineText = "Enter the imaginary bathroom?";
+  let lineText = "The imaginary bathroom is now closed.";
+  // let lineText = "Enter the imaginary bathroom?";
   push();
   background('black');
   // textFont(messageFont, messageFontSize);
@@ -1246,12 +1247,12 @@ function preLineupDraw() {
   fill(DBLUE);
   rectMode(CENTER);
   text(lineText, canvasWidth / 2, canvasHeight / 2, canvasWidth / 1.5, canvasHeight / 2);
-
   pop();
 }
 
 function lineupDraw() {
-  let lineText = "You are in line" + "\n" + bathroomLineUpTime;
+  let lineText = "Seriously, we're closed. You can enter but new graffiti won't be saved.";
+  // let lineText = "You are in line" + "\n" + bathroomLineUpTime;
   push();
   background('black');
   if (frameCount % 60 == 0 && bathroomLineUpTime > -1) { // if the frameCount is divisible by 60, a second has passed. it will stop at 0
