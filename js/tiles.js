@@ -1,4 +1,8 @@
 //////// Stuck ////////
+// need a close button for the tile
+// can’t see the arrow
+// work on hover
+// drawing is very very slow
 // arrows not appearing on mobile
 // tiles not SAVING in non toilet scenes. WHY?
 // tiles not drawing in last scene

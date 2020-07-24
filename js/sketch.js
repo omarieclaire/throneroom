@@ -4,12 +4,12 @@ let screenOrientation;
 let canvasWidth;
 let canvasHeight;
 
-let standardTimer = 3000;
+let standardTimer = 500; //3000;
 
 let currentColor = 'black';
 let currentAngle = '1';
 let scene = 'preline';
-let bathroomLineUpTime = 8;
+let bathroomLineUpTime = 1;
 let toiletPaperTile;
 
 let DBLUE = '#a5c7da';
@@ -371,30 +371,11 @@ function setup() {
     }
   }
 
-  // function mouseHoverFunctions() {
-  //   let previousItem = lastItemHovered;
-  //   let itemHovered = whatWasHovered();
-  //   let hovered = itemHovered['hovered']; // grab hovered
-  //   let item = itemHovered['item']; // grab item
-  //
-  //   if(typeof(lastItemHovered) === 'undefined' || previousItem.hovered === itemHovered.hovered) {
-  //     hoverActions(hovered, item, lastItemHovered); // call func
-  //   } else {
-  //     hoverOffActions(previousItem.hovered, previousItem.item); // call func
-  //     hoverActions(hovered, item); // call func
-  //   }
-  //   // redraw(); //redraw after every click action
-  //   lastItemHovered = itemHovered;
-  // }
-
   toolButtons = makeToolButtons(graffitiCanvasX, graffitiCanvasY, graffitiCanvasW, graffitiCanvasH);
 
   canvas.mousePressed(mouseClickFunctions); // run the mouse functions
   canvas.mouseMoved(hoverOnImg);
-
   // canvas.mouseMoved(mouseHoverFunctions); // run the mouse functions
-  // canvas.mouseOut(mouseHoverFunctions); // run the mouse functions
-
 
   canvas.touchStarted(startDrawPath); //
   canvas.parent('canvascontainer'); // parent the canvas to the canvas container
@@ -498,9 +479,9 @@ function windowResized() {
   // scaleAllTheThings(canvasWidth, canvasHeight);
   // redraw();
 }
+
 /////// WHAT WAS CLICKED /////////////
 function whatWasClicked() {
-
   let arrow = arrowMouseCheck();
   if (arrow && sceneSwitchArrowViz) {
     return {
@@ -509,7 +490,6 @@ function whatWasClicked() {
     };
   }
   if (scene == 'preline') {
-
     let join = joinLine();
     if (scene == 'preline') {
       if (join) {
@@ -574,6 +554,11 @@ function whatWasClicked() {
 }
 
 function clickActions(wasClicked, item) {
+  if(graffitiCanvasOpen && wasClicked !== 'canvasClicked') {
+    toggleGraffitiCanvas(undefined);
+    return;
+  }
+
   if (wasClicked == 'joinLineClicked') {
     lineupSound.play();
     sceneSwitch();
