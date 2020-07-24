@@ -1,19 +1,9 @@
-//////// Stuck ////////
-
-////////// Not Code /////////
-// select color palette for drawing
-// improve images
-// improve sounds
-// choose main font - make fonts?
-// water flowing image on click for sink scene
-// make small images for mirror and sink scene
 
 //////// If time ////////
 // hover working
 // debug "taken"
 // improve functionality of lettersound
 // keyboard focus for mobile?
-
 
 ////// If I Can Stop Time ////////
 // choose sound or reading in lineup
@@ -26,13 +16,29 @@
 // 'clear' should only clear unpushed updates - is this hard?
 // command z removes last draw path
 
-
-
 //////// BEFORE PUBLISHING ////////
 // make the 'text' canvas tool invisible (also clear if clear still clears EVERYTHING)
 // make database private
 // hide js? or opposite?
 // what do we do if firebase is full? 100 people? real line?
+
+
+////////// Not Code /////////
+// improve images
+    // - p1 retrace images
+    // - p2 make water flowing out of sink, gifs, oh my!
+// improve sounds
+    // - p1 soften to a comfortable volume, length, and fade out
+    // - p2 make some new if time
+// improve text
+    // - 'good enough'
+    // - great
+// select color palette for drawing
+    // - 'good enough'
+    // - great
+// playtest
+    // - 5 minutes of drawing and testing
+    // - other people
 
 // DREAMIN AROUND
 // add alt text to the lineup: (why are you here anyway?)

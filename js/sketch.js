@@ -234,6 +234,7 @@ function isScreenMobile(){
 }
 
 function scaleAllTheThings(userWindowWidth, userWindowHeight) {
+  console.log('scale');
   canvasWidth = calculateCanvasWidth(userWindowWidth, userWindowHeight);
   canvasHeight = calculateCanvasHeight(userWindowWidth, userWindowHeight);
 
@@ -242,14 +243,14 @@ function scaleAllTheThings(userWindowWidth, userWindowHeight) {
   graffitiCanvasX = calculateGraffitiCanvasPositionX(canvasWidth, canvasHeight, graffitiCanvasW);
   graffitiCanvasY = calculateGraffitiCanvasPositionY(canvasWidth, canvasHeight);
 
-  // toiletImg1.resize(0, canvasHeight);
-  // toiletImg2.resize(0, canvasHeight);
-  // toiletPaperImg1.resize(0, canvasHeight / 4.4);
-  // toiletPaperImg2.resize(0, canvasHeight / 4.4);
-  // mirrorImg1.resize(0, canvasHeight);
-  // mirrorImg2.resize(0, canvasHeight);
-  // sinkImg1.resize(0, canvasHeight);
-  // sinkImg2.resize(0, canvasHeight);
+  toiletImg1.resize(0, graffitiCanvasH);
+  toiletImg2.resize(0, canvasHeight);
+  toiletPaperImg1.resize(0, canvasHeight / 4.4);
+  toiletPaperImg2.resize(0, canvasHeight / 4.4);
+  mirrorImg1.resize(0, canvasHeight);
+  mirrorImg2.resize(0, canvasHeight);
+  sinkImg1.resize(0, canvasHeight);
+  sinkImg2.resize(0, canvasHeight);
 
 
   //SCALEFACTOR = 0.085 //0.145;
@@ -343,6 +344,7 @@ function chooseFontSize(){
 }
 
 function setup() {
+
   // input = createInput(); // make input for text
   // input.position(0, 0);
   // input.elt.id = "focus-me";
@@ -364,6 +366,8 @@ function setup() {
 
 
   canvas = createCanvas(canvasWidth, canvasHeight);
+  document.querySelectorAll('canvas').forEach(canvas=>canvas.imageSmoothingEnabled=false);
+
   tiles = tileFactory(canvasWidth, canvasHeight);
   currentTile = tiles[1];
   triangleParams = createTriangleParameters(40, screenOrientation);
@@ -637,8 +641,8 @@ function hoverOnImg() {
   if (!graffitiCanvasOpen) {
     if (!writtenMessageViz) {
       if (scene == 'toilet') {
-        hoverReplace(canvasWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height, toiletImg2, toiletImg1); // toilet hover
-        hoverReplace(canvasWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height, toiletPaperImg2, toiletPaperImg1); // tp hover
+        // hoverReplace(canvasWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg2.height, toiletImg2, toiletImg1); // toilet hover
+        // hoverReplace(canvasWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height, toiletPaperImg2, toiletPaperImg1); // tp hover
       } else if (scene == 'mirror') {
         hoverReplace(canvasWidth / 2 - mirrorImg1.width / 2, 0, mirrorImg1.width, mirrorImg2.height, mirrorImg2, mirrorImg1); // mirror hover
 
@@ -1229,7 +1233,7 @@ function toiletDraw() {
     background(LBLUE);
     displaySmallTileGraffiti(); // show all the small drawings/text
     image(toiletImg1, canvasWidth / 2 - toiletImg1.width / 2, 0);
-    image(toiletPaperImg1, canvasWidth / 1.5, 240);
+    // image(toiletPaperImg1, canvasWidth / 1.5, 240);
     if (writtenMessageViz) {
       writtenMessage("what are you ready to flush away?");
     }
