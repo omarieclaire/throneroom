@@ -144,15 +144,25 @@ function dataSent(data, err) {}
 
 function preload() {
   toiletImg1 = loadImage('img/toiletImg1.png');
+  toiletImg1.imageSmoothingEnabled=true;
   toiletImg2 = loadImage('img/toiletImg2.png');
+  toiletImg2.imageSmoothingEnabled=true;
   toiletPaperImg1 = loadImage('img/tpImg1.png');
+  toiletPaperImg1.imageSmoothingEnabled=true;
   toiletPaperImg2 = loadImage('img/tpImg2.png');
+  toiletPaperImg2.imageSmoothingEnabled=true;
   mirrorImg1 = loadImage('img/mirrorImg1.png');
+  mirrorImg1.imageSmoothingEnabled=true;
   mirrorImg2 = loadImage('img/mirrorImg2.png');
+  mirrorImg2.imageSmoothingEnabled=true;
   sinkImg1 = loadImage('img/sinkImg1.png');
+  sinkImg1.imageSmoothingEnabled=true;
   sinkImg2 = loadImage('img/sinkImg2.png');
+  sinkImg2.imageSmoothingEnabled=true;
   towelImg1 = loadImage('img/towelImg1.png');
+  towelImg1.imageSmoothingEnabled=true;
   towelImg2 = loadImage('img/towelImg2.png');
+  towelImg2.imageSmoothingEnabled=true;
   // monospace = loadFont('monospace');
 
   incon = loadFont('fonts/Incon.ttf');
