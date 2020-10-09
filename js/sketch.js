@@ -680,7 +680,7 @@ function hoverOnImg() {
       }
 
       if (scene == 'toilet') {
-        toiletImg1.elt.imageSmoothingEnabled=false;
+        toiletImg1.imageSmoothingEnabled=false;
         drawIfMouseOver(canvasWidth / 2 - toiletImg1.width / 2, 0, toiletImg1.width, toiletImg1.height, 100, 100, toiletImg1); // toilet hover
         drawIfMouseOver(canvasWidth / 1.5, 240, toiletPaperImg1.width, toiletPaperImg1.height, 100, 100,  toiletPaperImg1); // tp hover
       } else if (scene == 'mirror') {
@@ -1290,7 +1290,7 @@ function toiletDraw() {
       displaySmallTileGraffitiForASingleTile(tileHovered,true);
     }
 
-    toiletImg1.elt.imageSmoothingEnabled=false;
+    //toiletImg1.imageSmoothingEnabled=false;
     // toiletImg2.elt.imageSmoothingEnabled=false;
     // toiletPaperImg1.elt.imageSmoothingEnabled=false;
     // toiletPaperImg2.elt.imageSmoothingEnabled=false;
